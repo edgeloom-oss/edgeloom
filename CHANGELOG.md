@@ -7,6 +7,8 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-08-24
+
 ### Security
 
 - **Path containment for driver-supplied profile names.** A driver's
