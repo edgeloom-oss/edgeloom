@@ -151,3 +151,36 @@ def test_discover_says_so_when_the_capability_cross_check_is_skipped(
     catalog = json.loads((tmp_path / "c.json").read_text())
     assert catalog["capability_cross_check"] == "skipped"
     assert catalog["unsupported_drivers"] == []
+
+
+def test_translate_accepts_no_token_and_defaults_to_writing_it() -> None:
+    from edgeloom.cli import build_parser
+
+    base = ["translate", "--ha-url", "http://ha.local:8123", "--output", "out"]
+    assert build_parser().parse_args(base).no_token is False
+    assert build_parser().parse_args([*base, "--no-token"]).no_token is True
+
+
+def test_no_token_keeps_the_credential_out_of_the_generated_config(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    """--no-token must still require a token for the fetch, only stop persisting it."""
+    from ha2st_edge import cli as translator_cli
+
+    class StubClient:
+        def __init__(self, **_kwargs: object) -> None:
+            pass
+
+        def get_states(self) -> list[dict]:
+            return [{"entity_id": "switch.plug", "attributes": {}}]
+
+    monkeypatch.setattr(translator_cli, "HomeAssistantClient", StubClient)
+    monkeypatch.setenv("HA_TOKEN", "SECRET")
+
+    argv = ["translate", "--ha-url", "http://ha.local:8123", "--output", str(tmp_path), "--no-token"]
+    assert main(argv) == 0
+
+    written = (tmp_path / "config" / "ha_devices.yaml").read_text(encoding="utf-8")
+    assert "SECRET" not in written
+    assert "ha_token" not in written
+    assert "ha_base_url" in written

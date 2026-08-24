@@ -58,7 +58,13 @@ def _cmd_translate(args: argparse.Namespace) -> int:
     if not token:
         LOGGER.error("A Home Assistant token is required; pass --token or set HA_TOKEN.")
         return 1
-    return translate(ha_url=args.ha_url, token=token, output=args.output, domains=args.domains)
+    return translate(
+        ha_url=args.ha_url,
+        token=token,
+        output=args.output,
+        domains=args.domains,
+        write_token=not args.no_token,
+    )
 
 
 # ------------------------------------------------------------------------ discover
@@ -245,6 +251,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Comma-separated HA domains to include",
     )
     translate.add_argument("--output", required=True, help="Output directory for generated artifacts")
+    translate.add_argument(
+        "--no-token",
+        action="store_true",
+        help="Do not write the HA token into the generated config; set HA_EDGE_TOKEN on the hub instead",
+    )
     translate.set_defaults(func=_cmd_translate)
 
     discover = subparsers.add_parser(
