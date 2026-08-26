@@ -461,6 +461,7 @@ main {
   width: min(100%, calc(var(--max) + 2 * var(--gutter)));
   padding: clamp(4.5rem, 7vw, 6.25rem) var(--gutter);
   margin: 0 auto;
+  scroll-margin-top: 5.5rem;
 }
 
 .section + .section,
@@ -912,6 +913,88 @@ main {
   text-decoration: none;
 }
 
+.credit-list {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  border-top: 1px solid var(--ink);
+}
+
+.credit-list li {
+  border-bottom: 1px solid var(--line);
+}
+
+.credit-list li:first-child {
+  background: rgba(213, 233, 220, 0.35);
+}
+
+.credit-list a {
+  display: grid;
+  grid-template-columns: minmax(12rem, 0.75fr) minmax(20rem, 1.5fr) auto;
+  gap: 1.5rem;
+  align-items: center;
+  min-height: 5.25rem;
+  padding: 0.8rem 1rem;
+  text-decoration: none;
+}
+
+.credit-list a:hover {
+  background: var(--mint);
+}
+
+.credit-list a > span {
+  display: flex;
+  flex-direction: column;
+}
+
+.credit-list strong {
+  font-family: var(--serif);
+  font-size: 1.25rem;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.credit-list small {
+  margin-top: 0.15rem;
+  color: var(--teal-dark);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+}
+
+.credit-list p {
+  margin: 0;
+  color: var(--ink-soft);
+  font-size: 0.84rem;
+}
+
+.credit-list em {
+  color: var(--teal-dark);
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.credit-source {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.6rem;
+  margin: 1.25rem 0 0;
+  color: var(--ink-soft);
+  font-size: 0.74rem;
+}
+
+.credit-source code {
+  font-family: var(--mono);
+}
+
+.credit-source a {
+  color: var(--teal-dark);
+  font-weight: 700;
+}
+
 .research-section {
   position: relative;
   width: 100%;
@@ -1247,6 +1330,11 @@ main {
     min-height: 4.2rem;
   }
 
+  .section,
+  .research-section {
+    scroll-margin-top: 4.5rem;
+  }
+
   .menu-toggle {
     position: relative;
     display: block;
@@ -1390,6 +1478,17 @@ main {
 
   .community-columns > div {
     min-height: auto;
+  }
+
+  .credit-list a {
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem 1rem;
+    padding: 1rem;
+  }
+
+  .credit-list p {
+    grid-column: 1 / -1;
+    grid-row: 2;
   }
 
   .research-intro .eyebrow {
