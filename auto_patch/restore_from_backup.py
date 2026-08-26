@@ -54,15 +54,23 @@ def timestamped_backup_name(active_dir: Path) -> Path:
     return candidate
 
 
-def restore_driver(driver: str, dry_run: bool = False) -> Path | None:
-    """Restore a driver from its backup, parking the patched copy first."""
-    active_dir = SCRIPT_ROOT / driver
-    backup_dir = SCRIPT_ROOT / f"{driver}-backup"
+def _driver_path(driver: str | Path) -> Path:
+    """Resolve a CLI path while preserving the helper's bare-name shorthand."""
+    candidate = Path(driver).expanduser()
+    if not candidate.is_absolute() and candidate.parent == Path("."):
+        candidate = SCRIPT_ROOT / candidate
+    return candidate.resolve()
+
+
+def restore_driver(driver: str | Path, dry_run: bool = False) -> Path | None:
+    """Restore a driver from its sibling backup, parking the patched copy first."""
+    active_dir = _driver_path(driver)
+    backup_dir = active_dir.with_name(f"{active_dir.name}-backup")
 
     LOGGER.debug("Active driver directory: %s", active_dir)
     LOGGER.debug("Backup driver directory: %s", backup_dir)
 
-    if not backup_dir.exists():
+    if not backup_dir.is_dir():
         raise FileNotFoundError(f"Backup directory not found: {backup_dir}")
 
     patched_dir: Path | None = None

@@ -49,6 +49,29 @@ def _cmd_patch(args: argparse.Namespace) -> int:
     return 0
 
 
+# ------------------------------------------------------------------------ restore
+
+
+def _cmd_restore(args: argparse.Namespace) -> int:
+    from auto_patch.restore_from_backup import restore_driver
+
+    driver_dir = Path(args.driver).resolve()
+
+    try:
+        patched_dir = restore_driver(driver_dir, dry_run=args.dry_run)
+    except FileNotFoundError as exc:
+        LOGGER.error("%s", exc)
+        return 1
+
+    if args.dry_run:
+        print(f"Dry run complete for {driver_dir.name}; nothing was written.")
+    else:
+        print(f"Restored {driver_dir.name} from its backup.")
+        if patched_dir is not None:
+            print(f"Patched tree preserved at {patched_dir}")
+    return 0
+
+
 # ----------------------------------------------------------------------- translate
 
 
@@ -238,6 +261,15 @@ def build_parser() -> argparse.ArgumentParser:
     )
     patch.add_argument("-n", "--dry-run", action="store_true", help="Preview every change without writing")
     patch.set_defaults(func=_cmd_patch)
+
+    restore = subparsers.add_parser(
+        "restore",
+        parents=[common],
+        help="Restore a patched Edge driver from its backup",
+    )
+    restore.add_argument("driver", help="Path to the Edge driver directory to restore")
+    restore.add_argument("-n", "--dry-run", action="store_true", help="Preview every change without writing")
+    restore.set_defaults(func=_cmd_restore)
 
     translate = subparsers.add_parser(
         "translate",
