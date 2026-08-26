@@ -25,6 +25,12 @@ the wrong answer twice before the data was consulted.
 on both protocols. Full output in [`results/summary.txt`](results/summary.txt);
 every scored cell in [`results/cells.json`](results/cells.json).
 
+The accompanying
+[`results/cells.evidence.json`](results/cells.evidence.json) pins the exact
+committed bytes, source revision, asserted licence, and deterministic parse
+result using EdgeLoom's v0.1 evidence-record contract. It is an identity and
+check record, not independent validation of the experiment's conclusions.
+
 ## What is being measured
 
 Not "does this capability exist on both protocols" — that question cannot fail.
@@ -109,6 +115,13 @@ pip install -r research/binding-resolution/requirements.txt
 python research/binding-resolution/fetch_data.py     # corpora, ~1 minute
 python research/binding-resolution/build_index.py    # join, writes results/
 python research/binding-resolution/measure.py        # score and report
+
+# Record the exact committed result bytes after reproducing the run.
+edgeloom audit research/binding-resolution/results/cells.json \
+  --source-uri https://github.com/edgeloom-oss/edgeloom/blob/784718c/research/binding-resolution/results/cells.json \
+  --source-ref 784718c --license Apache-2.0 \
+  --artifact-status experimental \
+  --output research/binding-resolution/results/cells.evidence.json
 ```
 
 Deliberately not part of `make check`: it needs network access and a 2,384-file

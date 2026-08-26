@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -22,7 +23,7 @@ def test_bare_invocation_prints_help(capsys: pytest.CaptureFixture[str]) -> None
     assert "usage: edgeloom" in capsys.readouterr().out
 
 
-@pytest.mark.parametrize("command", ["patch", "restore", "translate", "discover", "validate"])
+@pytest.mark.parametrize("command", ["patch", "restore", "translate", "discover", "audit", "validate"])
 def test_every_subcommand_is_registered(command: str, capsys: pytest.CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit) as exc:
         main([command, "--help"])
@@ -234,6 +235,51 @@ def test_restore_restores_an_external_driver(tmp_path: Path) -> None:
     patched_dirs = [p for p in tmp_root.iterdir() if p.name.startswith("zigbee-lock-patched-")]
     assert len(patched_dirs) == 1
     assert (patched_dirs[0] / "fingerprints.yml").read_text(encoding="utf-8") == "patched\n"
+
+
+def test_audit_prints_a_clean_json_record(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    artifact = tmp_path / "model.json"
+    artifact.write_text('{"x": 1}', encoding="utf-8")
+
+    assert main(["audit", str(artifact)]) == 0
+
+    record = json.loads(capsys.readouterr().out)
+    assert record["record_version"] == "0.1"
+    assert record["subject"]["digest"]["algorithm"] == "sha256"
+
+
+def test_audit_schema_failure_returns_nonzero_with_record(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    artifact = tmp_path / "model.json"
+    artifact.write_text('{"x": 1}', encoding="utf-8")
+    schema = tmp_path / "schema.json"
+    schema.write_text('{"type":"object","required":["missing"]}', encoding="utf-8")
+
+    assert main(["audit", str(artifact), "--schema", str(schema)]) == 1
+
+    record = json.loads(capsys.readouterr().out)
+    assert record["checks"][-1]["status"] == "fail"
+
+
+def test_audit_refuses_to_overwrite_its_input(tmp_path: Path) -> None:
+    artifact = tmp_path / "model.json"
+    original = '{"x": 1}'
+    artifact.write_text(original, encoding="utf-8")
+
+    assert main(["audit", str(artifact), "--output", str(artifact)]) == 1
+    assert artifact.read_text(encoding="utf-8") == original
+
+
+def test_audit_writes_markdown_atomically(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    artifact = tmp_path / "model.json"
+    artifact.write_text('{"x": 1}', encoding="utf-8")
+    output = tmp_path / "reports" / "model.md"
+
+    assert main(["audit", str(artifact), "--format", "markdown", "--output", str(output)]) == 0
+
+    assert output.read_text(encoding="utf-8").startswith("# EdgeLoom evidence record")
+    assert "Evidence record written" in capsys.readouterr().out
 
 
 def test_patch_then_restore_an_external_driver(driver_copy: Path) -> None:

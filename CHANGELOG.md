@@ -9,6 +9,13 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- `edgeloom audit` and the v0.1 evidence-record schema capture exact local
+  artifact digests, asserted source metadata, bounded syntax results, optional
+  pinned JSON-Schema checks with authority labels, limitations, and extension
+  points for semantic mappings, transformations, recovery, and human review.
+- `STANDARDS.md` states the product's relationship to RFC 9880/SDF, separates
+  normative CDDL from the informative Appendix B JSON-Schema rendition, and
+  documents which standards-facing capabilities do and do not exist today.
 - Public governance, maintainer, support, and code-ownership documents now
   define decision records, contribution roles, support channels, and review
   responsibility.
@@ -38,6 +45,9 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- The legacy restore helper now requires a bare driver name, anchors it at the
+  trusted `auto_patch/` root, and refuses symlinked driver or backup paths. The
+  unified CLI continues to support operator-selected absolute driver paths.
 - `discover --limit N` now counts drivers that actually yield fingerprints.
   A `fingerprints.yml` without a `zigbeeManufacturer` key (e.g. Matter
   drivers) no longer consumes the limit, which made small limits return

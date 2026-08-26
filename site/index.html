@@ -77,7 +77,7 @@
           </a>
           <h1 id="hero-title">Inspect edge drivers. Change them with a <em>way back.</em></h1>
           <p class="hero-lede">
-            EdgeLoom validates, patches, restores, translates, and discovers smart-home edge-driver artifacts.
+            EdgeLoom audits, validates, patches, restores, translates, and discovers smart-home edge-driver artifacts.
           </p>
           <div class="hero-actions">
             <a class="button button-primary" href="https://github.com/edgeloom-oss/edgeloom">View on GitHub</a>
@@ -96,7 +96,7 @@
           <div class="pipeline" aria-hidden="true">
             <div class="pipeline-input"><span>INPUT</span><b>drivers</b><b>entities</b><b>catalogs</b></div>
             <div class="pipeline-tools"><span>TRANSFORM</span><b>patch ↔ restore</b><b>translate</b><b>discover</b></div>
-            <div class="pipeline-contract"><span>CONTRACT</span><strong>schema / v0.1</strong><b>validate</b></div>
+            <div class="pipeline-contract"><span>CONTRACT</span><strong>schema / v0.1</strong><b>validate · audit</b></div>
           </div>
           <div class="terminal-result"><span class="status-dot" aria-hidden="true"></span><code>checked · reversible</code></div>
         </div>
@@ -129,7 +129,7 @@
 
       <section class="section capabilities" id="capabilities" aria-labelledby="capabilities-title">
         <div class="section-heading split-heading">
-          <div><p class="eyebrow">Core capabilities</p><h2 id="capabilities-title">One artifact layer, four focused workflows.</h2></div>
+          <div><p class="eyebrow">Core capabilities</p><h2 id="capabilities-title">One artifact layer, four workflows, reviewable evidence.</h2></div>
           <p>EdgeLoom leaves packaging, review, and hub installation with the operator.</p>
         </div>
         <div class="capability-list">
@@ -160,8 +160,8 @@
         </div>
         <div class="contract-rail" role="group" aria-label="EdgeLoom artifact contract">
           <span>driver · entities · catalog</span><i aria-hidden="true">→</i>
-          <strong>patch · translate · discover</strong><i aria-hidden="true">→</i>
-          <span>schema / v0.1</span><b>validate</b>
+          <strong>patch ↔ restore · translate · discover</strong><i aria-hidden="true">→</i>
+          <span>schema / v0.1</span><b>validate · audit</b>
         </div>
       </section>
 
@@ -189,7 +189,7 @@
         <div class="ecosystem-columns">
           <article><h3>Build</h3><p>Manufacturers, maintainers, and integrators can inspect how behavior becomes a capability and review generated changes.</p></article>
           <article><h3>Study</h3><p>Researchers can investigate hidden attributes, trust boundaries, generated code, and driver supply chains.</p></article>
-          <article><h3>Align</h3><p>Standards communities can use schemas and capability maps to discuss namespaces, portability, and future contracts.</p></article>
+          <article><h3>Align</h3><p>Standards communities can inspect pinned evidence about provenance, semantic loss, recovery, and implementation boundaries.</p><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/STANDARDS.md">Standards position →</a></article>
         </div>
         <p class="potential-note">These are directions for collaboration, not claims of adoption or endorsement.</p>
       </section>
@@ -330,7 +330,7 @@
         <div><a class="brand footer-brand" href="#top"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>EdgeLoom</span></a><p>Checked, reversible tooling for smart-home driver artifacts.</p></div>
         <div><span>Build</span><a href="#get-started">Get started</a><a href="https://github.com/edgeloom-oss/edgeloom">GitHub</a><a href="https://pypi.org/project/edgeloom/">PyPI</a></div>
         <div><span>Participate</span><a href="#acknowledgements">Acknowledgements</a><a href="https://github.com/edgeloom-oss/edgeloom/discussions">Discussions</a><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/CONTRIBUTING.md">Contributing</a><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/SUPPORT.md">Support</a></div>
-        <div><span>Trust</span><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/SECURITY.md">Security</a><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/GOVERNANCE.md">Governance</a><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/LICENSE">Apache-2.0</a></div>
+        <div><span>Trust</span><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/SECURITY.md">Security</a><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/STANDARDS.md">Standards</a><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/GOVERNANCE.md">Governance</a><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/LICENSE">Apache-2.0</a></div>
       </div>
       <div class="footer-bottom"><span>Apache License 2.0.</span><span>Questions? <a href="https://github.com/edgeloom-oss/edgeloom/discussions">Start a discussion</a>.</span></div>
     </footer>

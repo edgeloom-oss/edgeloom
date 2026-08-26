@@ -44,6 +44,7 @@ jobs:
         run: |
           edgeloom validate auto_patch/capability-map.yaml -v
           edgeloom validate auto_patch/zigbee-lock/profiles translator/ha_proxy_edge_driver/profiles
+          edgeloom validate research/binding-resolution/results/cells.evidence.json --kind evidence-record
 
       # The shell entrypoint was unlinted for the whole life of the project,
       # which is how an `else:` typo survived in the backup guard.

@@ -29,7 +29,7 @@ assignees: ''
 ## Environment
 
 - EdgeLoom version (`edgeloom --version`) or commit:
-- Command (`patch` / `translate` / `discover` / `validate`):
+- Command (`audit` / `validate` / `patch` / `restore` / `translate` / `discover`):
 - OS:
 - Python version:
 - Driver or HA domain involved:

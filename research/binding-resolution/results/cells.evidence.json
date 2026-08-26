@@ -1,0 +1,46 @@
+{
+  "record_version": "0.1",
+  "record_id": "elr-07c7797c7ddb7a1c8fae4840",
+  "created_at": "2026-08-26T20:11:33.292908+00:00",
+  "tool": {
+    "name": "edgeloom",
+    "version": "0.1.1",
+    "policy_version": "audit-0.1"
+  },
+  "subject": {
+    "path": "research/binding-resolution/results/cells.json",
+    "status": "experimental",
+    "media_type": "application/json",
+    "size_bytes": 55109,
+    "digest": {
+      "algorithm": "sha256",
+      "value": "f4e0c78dffb46c96b48cc88a95beacec33ffc4304635a52d75b18fa994bd9cc4"
+    },
+    "uri": "https://github.com/edgeloom-oss/edgeloom/blob/784718c/research/binding-resolution/results/cells.json",
+    "ref": "784718c",
+    "license": "Apache-2.0"
+  },
+  "checks": [
+    {
+      "id": "content-digest",
+      "status": "pass",
+      "authority": "deterministic",
+      "summary": "SHA-256 digest computed over the exact local bytes."
+    },
+    {
+      "id": "document-syntax",
+      "status": "pass",
+      "authority": "deterministic",
+      "summary": "Document parsed as bounded JSON/YAML."
+    }
+  ],
+  "limitations": [
+    "A digest establishes byte identity, not provenance, authenticity, ownership, or license.",
+    "Source URI, revision, license, and status are operator assertions; this command does not fetch or authenticate them.",
+    "Structural validation does not establish semantic correctness, applicability, security, or standards conformance.",
+    "Check authority labels are operator assertions about the supplied policy; EdgeLoom does not establish their governance status.",
+    "Schema evaluation runs in-process; size, depth, and node bounds do not guarantee a time bound for adversarial schema expressions.",
+    "This local audit does not resolve remote references or imported model components."
+  ],
+  "title": "Binding-resolution cells at 784718c"
+}

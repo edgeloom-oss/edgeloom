@@ -15,7 +15,8 @@ SCHEMA_VERSION = "0.1"
 
 PROFILE = "profile"
 CAPABILITY_MAP = "capability-map"
-KINDS = (PROFILE, CAPABILITY_MAP)
+EVIDENCE_RECORD = "evidence-record"
+KINDS = (PROFILE, CAPABILITY_MAP, EVIDENCE_RECORD)
 
 _YAML_SUFFIXES = {".yaml", ".yml"}
 _JSON_SUFFIXES = {".json"}
@@ -92,6 +93,12 @@ def detect_kind(document: Any) -> str | None:
         return CAPABILITY_MAP
     if isinstance(document.get("components"), list):
         return PROFILE
+    if (
+        document.get("record_version") == "0.1"
+        and isinstance(document.get("subject"), dict)
+        and isinstance(document.get("checks"), list)
+    ):
+        return EVIDENCE_RECORD
     return None
 
 
@@ -110,21 +117,26 @@ class ValidationResult:
         return self.kind is None
 
 
-def validate_document(path: Path, kind: str | None = None) -> ValidationResult:
-    """Validate one document. ``kind`` forces a schema instead of inferring one."""
+def validation_errors(document: Any, *, kind: str) -> tuple[str, ...]:
+    """Return stable, path-qualified validation errors for an in-memory document."""
     import jsonschema
 
+    validator = jsonschema.Draft202012Validator(load_schema(kind))
+    errors = []
+    for error in sorted(validator.iter_errors(document), key=lambda e: list(e.absolute_path)):
+        location = "/".join(str(part) for part in error.absolute_path) or "<document root>"
+        errors.append(f"{location}: {error.message}")
+    return tuple(errors)
+
+
+def validate_document(path: Path, kind: str | None = None) -> ValidationResult:
+    """Validate one document. ``kind`` forces a schema instead of inferring one."""
     document = load_document(path)
     resolved = kind or detect_kind(document)
     if resolved is None:
         return ValidationResult(path=path, kind=None, errors=())
 
-    validator = jsonschema.Draft202012Validator(load_schema(resolved))
-    errors = []
-    for error in sorted(validator.iter_errors(document), key=lambda e: list(e.absolute_path)):
-        location = "/".join(str(part) for part in error.absolute_path) or "<document root>"
-        errors.append(f"{location}: {error.message}")
-    return ValidationResult(path=path, kind=resolved, errors=tuple(errors))
+    return ValidationResult(path=path, kind=resolved, errors=validation_errors(document, kind=resolved))
 
 
 # Directories that hold other people's files. Walking into them produces

@@ -11,7 +11,7 @@
 - [ ] `make test` (or `python -m pytest tests/ translator/tests/`)
 - [ ] `make lint` (`ruff check .`)
 - [ ] `ruff format --check .`
-- [ ] `edgeloom validate` passes on any profile or capability-map change
+- [ ] `edgeloom validate` passes on any profile, capability-map, or evidence-record change
 - [ ] Other (describe):
 
 ## Checklist

@@ -10,6 +10,8 @@ from collections.abc import Sequence
 from datetime import datetime
 from pathlib import Path
 
+from auto_patch.paths import UnsafePathError, contained_path, safe_identifier
+
 LOGGER = logging.getLogger("edge_patcher.restore")
 SCRIPT_ROOT = Path(__file__).resolve().parent
 
@@ -46,10 +48,10 @@ def timestamped_backup_name(active_dir: Path) -> Path:
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     parent = active_dir.parent
     base_name = f"{active_dir.name}-patched-{timestamp}"
-    candidate = parent / base_name
+    candidate = contained_path(parent, base_name)
     suffix = 1
     while candidate.exists():
-        candidate = parent / f"{base_name}-{suffix}"
+        candidate = contained_path(parent, f"{base_name}-{suffix}")
         suffix += 1
     return candidate
 
@@ -57,15 +59,22 @@ def timestamped_backup_name(active_dir: Path) -> Path:
 def _driver_path(driver: str | Path) -> Path:
     """Resolve a CLI path while preserving the helper's bare-name shorthand."""
     candidate = Path(driver).expanduser()
-    if not candidate.is_absolute() and candidate.parent == Path("."):
-        candidate = SCRIPT_ROOT / candidate
+    if not candidate.is_absolute():
+        # The legacy ``restore_from_backup.py --driver NAME`` interface only
+        # promises a folder name under ``auto_patch/``. Keep that shorthand
+        # inside its trusted root and reject path-like values before joining.
+        # The unified ``edgeloom restore`` command resolves operator-supplied
+        # paths to absolute paths before calling this helper, so external
+        # drivers remain supported without treating them as untrusted data.
+        name = safe_identifier(str(candidate), field="driver")
+        return contained_path(SCRIPT_ROOT, name)
     return candidate.resolve()
 
 
 def restore_driver(driver: str | Path, dry_run: bool = False) -> Path | None:
     """Restore a driver from its sibling backup, parking the patched copy first."""
     active_dir = _driver_path(driver)
-    backup_dir = active_dir.with_name(f"{active_dir.name}-backup")
+    backup_dir = contained_path(active_dir.parent, f"{active_dir.name}-backup")
 
     LOGGER.debug("Active driver directory: %s", active_dir)
     LOGGER.debug("Backup driver directory: %s", backup_dir)
@@ -99,7 +108,7 @@ def main(argv: Sequence[str] | None = None) -> None:
 
     try:
         restore_driver(args.driver, dry_run=args.dry_run)
-    except FileNotFoundError as exc:
+    except (FileNotFoundError, UnsafePathError) as exc:
         LOGGER.error("%s", exc)
         sys.exit(1)
     except Exception:  # noqa: BLE001 - propagate unexpected failure

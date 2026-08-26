@@ -6,6 +6,7 @@ import argparse
 import logging
 import os
 import sys
+import tempfile
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -53,13 +54,14 @@ def _cmd_patch(args: argparse.Namespace) -> int:
 
 
 def _cmd_restore(args: argparse.Namespace) -> int:
+    from auto_patch.paths import UnsafePathError
     from auto_patch.restore_from_backup import restore_driver
 
     driver_dir = Path(args.driver).resolve()
 
     try:
         patched_dir = restore_driver(driver_dir, dry_run=args.dry_run)
-    except FileNotFoundError as exc:
+    except (FileNotFoundError, UnsafePathError) as exc:
         LOGGER.error("%s", exc)
         return 1
 
@@ -171,6 +173,71 @@ def _cmd_discover(args: argparse.Namespace) -> int:
     return 0
 
 
+# --------------------------------------------------------------------------- audit
+
+
+def _atomic_write(path: Path, content: str) -> None:
+    """Write text beside the destination and replace it atomically."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    temporary: Path | None = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            mode="w",
+            encoding="utf-8",
+            dir=path.parent,
+            prefix=f".{path.name}.",
+            suffix=".tmp",
+            delete=False,
+        ) as stream:
+            stream.write(content)
+            temporary = Path(stream.name)
+        temporary.replace(path)
+    except OSError:
+        if temporary is not None:
+            temporary.unlink(missing_ok=True)
+        raise
+
+
+def _cmd_audit(args: argparse.Namespace) -> int:
+    from edgeloom import evidence
+
+    output_path = None if args.output == "-" else Path(args.output)
+    if output_path is not None:
+        protected = {args.artifact.resolve()}
+        if args.schema is not None:
+            protected.add(args.schema.resolve())
+        if output_path.resolve() in protected:
+            LOGGER.error("Refusing to overwrite the audited artifact or its schema: %s", output_path)
+            return 1
+
+    try:
+        result = evidence.audit_artifact(
+            args.artifact,
+            schema_path=args.schema,
+            schema_authority=args.schema_authority,
+            source_uri=args.source_uri,
+            source_ref=args.source_ref,
+            license_expression=args.license_expression,
+            artifact_status=args.artifact_status,
+            title=args.title,
+        )
+        rendered = (
+            evidence.render_json(result.record)
+            if args.format == "json"
+            else evidence.render_markdown(result.record)
+        )
+        if output_path is None:
+            sys.stdout.write(rendered)
+        else:
+            _atomic_write(output_path, rendered)
+            print(f"Evidence record written to {output_path}")
+    except (evidence.EvidenceError, OSError) as exc:
+        LOGGER.error("Audit failed: %s", exc)
+        return 1
+
+    return 1 if result.failed else 0
+
+
 # ------------------------------------------------------------------------ validate
 
 
@@ -225,8 +292,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="edgeloom",
         description=(
-            "An open toolchain for validating, patching, and translating smart-home "
-            "edge drivers across platforms."
+            "An open toolchain for auditing, validating, patching, restoring, translating, "
+            "and discovering smart-home edge-driver artifacts."
         ),
     )
     parser.add_argument("--version", action="version", version=f"edgeloom {__version__}")
@@ -315,6 +382,36 @@ def build_parser() -> argparse.ArgumentParser:
     )
     discover.add_argument("--token", help="GitHub token (or set GITHUB_TOKEN)")
     discover.set_defaults(func=_cmd_discover)
+
+    audit = subparsers.add_parser(
+        "audit",
+        parents=[common],
+        help="Create a local evidence record for an artifact and optional pinned schema",
+    )
+    audit.add_argument("artifact", type=Path, help="Local artifact to hash and inspect")
+    audit.add_argument("--schema", type=Path, help="Local Draft 2020-12 JSON Schema to apply")
+    audit.add_argument(
+        "--schema-authority",
+        choices=["normative", "informative", "user-supplied"],
+        default="user-supplied",
+        help="How the supplied schema is governed (default: user-supplied)",
+    )
+    audit.add_argument("--source-uri", help="Asserted canonical or retrieval URI (not fetched)")
+    audit.add_argument("--source-ref", help="Pinned commit, tag, version, or revision")
+    audit.add_argument(
+        "--license",
+        dest="license_expression",
+        help="Asserted SPDX expression or license label (not verified)",
+    )
+    audit.add_argument(
+        "--artifact-status",
+        choices=["experimental", "draft", "stable", "deprecated", "unknown"],
+        default="unknown",
+    )
+    audit.add_argument("--title", help="Human-readable record title")
+    audit.add_argument("--format", choices=["json", "markdown"], default="json")
+    audit.add_argument("--output", default="-", help="Output file, or - for stdout (default)")
+    audit.set_defaults(func=_cmd_audit)
 
     validate = subparsers.add_parser(
         "validate",

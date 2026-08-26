@@ -37,12 +37,37 @@ VALID_MAP = {
     "drivers": {"zigbee-lock": {"attributes": {"Language": "adminmusic34435.language"}}},
 }
 
+VALID_EVIDENCE_RECORD = {
+    "record_version": "0.1",
+    "record_id": "elr-0123456789abcdef01234567",
+    "created_at": "2026-08-26T20:00:00+00:00",
+    "tool": {"name": "edgeloom", "version": "0.1.1", "policy_version": "audit-0.1"},
+    "subject": {
+        "path": "model.sdf.json",
+        "status": "experimental",
+        "size_bytes": 2,
+        "digest": {"algorithm": "sha256", "value": "0" * 64},
+    },
+    "checks": [
+        {
+            "id": "content-digest",
+            "status": "pass",
+            "authority": "deterministic",
+            "summary": "Digest computed.",
+        }
+    ],
+    "limitations": ["A digest is not proof of provenance."],
+}
 
-def test_both_schemas_are_shipped_and_parse() -> None:
+
+def test_all_schemas_are_shipped_and_valid_draft_2020_12() -> None:
+    import jsonschema
+
     for kind in schemas.KINDS:
         schema = schemas.load_schema(kind)
         assert schema["$schema"].startswith("https://json-schema.org/draft/2020-12")
         assert schema["title"].startswith("EdgeLoom")
+        jsonschema.Draft202012Validator.check_schema(schema)
 
 
 def test_unknown_schema_kind_is_rejected() -> None:
@@ -55,6 +80,7 @@ def test_unknown_schema_kind_is_rejected() -> None:
     [
         (VALID_PROFILE, schemas.PROFILE),
         (VALID_MAP, schemas.CAPABILITY_MAP),
+        (VALID_EVIDENCE_RECORD, schemas.EVIDENCE_RECORD),
         ({"components": []}, schemas.PROFILE),
         ({"drivers": {}}, schemas.CAPABILITY_MAP),
         (
@@ -103,6 +129,12 @@ def test_valid_capability_map_passes(tmp_path: Path) -> None:
     result = schemas.validate_document(_write(tmp_path / "m.yaml", VALID_MAP))
     assert result.ok
     assert result.kind == schemas.CAPABILITY_MAP
+
+
+def test_valid_evidence_record_passes(tmp_path: Path) -> None:
+    result = schemas.validate_document(_write(tmp_path / "record.json", VALID_EVIDENCE_RECORD))
+    assert result.ok
+    assert result.kind == schemas.EVIDENCE_RECORD
 
 
 def test_profile_missing_components_fails(tmp_path: Path) -> None:
@@ -180,6 +212,7 @@ def test_repo_document_census_recognizes_only_schema_artifacts(repo_root: Path) 
     """Repository-wide inference must find every schema artifact and skip support YAML."""
     expected = {
         Path("auto_patch/capability-map.yaml"),
+        Path("research/binding-resolution/results/cells.evidence.json"),
         # Vendored upstream corpus; see tests/fixtures/upstream_profiles/README.md.
         Path("tests/fixtures/upstream_profiles/base-lock.yml"),
         Path("tests/fixtures/upstream_profiles/color-temp-bulb.yml"),

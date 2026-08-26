@@ -1,14 +1,14 @@
 cff-version: 1.2.0
 title: "EdgeLoom"
 abstract: >-
-  An open toolchain for validating, patching, and translating smart-home edge
-  drivers across platforms.
+  An open toolchain for auditing, validating, patching, restoring, translating,
+  and discovering smart-home edge-driver artifacts.
 type: software
-version: 0.1.0
-date-released: 2026-08-23
+version: 0.1.1
+date-released: 2026-08-24
 license: Apache-2.0
 repository-code: https://github.com/edgeloom-oss/edgeloom
-url: https://github.com/edgeloom-oss/edgeloom
+url: https://edgeloom-oss.github.io/edgeloom/
 keywords:
   - smart home
   - internet of things
