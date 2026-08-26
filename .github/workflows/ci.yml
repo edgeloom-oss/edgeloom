@@ -70,3 +70,13 @@ jobs:
           /tmp/clean/bin/edgeloom --version
           # Schemas must resolve from inside the wheel, with no checkout present.
           cd /tmp && /tmp/clean/bin/python -c "from edgeloom import schemas; print(schemas.schema_path('profile'))"
+
+  site:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+      - name: Lint, link-check, and build the project site
+        run: make site-check
