@@ -44,17 +44,12 @@ social card lives at `site/assets/og-card.png` and is 1200 by 630 pixels.
 
 ## Publish with GitHub Pages
 
-The workflow in `.github/workflows/pages.yml` is manual-only. Adding the file
-does not enable Pages and does not deploy the site.
+GitHub Pages uses **GitHub Actions** as its publishing source. A push to `main`
+triggers `.github/workflows/pages.yml`, which checks and builds the site before
+uploading the Pages artifact. The same workflow can be run manually from the
+Actions tab when a maintainer needs to retry a deployment.
 
-After the homepage branch is reviewed and merged:
-
-1. In repository settings, open **Pages** and select **GitHub Actions** as the
-   source.
-2. Open **Actions**, choose **Build and deploy project site**, and run the
-   workflow from `main`.
-3. Verify the reported Pages URL, navigation, social metadata, and both desktop
-   and mobile layouts.
-
-Keep the workflow manual until the maintainers explicitly decide that merges to
-`main` should publish automatically.
+After a homepage change is reviewed and merged, verify the reported Pages URL,
+navigation, social metadata, and both desktop and mobile layouts. Keep the
+canonical metadata and publishing source aligned if the site later moves to a
+custom domain or another hosting arrangement.
