@@ -1,8 +1,9 @@
 name: Build and deploy project site
 
-# Deployment is intentionally manual. Repository maintainers must separately
-# enable GitHub Pages with GitHub Actions as the source before this can publish.
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
 
 concurrency:
