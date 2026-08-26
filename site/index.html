@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>EdgeLoom — Checked, reversible smart-home edge drivers</title>
+    <meta
+      name="description"
+      content="EdgeLoom is an active open-source toolchain to validate, patch, restore, translate, and discover smart-home edge-driver artifacts."
+    >
+    <meta name="theme-color" content="#f5f7f1">
+    <meta name="robots" content="index, follow">
+    <link rel="icon" type="image/png" href="./assets/favicon.png">
+    <link rel="canonical" href="https://edgeloom-oss.github.io/edgeloom/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="EdgeLoom">
+    <meta property="og:title" content="EdgeLoom — Checked. Reversible. Open.">
+    <meta
+      property="og:description"
+      content="An open toolchain for smart-home edge-driver artifacts: validate, patch, restore, translate, and discover."
+    >
+    <meta property="og:url" content="https://edgeloom-oss.github.io/edgeloom/">
+    <meta property="og:image" content="https://edgeloom-oss.github.io/edgeloom/assets/og-card.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="EdgeLoom — Checked. Reversible. Open.">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="EdgeLoom — Checked. Reversible. Open.">
+    <meta
+      name="twitter:description"
+      content="An open toolchain for smart-home edge-driver artifacts: validate, patch, restore, translate, and discover."
+    >
+    <meta name="twitter:image" content="https://edgeloom-oss.github.io/edgeloom/assets/og-card.png">
+    <meta name="twitter:image:alt" content="EdgeLoom — Checked. Reversible. Open.">
+    <link rel="stylesheet" href="./styles.css">
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareSourceCode",
+        "name": "EdgeLoom",
+        "description": "An open toolchain for validating, patching, restoring, translating, and discovering smart-home edge-driver artifacts.",
+        "codeRepository": "https://github.com/edgeloom-oss/edgeloom",
+        "downloadUrl": "https://pypi.org/project/edgeloom/",
+        "license": "https://www.apache.org/licenses/LICENSE-2.0",
+        "programmingLanguage": ["Python", "Lua"],
+        "runtimePlatform": "Python 3.11 or newer",
+        "softwareVersion": "0.1.1",
+        "applicationCategory": "DeveloperApplication"
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="EdgeLoom home">
+        <span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span>
+        <span>EdgeLoom</span>
+      </a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-nav">
+        <span class="sr-only">Toggle navigation</span>
+        <span aria-hidden="true"></span><span aria-hidden="true"></span>
+      </button>
+      <nav id="primary-nav" aria-label="Primary navigation">
+        <a href="#capabilities">Capabilities</a>
+        <a href="#evidence">Project health</a>
+        <a href="#community">Community</a>
+        <a href="#research">Research</a>
+      </nav>
+      <a class="header-cta" href="https://github.com/edgeloom-oss/edgeloom">GitHub</a>
+    </header>
+
+    <main id="main">
+      <section class="hero" id="top" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <a class="release-pill" href="https://github.com/edgeloom-oss/edgeloom/releases/tag/v0.1.1">
+            <span>Active open source</span><span aria-hidden="true">·</span><strong>v0.1.1</strong>
+          </a>
+          <h1 id="hero-title">Inspect edge drivers. Change them with a <em>way back.</em></h1>
+          <p class="hero-lede">
+            EdgeLoom validates, patches, restores, translates, and discovers smart-home edge-driver artifacts.
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="https://github.com/edgeloom-oss/edgeloom">View on GitHub</a>
+            <a class="button button-secondary" href="#get-started">Get started</a>
+          </div>
+          <ul class="hero-facts" aria-label="Project facts">
+            <li>Apache-2.0</li><li>Python 3.11+</li><li>On PyPI</li>
+          </ul>
+        </div>
+
+        <div class="toolchain-card" role="img" aria-label="EdgeLoom toolchain overview">
+          <div class="terminal-bar">
+            <span></span><span></span><span></span><code>edgeloom / checked pipeline</code>
+          </div>
+          <div class="terminal-command"><span>$</span> pip install edgeloom</div>
+          <div class="pipeline" aria-hidden="true">
+            <div class="pipeline-input"><span>INPUT</span><b>drivers</b><b>entities</b><b>catalogs</b></div>
+            <div class="pipeline-tools"><span>TRANSFORM</span><b>patch ↔ restore</b><b>translate</b><b>discover</b></div>
+            <div class="pipeline-contract"><span>CONTRACT</span><strong>schema / v0.1</strong><b>validate</b></div>
+          </div>
+          <div class="terminal-result"><span class="status-dot" aria-hidden="true"></span><code>checked · reversible</code></div>
+        </div>
+      </section>
+
+      <p class="audience-line">
+        Built in public for developers, maintainers, smart-home users, manufacturers, integrators, researchers, and standards communities.
+      </p>
+
+      <section class="section problem" id="problem" aria-labelledby="problem-title">
+        <div class="section-heading">
+          <p class="eyebrow">The boundary problem</p>
+          <h2 id="problem-title">A device can expose more than its platform profile admits.</h2>
+        </div>
+        <div class="problem-layout">
+          <p class="lead">
+            Platform drivers translate protocol behavior into usable capabilities. When their artifacts are incomplete
+            or opaque, attributes disappear at the boundary. EdgeLoom makes that layer inspectable and changeable.
+          </p>
+          <ol class="boundary-line" aria-label="The edge-driver artifact boundary">
+            <li><span>01</span><strong>Device behavior</strong><small>protocol state</small></li>
+            <li><span>02</span><strong>Driver artifact</strong><small>profiles + mappings</small></li>
+            <li><span>03</span><strong>Platform surface</strong><small>usable capabilities</small></li>
+          </ol>
+        </div>
+        <p class="scope-line">
+          <strong>Current scope:</strong> SmartThings Edge artifacts and a Home Assistant-to-SmartThings translation path — not firmware modification, hub installation, or a replacement for either platform.
+        </p>
+      </section>
+
+      <section class="section capabilities" id="capabilities" aria-labelledby="capabilities-title">
+        <div class="section-heading split-heading">
+          <div><p class="eyebrow">Core capabilities</p><h2 id="capabilities-title">One artifact layer, four focused workflows.</h2></div>
+          <p>EdgeLoom leaves packaging, review, and hub installation with the operator.</p>
+        </div>
+        <div class="capability-list">
+          <article>
+            <span class="capability-index">01</span><h3>Validate</h3>
+            <p>Check profiles and capability maps against versioned JSON Schemas.</p>
+            <code>edgeloom validate .</code>
+            <a href="https://github.com/edgeloom-oss/edgeloom/tree/main/schema" aria-label="Inspect the validation schemas">↗</a>
+          </article>
+          <article>
+            <span class="capability-index">02</span><h3>Patch / Restore</h3>
+            <p>Expose mapped attributes with backups, rollback on failure, and a path to stock.</p>
+            <code>edgeloom restore DRIVER</code>
+            <a href="https://github.com/edgeloom-oss/edgeloom/blob/main/docs/patching.md" aria-label="Read the patching and restore guide">↗</a>
+          </article>
+          <article>
+            <span class="capability-index">03</span><h3>Translate</h3>
+            <p>Generate SmartThings Edge proxy artifacts from supported Home Assistant entities.</p>
+            <code>edgeloom translate …</code>
+            <a href="https://github.com/edgeloom-oss/edgeloom/blob/main/translator/README.md" aria-label="Explore the translator">↗</a>
+          </article>
+          <article>
+            <span class="capability-index">04</span><h3>Discover</h3>
+            <p>Catalog driver fingerprints, devices, and gaps in capability mapping.</p>
+            <code>edgeloom discover …</code>
+            <a href="https://github.com/edgeloom-oss/edgeloom/blob/main/docs/discovery.md" aria-label="Read discovery documentation">↗</a>
+          </article>
+        </div>
+        <div class="contract-rail" role="group" aria-label="EdgeLoom artifact contract">
+          <span>driver · entities · catalog</span><i aria-hidden="true">→</i>
+          <strong>patch · translate · discover</strong><i aria-hidden="true">→</i>
+          <span>schema / v0.1</span><b>validate</b>
+        </div>
+      </section>
+
+      <section class="section evidence" id="evidence" aria-labelledby="evidence-title">
+        <div class="section-heading split-heading">
+          <div><p class="eyebrow">Project health</p><h2 id="evidence-title">Active means inspectable.</h2></div>
+          <p class="verified-date">Verified <time datetime="2026-08-26">26 August 2026</time></p>
+        </div>
+        <div class="evidence-ledger">
+          <a href="https://github.com/edgeloom-oss/edgeloom/releases"><span>Releases</span><strong>2 public</strong><small>v0.1.0 · v0.1.1</small></a>
+          <a href="https://pypi.org/project/edgeloom/"><span>Package</span><strong>PyPI 0.1.1</strong><small>wheel + sdist</small></a>
+          <a href="https://github.com/edgeloom-oss/edgeloom/actions/workflows/ci.yml"><span>Current main</span><strong class="passing"><i></i>CI passing</strong><small>3.11 · 3.12 · build</small></a>
+          <a href="https://github.com/edgeloom-oss/edgeloom/pulls?q=is%3Apr+is%3Amerged"><span>Contributions</span><strong>Public record</strong><small>authorship + review</small></a>
+          <a href="https://github.com/edgeloom-oss/edgeloom/security/advisories/GHSA-4f7m-wgh7-46xf"><span>Security</span><strong>GHSA response</strong><small>fixed in v0.1.1</small></a>
+          <a href="https://github.com/edgeloom-oss/edgeloom/blob/main/GOVERNANCE.md"><span>Stewardship</span><strong>Open governance</strong><small>roles + decisions</small></a>
+        </div>
+        <p class="evidence-caveat">Activity is not adoption: no production scale, partnership, endorsement, or user-count claims are made.</p>
+      </section>
+
+      <section class="section ecosystem" id="ecosystem" aria-labelledby="ecosystem-title">
+        <div class="section-heading">
+          <p class="eyebrow">Industry + standards potential</p>
+          <h2 id="ecosystem-title">Concrete artifacts make better cross-platform conversations.</h2>
+        </div>
+        <div class="ecosystem-columns">
+          <article><h3>Build</h3><p>Manufacturers, maintainers, and integrators can inspect how behavior becomes a capability and review generated changes.</p></article>
+          <article><h3>Study</h3><p>Researchers can investigate hidden attributes, trust boundaries, generated code, and driver supply chains.</p></article>
+          <article><h3>Align</h3><p>Standards communities can use schemas and capability maps to discuss namespaces, portability, and future contracts.</p></article>
+        </div>
+        <p class="potential-note">These are directions for collaboration, not claims of adoption or endorsement.</p>
+      </section>
+
+      <section class="section getting-started" id="get-started" aria-labelledby="getting-started-title">
+        <div class="start-panel">
+          <div class="start-copy">
+            <p class="eyebrow eyebrow-light">Getting started</p>
+            <h2 id="getting-started-title">Install. Check. Then decide.</h2>
+            <p>EdgeLoom requires Python 3.11 or newer.</p>
+            <div class="start-links">
+              <a href="https://github.com/edgeloom-oss/edgeloom#commands">Commands</a>
+              <a href="https://github.com/edgeloom-oss/edgeloom/blob/main/docs/development.md">Development</a>
+              <a href="https://pypi.org/project/edgeloom/">PyPI</a>
+            </div>
+          </div>
+          <div class="code-window" role="group" aria-label="EdgeLoom installation example">
+            <div class="code-window-bar"><span>Quickstart</span><button type="button" data-copy="pip install edgeloom\nedgeloom validate .">Copy</button></div>
+            <pre><code><span class="code-comment"># install the latest release</span>
+<span class="code-prompt">$</span> pip install edgeloom
+
+<span class="code-comment"># check an artifact tree</span>
+<span class="code-prompt">$</span> edgeloom validate .</code></pre>
+          </div>
+        </div>
+        <div class="safety-line">
+          <strong>Pre-1.0:</strong> review diffs, keep backups, treat inputs as untrusted, and keep tokens out of logs.
+          <a href="https://github.com/edgeloom-oss/edgeloom/blob/main/SECURITY.md">Trust model →</a>
+        </div>
+      </section>
+
+      <section class="section community" id="community" aria-labelledby="community-title">
+        <div class="section-heading">
+          <p class="eyebrow">Community</p><h2 id="community-title">Use it, shape it, steward it.</h2>
+        </div>
+        <div class="community-columns">
+          <div><h3>Use + discuss</h3><a href="https://github.com/edgeloom-oss/edgeloom/discussions">Discussions</a><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/SUPPORT.md">Support paths</a><a href="https://github.com/edgeloom-oss/edgeloom/issues/new?template=device_report.yml">Device report</a></div>
+          <div><h3>Contribute + govern</h3><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/CONTRIBUTING.md">Contributing</a><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/GOVERNANCE.md">Governance</a><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/MAINTAINERS.md">Maintainers</a><a href="https://github.com/edgeloom-oss/edgeloom/issues/new?template=design_proposal.yml">Design proposal</a></div>
+          <div class="security-column"><h3>Report security</h3><p>Use a private advisory, not a public issue.</p><a class="security-link" href="https://github.com/edgeloom-oss/edgeloom/security/advisories/new">Report privately →</a><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/SECURITY.md">Security policy</a></div>
+        </div>
+        <p class="contribution-note">Code, docs, device results, issue triage, design discussion, and review all count as contributions.</p>
+      </section>
+
+      <section class="section acknowledgements" id="acknowledgements" aria-labelledby="acknowledgements-title">
+        <div class="section-heading split-heading">
+          <div><p class="eyebrow">Acknowledgements</p><h2 id="acknowledgements-title">Credit belongs with the work.</h2></div>
+          <p>EdgeLoom is maintained and strengthened in public by people who ship code, tests, documentation, security improvements, and project stewardship.</p>
+        </div>
+        <ul class="credit-list" aria-label="EdgeLoom maintainers and contributors">
+          <li>
+            <a href="https://github.com/infinitywings">
+              <span><strong>Chenglong Fu</strong><small>@infinitywings</small></span>
+              <p>Lead maintenance, releases, security stewardship, and integration.</p>
+              <em>Maintainer ↗</em>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/vsolano9">
+              <span><strong>Victor</strong><small>@vsolano9</small></span>
+              <p>Validation and discovery fixes, translator tests, and patching documentation.</p>
+              <em>Contributor ↗</em>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/LZhWang">
+              <span><strong>@LZhWang</strong><small>restore workflow</small></span>
+              <p>The restore helper and its first-class CLI workflow.</p>
+              <em>Contributor ↗</em>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/Georgefifth">
+              <span><strong>@Georgefifth</strong><small>discovery + translator</small></span>
+              <p>Discovery limit fixes and safer Home Assistant token configuration.</p>
+              <em>Contributor ↗</em>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/chuxiongwu">
+              <span><strong>@chuxiongwu</strong><small>early contributor</small></span>
+              <p>An early code contribution preserved in the project history.</p>
+              <em>Contributor ↗</em>
+            </a>
+          </li>
+        </ul>
+        <p class="credit-source">
+          Based on commits and merged pull requests in current <code>main</code>, verified <time datetime="2026-08-26">26 August 2026</time>.
+          <a href="https://github.com/edgeloom-oss/edgeloom/graphs/contributors">Contributor graph</a>
+          <span aria-hidden="true">·</span>
+          <a href="https://github.com/edgeloom-oss/edgeloom/pulls?q=is%3Apr+is%3Amerged">Merged pull requests</a>
+        </p>
+      </section>
+
+      <section class="research-section" id="research" aria-labelledby="research-title">
+        <div class="research-intro">
+          <p class="eyebrow">Research → infrastructure</p>
+          <h2 id="research-title">A finding becomes useful when the infrastructure outlasts the paper.</h2>
+          <p>EdgeLoom grows the hidden-attribute research into shared contracts, reproducible transforms, real-device evidence, and open stewardship.</p>
+        </div>
+        <figure class="paper-figure">
+          <div class="paper-figure-image">
+            <img src="./assets/research-driver-gap.webp" width="1490" height="425" loading="lazy" decoding="async" alt="Research diagram showing a smart lock with four attributes, an edge driver, and an IoT platform where AutoRelockTime and SoundVolume are missing">
+          </div>
+          <figcaption>
+            <span>CCS 2025 · Figure 1</span>
+            <p>The study found 119 hidden attributes across 31 devices from 16 manufacturers. It motivates EdgeLoom; it does not define current tool coverage.</p>
+            <a href="https://doi.org/10.1145/3719027.3744847">Read the paper →</a>
+            <small>Xu et al. · reproduced under CC BY 4.0</small>
+          </figcaption>
+        </figure>
+        <div class="impact-rail" role="group" aria-label="Research and sustainability directions">
+          <p><strong>Research</strong><span>Measure driver/profile mismatches.</span></p>
+          <p><strong>Impact</strong><span>Make hidden behavior reviewable.</span></p>
+          <p><strong>Sustainability</strong><span>Version, release, govern, repeat.</span></p>
+        </div>
+        <article class="citation-card">
+          <div><span>Preferred citation · ACM CCS 2025</span><h3>Discovering and Exploiting IoT Device Hidden Attributes: A New Vulnerability in Smart Homes</h3><p>Xuening Xu · Chenglong Fu · Xiaojiang Du · Bo Luo</p></div>
+          <div class="citation-actions"><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/CITATION.cff">CITATION.cff</a><a href="https://github.com/edgeloom-oss/edgeloom#how-to-cite">BibTeX</a></div>
+        </article>
+      </section>
+
+      <section class="section news" id="news" aria-labelledby="news-title">
+        <div class="section-heading split-heading">
+          <div><p class="eyebrow">Releases + news</p><h2 id="news-title">Recent movement.</h2></div>
+          <a class="section-link" href="https://github.com/edgeloom-oss/edgeloom/blob/main/CHANGELOG.md">Changelog →</a>
+        </div>
+        <div class="news-list">
+          <a href="https://github.com/edgeloom-oss/edgeloom/pull/48"><time datetime="2026-08-26">26 Aug 2026</time><strong>Restore becomes a first-class CLI command</strong><span>PR #48</span></a>
+          <a href="https://github.com/edgeloom-oss/edgeloom/pull/49"><time datetime="2026-08-26">26 Aug 2026</time><strong>Community governance and support paths established</strong><span>PR #49</span></a>
+          <a href="https://github.com/edgeloom-oss/edgeloom/releases/tag/v0.1.1"><time datetime="2026-08-24">24 Aug 2026</time><strong>v0.1.1 — security patch release</strong><span>release</span></a>
+          <a href="https://github.com/edgeloom-oss/edgeloom/releases/tag/v0.1.0"><time datetime="2026-08-23">23 Aug 2026</time><strong>v0.1.0 — first EdgeLoom release</strong><span>release</span></a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-main">
+        <div><a class="brand footer-brand" href="#top"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i></span><span>EdgeLoom</span></a><p>Checked, reversible tooling for smart-home driver artifacts.</p></div>
+        <div><span>Build</span><a href="#get-started">Get started</a><a href="https://github.com/edgeloom-oss/edgeloom">GitHub</a><a href="https://pypi.org/project/edgeloom/">PyPI</a></div>
+        <div><span>Participate</span><a href="#acknowledgements">Acknowledgements</a><a href="https://github.com/edgeloom-oss/edgeloom/discussions">Discussions</a><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/CONTRIBUTING.md">Contributing</a><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/SUPPORT.md">Support</a></div>
+        <div><span>Trust</span><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/SECURITY.md">Security</a><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/GOVERNANCE.md">Governance</a><a href="https://github.com/edgeloom-oss/edgeloom/blob/main/LICENSE">Apache-2.0</a></div>
+      </div>
+      <div class="footer-bottom"><span>Apache License 2.0.</span><span>Questions? <a href="https://github.com/edgeloom-oss/edgeloom/discussions">Start a discussion</a>.</span></div>
+    </footer>
+    <div class="copy-notice" role="status" aria-live="polite"></div>
+    <script src="./script.js" defer></script>
+  </body>
+</html>

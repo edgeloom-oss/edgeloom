@@ -3,9 +3,10 @@ PIP ?= pip3
 DOCKER ?= docker
 COMPOSE ?= docker compose
 IMAGE ?= edgeloom-dev
+SITE_OUTPUT ?= _site
 
 .PHONY: install lint format format-check test validate check \
-        docker-build docker-shell docker-test
+        docker-build docker-shell docker-test site-build site-lint site-links site-check
 
 # Editable install of the package itself, not just its dependencies. Installing
 # only requirements-dev.txt leaves `edgeloom` and `ha2st_edge` unimportable and
@@ -40,3 +41,17 @@ docker-shell: docker-build
 
 docker-test: docker-build
 	$(DOCKER) run --rm -v $(PWD):/workspace -w /workspace $(IMAGE) make check
+
+site-build:
+	$(PYTHON) scripts/site_build.py --output $(SITE_OUTPUT)
+
+site-lint:
+	$(PYTHON) scripts/site_check.py --lint
+	node --check site/script.js
+
+site-links:
+	$(PYTHON) scripts/site_check.py --links --external
+
+site-check: site-lint
+	$(PYTHON) scripts/site_check.py --links
+	$(MAKE) site-build SITE_OUTPUT=$(SITE_OUTPUT)
