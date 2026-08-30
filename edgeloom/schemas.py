@@ -15,7 +15,8 @@ SCHEMA_VERSION = "0.1"
 
 PROFILE = "profile"
 CAPABILITY_MAP = "capability-map"
-KINDS = (PROFILE, CAPABILITY_MAP)
+EVIDENCE_RECORD = "evidence-record"
+KINDS = (PROFILE, CAPABILITY_MAP, EVIDENCE_RECORD)
 
 _YAML_SUFFIXES = {".yaml", ".yml"}
 _JSON_SUFFIXES = {".json"}
@@ -55,12 +56,17 @@ def load_schema(kind: str) -> dict[str, Any]:
     return json.loads(schema_path(kind).read_text(encoding="utf-8"))
 
 
-def load_document(path: Path) -> Any:
-    """Read a YAML or JSON document from disk."""
+def parse_document_bytes(content: bytes, *, path: Path) -> Any:
+    """Parse already-snapshotted YAML or JSON bytes within shared bounds.
+
+    Keeping parsing separate from file I/O lets evidence generation hash and
+    validate the same byte snapshot instead of reopening a mutable artifact.
+    ``path`` supplies only the format hint and diagnostic label.
+    """
     if path.suffix.lower() not in DOCUMENT_SUFFIXES:
         raise SchemaError(f"Unsupported document type {path.suffix!r}: {path}")
     try:
-        text = path.read_text(encoding="utf-8")
+        text = content.decode("utf-8")
     except UnicodeDecodeError as exc:
         raise SchemaError(f"{path}: is not valid UTF-8: {exc}") from exc
     try:
@@ -80,6 +86,15 @@ def load_document(path: Path) -> Any:
         raise SchemaError(f"{path}: {exc}") from exc
 
 
+def load_document(path: Path) -> Any:
+    """Read a YAML or JSON document from disk."""
+    try:
+        content = path.read_bytes()
+    except OSError as exc:
+        raise SchemaError(f"Could not read {path}: {exc}") from exc
+    return parse_document_bytes(content, path=path)
+
+
 def detect_kind(document: Any) -> str | None:
     """Infer which schema a document is meant to satisfy.
 
@@ -92,6 +107,12 @@ def detect_kind(document: Any) -> str | None:
         return CAPABILITY_MAP
     if isinstance(document.get("components"), list):
         return PROFILE
+    if (
+        document.get("record_version") == "0.1"
+        and isinstance(document.get("subject"), dict)
+        and isinstance(document.get("checks"), list)
+    ):
+        return EVIDENCE_RECORD
     return None
 
 
@@ -110,21 +131,29 @@ class ValidationResult:
         return self.kind is None
 
 
-def validate_document(path: Path, kind: str | None = None) -> ValidationResult:
-    """Validate one document. ``kind`` forces a schema instead of inferring one."""
+def validation_errors(document: Any, *, kind: str) -> tuple[str, ...]:
+    """Return stable, path-qualified validation errors for an in-memory document."""
     import jsonschema
 
+    validator = jsonschema.Draft202012Validator(
+        load_schema(kind),
+        format_checker=jsonschema.FormatChecker(),
+    )
+    errors = []
+    for error in sorted(validator.iter_errors(document), key=lambda e: list(e.absolute_path)):
+        location = "/".join(str(part) for part in error.absolute_path) or "<document root>"
+        errors.append(f"{location}: {error.message}")
+    return tuple(errors)
+
+
+def validate_document(path: Path, kind: str | None = None) -> ValidationResult:
+    """Validate one document. ``kind`` forces a schema instead of inferring one."""
     document = load_document(path)
     resolved = kind or detect_kind(document)
     if resolved is None:
         return ValidationResult(path=path, kind=None, errors=())
 
-    validator = jsonschema.Draft202012Validator(load_schema(resolved))
-    errors = []
-    for error in sorted(validator.iter_errors(document), key=lambda e: list(e.absolute_path)):
-        location = "/".join(str(part) for part in error.absolute_path) or "<document root>"
-        errors.append(f"{location}: {error.message}")
-    return ValidationResult(path=path, kind=resolved, errors=tuple(errors))
+    return ValidationResult(path=path, kind=resolved, errors=validation_errors(document, kind=resolved))
 
 
 # Directories that hold other people's files. Walking into them produces
