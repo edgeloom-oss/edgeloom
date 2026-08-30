@@ -117,6 +117,37 @@ def test_profile_with_empty_capabilities_fails(tmp_path: Path) -> None:
     assert not result.ok
 
 
+def test_profile_rejects_exact_duplicate_components(tmp_path: Path) -> None:
+    bad = {
+        "name": "x",
+        "components": [
+            {"id": "main", "capabilities": [{"id": "lock", "version": 1}]},
+            {"id": "main", "capabilities": [{"id": "lock", "version": 1}]},
+        ],
+    }
+    result = schemas.validate_document(_write(tmp_path / "p.yaml", bad))
+
+    assert not result.ok
+
+
+def test_profile_rejects_exact_duplicate_capabilities(tmp_path: Path) -> None:
+    bad = {
+        "name": "x",
+        "components": [
+            {
+                "id": "main",
+                "capabilities": [
+                    {"id": "lock", "version": 1},
+                    {"id": "lock", "version": 1},
+                ],
+            }
+        ],
+    }
+    result = schemas.validate_document(_write(tmp_path / "p.yaml", bad))
+
+    assert not result.ok
+
+
 def test_capability_map_rejects_unnamespaced_capability(tmp_path: Path) -> None:
     """A bare id like 'language' would collide with the standard namespace."""
     bad = {"version": "0.1", "drivers": {"zigbee-lock": {"attributes": {"Language": "language"}}}}
