@@ -188,12 +188,18 @@ container workflow.
 
 ## Roadmap
 
-- Expand the library of subdrivers and handler templates.
-- Broaden the capability map beyond Zigbee locks, switches, and sensors.
-- Grow the schema toward Matter and Home Assistant capability namespaces.
-- Native Windows validation (the Python `patch` path no longer needs bash).
-- Device reports from real hardware — see the
-  [device report template](.github/ISSUE_TEMPLATE/device_report.yml).
+The [project roadmap](ROADMAP.md) sequences two connected tracks: continued
+hardening and expansion of the existing toolchain, and a federated evidence
+catalog that links pinned platform artifacts, neutral SDF models, explicit
+semantic-loss classifications, and human review. Restore containment, bounded
+audit/evidence records, and the first catalog-contract slice are now on `main`.
+The next gate is a 3–5-record SmartThings lock pilot with explicit licensing and
+independent-review boundaries, rather than bulk ingestion. A separate
+[`edgeloom-catalog`](https://github.com/edgeloom-oss/edgeloom-catalog)
+repository shell exists but is not yet populated with catalog records.
+
+Device reports from real hardware remain especially useful; see the
+[device report template](.github/ISSUE_TEMPLATE/device_report.yml).
 
 ## Security
 
