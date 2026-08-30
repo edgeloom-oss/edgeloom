@@ -45,6 +45,7 @@ jobs:
         run: |
           edgeloom validate auto_patch/capability-map.yaml -v
           edgeloom validate auto_patch/zigbee-lock/profiles translator/ha_proxy_edge_driver/profiles
+          edgeloom validate tests/fixtures/catalog -v
           edgeloom audit auto_patch/capability-map.yaml \
             --schema schema/capability-map.schema.json \
             --schema-authority normative \
@@ -71,6 +72,7 @@ jobs:
           python -m pip install --upgrade pip build twine
           python -m build
           python -m twine check dist/*
+          python -c "import glob, tarfile; p=glob.glob('dist/*.tar.gz')[0]; names=tarfile.open(p).getnames(); assert any(n.endswith('/docs/catalog-contracts.md') for n in names)"
       - name: Verify the wheel installs and runs standalone
         run: |
           python -m venv /tmp/clean
@@ -78,10 +80,11 @@ jobs:
           /tmp/clean/bin/edgeloom --version
           # Schemas must resolve from inside the wheel, with no checkout present.
           cd /tmp
-          /tmp/clean/bin/python -c "from edgeloom import schemas; [print(schemas.schema_path(kind)) for kind in schemas.KINDS]"
+          /tmp/clean/bin/python -c "from edgeloom import schemas; expected=('profile','capability-map','evidence-record','source-manifest','catalog-mapping-set'); assert schemas.KINDS == expected; [print(schemas.schema_path(kind)) for kind in expected]"
           printf '{"sample":true}\n' > artifact.json
           /tmp/clean/bin/edgeloom audit artifact.json --output record.json
           /tmp/clean/bin/edgeloom validate record.json --kind evidence-record
+          /tmp/clean/bin/edgeloom validate "$GITHUB_WORKSPACE/tests/fixtures/catalog" -v
 
   site:
     runs-on: ubuntu-latest

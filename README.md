@@ -38,7 +38,7 @@ flowchart TD
     T --> S
     D -.->|"flags drivers with<br/>no mapping"| S
 
-    S{{"schema/ v0.1<br/><b>profile · capability-map · evidence-record</b>"}}
+    S{{"schema/ v0.1<br/><b>five artifact + evidence contracts</b>"}}
 
     S --> V["edgeloom validate<br/><i>contract gate, CI-ready</i>"]
     V --> O["Hub-installable driver<br/>with a checked profile"]
@@ -102,7 +102,7 @@ export HA_TOKEN=...   # a long-lived access token
 edgeloom translate --ha-url http://homeassistant.local:8123 --output ./generated_edge
 ```
 
-Check every profile and capability map in a tree:
+Check every recognized toolchain or catalog contract in a tree:
 
 ```bash
 edgeloom validate .
@@ -144,7 +144,7 @@ archived and redirects to this one.
 
 ## Schema
 
-Version 0.1 publishes three JSON Schemas (draft 2020-12):
+Version 0.1 publishes five JSON Schemas (draft 2020-12):
 
 - **[`schema/profile.schema.json`](schema/profile.schema.json)** — a device
   profile: the capabilities a driver exposes for one device, and the categories
@@ -156,12 +156,23 @@ Version 0.1 publishes three JSON Schemas (draft 2020-12):
 - **[`schema/evidence-record.schema.json`](schema/evidence-record.schema.json)** —
   local artifact identity, deterministic checks, optional unauthenticated human
   disposition, and explicit limitations.
+- **[`schema/source-manifest.schema.json`](schema/source-manifest.schema.json)** —
+  an immutable upstream Git commit plus portable artifact paths, digests,
+  parser-independent roles, explicitly bounded source maturity, and license
+  evidence.
+- **[`schema/catalog-mapping-set.schema.json`](schema/catalog-mapping-set.schema.json)** —
+  evidence-backed mappings among device/protocol support, platform exposure,
+  and neutral SDF representation, including loss and an unauthenticated review
+  declaration whose authority comes from governed catalog history.
 
 [`auto_patch/capability-map.yaml`](auto_patch/capability-map.yaml) is the live
 map for the drivers shipped here, and is validated in CI on every push.
 
-All three schemas are versioned and shipped inside the installed package, so
+All five schemas are versioned and shipped inside the installed package, so
 `edgeloom validate` and `edgeloom audit` work without a checkout.
+
+See [Catalog Contracts](docs/catalog-contracts.md) for the mapping taxonomy,
+status model, validation boundary, and synthetic lock example.
 
 ## Development
 

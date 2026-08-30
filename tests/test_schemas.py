@@ -63,6 +63,13 @@ VALID_EVIDENCE_RECORD = {
 def test_all_schemas_are_shipped_and_valid_draft_2020_12() -> None:
     import jsonschema
 
+    assert schemas.KINDS == (
+        schemas.PROFILE,
+        schemas.CAPABILITY_MAP,
+        schemas.EVIDENCE_RECORD,
+        schemas.SOURCE_MANIFEST,
+        schemas.CATALOG_MAPPING_SET,
+    )
     for kind in schemas.KINDS:
         schema = schemas.load_schema(kind)
         assert schema["$schema"].startswith("https://json-schema.org/draft/2020-12")
@@ -81,6 +88,27 @@ def test_unknown_schema_kind_is_rejected() -> None:
         (VALID_PROFILE, schemas.PROFILE),
         (VALID_MAP, schemas.CAPABILITY_MAP),
         (VALID_EVIDENCE_RECORD, schemas.EVIDENCE_RECORD),
+        (
+            {"kind": "source-manifest", "repository": {}, "artifacts": []},
+            schemas.SOURCE_MANIFEST,
+        ),
+        (
+            {"kind": "catalog-mapping-set", "nodes": [], "mappings": []},
+            schemas.CATALOG_MAPPING_SET,
+        ),
+        (
+            {"schema_version": "0.1", "repository": {}, "artifacts": []},
+            schemas.SOURCE_MANIFEST,
+        ),
+        (
+            {
+                "kind": "catalog_mapping_set",
+                "source_manifests": [],
+                "nodes": [],
+                "mappings": [],
+            },
+            schemas.CATALOG_MAPPING_SET,
+        ),
         ({"components": []}, schemas.PROFILE),
         ({"drivers": {}}, schemas.CAPABILITY_MAP),
         (
@@ -180,6 +208,20 @@ def test_evidence_record_date_time_format_is_enforced(tmp_path: Path) -> None:
 
     assert not result.ok
     assert any("date-time" in message for message in result.errors)
+
+
+def test_bundled_schema_errors_are_bounded_with_stable_marker(tmp_path: Path) -> None:
+    invalid = {
+        "name": "many-invalid-components",
+        "components": [{"id": f"component-{index}"} for index in range(75)],
+    }
+
+    first = schemas.validate_document(_write(tmp_path / "many.yaml", invalid))
+    second = schemas.validation_errors(invalid, kind=schemas.PROFILE)
+
+    assert first.errors == second
+    assert len(first.errors) == schemas.MAX_VALIDATION_ERRORS + 1
+    assert first.errors[-1] == schemas.VALIDATION_TRUNCATION_MARKER
 
 
 def test_profile_missing_components_fails(tmp_path: Path) -> None:
@@ -301,6 +343,9 @@ def test_repo_document_census_recognizes_only_schema_artifacts(repo_root: Path) 
         Path("translator/ha_proxy_edge_driver/profiles/ha_lock_basic.yaml"),
         Path("translator/ha_proxy_edge_driver/profiles/ha_motion_sensor.yaml"),
         Path("translator/ha_proxy_edge_driver/profiles/ha_switch_basic.yaml"),
+        Path("tests/fixtures/catalog/smartthings-source.yaml"),
+        Path("tests/fixtures/catalog/onedm-source.yaml"),
+        Path("tests/fixtures/catalog/lock-mapping-set.yaml"),
     }
     recognized = {
         result.path.relative_to(repo_root)

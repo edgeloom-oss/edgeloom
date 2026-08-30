@@ -1,0 +1,161 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/edgeloom-oss/edgeloom/schema/v0.1/source-manifest.schema.json",
+  "title": "EdgeLoom source manifest",
+  "description": "Pins one upstream repository and the artifacts EdgeLoom is allowed to use from it. A manifest records provenance; it does not assert that an artifact is correct, adopted, or verified.",
+  "type": "object",
+  "required": ["kind", "schema_version", "id", "ecosystem", "repository", "artifacts"],
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "const": "source-manifest"
+    },
+    "schema_version": {
+      "const": "0.1"
+    },
+    "id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "ecosystem": {
+      "$ref": "#/$defs/aggregationIdentifier",
+      "description": "Stable lowercase aggregation identifier, for example 'smartthings' or 'onedm'. Human-readable names belong in descriptions and rendered labels."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "repository": {
+      "$ref": "#/$defs/repository"
+    },
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/artifact"
+      }
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "gitTreePath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*//)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*(?:^|/)\\.[gG][iI][tT](?:/|$))(?!.*[\\u0000-\\u001F\\u007F\\\\])(?!.*/$).+$",
+      "description": "Portable POSIX path to a file in the pinned Git tree. Filesystem-absolute and drive paths, dot segments, Git administrative paths, empty segments, control characters, backslashes, and trailing slashes are forbidden."
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "aggregationIdentifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "repository": {
+      "type": "object",
+      "required": ["url", "commit"],
+      "additionalProperties": false,
+      "properties": {
+        "url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://(?![^/?#]*@)[^/?#\\s]+(?:/[^?#\\s]*)?$",
+          "maxLength": 2000,
+          "description": "HTTPS URL of the upstream Git repository, with a hostname and without credentials, query, or fragment. EdgeLoom also validates hostname syntax explicitly."
+        },
+        "commit": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$",
+          "description": "Full immutable Git commit object ID; branch and tag names are not accepted."
+        }
+      }
+    },
+    "license": {
+      "type": "object",
+      "required": ["expression", "evidence_path"],
+      "additionalProperties": false,
+      "properties": {
+        "expression": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200,
+          "description": "Declared SPDX expression. EdgeLoom records the declaration but does not parse it or perform legal interpretation."
+        },
+        "evidence_path": {
+          "$ref": "#/$defs/gitTreePath"
+        },
+        "evidence_locator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "description": "Optional locator within the evidence file, such as a JSON Pointer."
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "required": [
+        "id",
+        "layer",
+        "path",
+        "sha256",
+        "media_type",
+        "artifact_role",
+        "source_maturity",
+        "license"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "layer": {
+          "enum": [
+            "device-protocol-support",
+            "platform-exposure",
+            "neutral-sdf-representation"
+          ],
+          "description": "The evidence layer for which this artifact is used; it is not a correctness claim."
+        },
+        "path": {
+          "$ref": "#/$defs/gitTreePath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 200,
+          "pattern": "^[A-Za-z0-9!#$&^_.+-]+/[A-Za-z0-9!#$&^_.+-]+$"
+        },
+        "artifact_role": {
+          "enum": ["driver-config", "fingerprints", "platform-profile", "sdf-model", "evidence"],
+          "description": "Parser-independent role of the artifact. This is distinct from the evidence layer in which the artifact is used."
+        },
+        "source_maturity": {
+          "enum": ["official", "community", "experimental", "draft", "deprecated", "unknown"],
+          "description": "Unauthenticated status declared from or inferred about the upstream source. This is independent of EdgeLoom review lifecycle and becomes project-trusted only through governed catalog history."
+        },
+        "license": {
+          "$ref": "#/$defs/license"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        }
+      }
+    }
+  }
+}
