@@ -15,6 +15,13 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   limitations. Generated JSON records validate against their bundled contract;
   output replacement is atomic, non-local schema references are rejected, and
   recorded validation diagnostics are bounded.
+- Draft 2020-12 contracts for immutable upstream source manifests and catalog
+  mapping sets. They model device/protocol support, native platform exposure,
+  and neutral SDF representation as separate evidence layers; preserve
+  one-to-one, lossy, ambiguous, and unbound outcomes; and keep upstream source
+  maturity distinct from EdgeLoom review lifecycle. `edgeloom validate` ships
+  and autodetects both contracts and checks duplicate IDs and internal
+  references without fetching or executing upstream content.
 - Public governance, maintainer, support, and code-ownership documents now
   define decision records, contribution roles, support channels, and review
   responsibility.

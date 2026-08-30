@@ -11,6 +11,17 @@ make lint
 make test
 ```
 
+Validate both shipped toolchain artifacts and the synthetic catalog-contract
+fixtures with:
+
+```bash
+make validate
+```
+
+Catalog validation in this first contract slice is intentionally offline. It
+does not fetch a source repository or resolve artifact IDs across separate
+manifest files; see [Catalog Contracts](catalog-contracts.md).
+
 GitHub Actions (`.github/workflows/ci.yml`) runs the exact commands on every PR
 and on the `main`/`master` branches.
 
@@ -40,4 +51,3 @@ You can also use `docker compose run --rm dev bash` directly if you prefer the
 Compose workflow. The container automatically honors `GITHUB_TOKEN`, making it
 easy to run the discovery pipeline against the public SmartThings repos without
 throttling.
-

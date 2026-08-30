@@ -285,7 +285,7 @@ def _cmd_validate(args: argparse.Namespace) -> int:
 
     if checked == 0:
         # Silence here would read as success. It is not: nothing was checked.
-        LOGGER.error("No profile or capability-map documents found in the given paths.")
+        LOGGER.error("No recognized EdgeLoom contract documents found in the given paths.")
         return 1
 
     summary = f"{checked} document(s) checked, {len(failures)} failed"
@@ -426,7 +426,7 @@ def build_parser() -> argparse.ArgumentParser:
     validate = subparsers.add_parser(
         "validate",
         parents=[common],
-        help="Check device profiles and capability maps against the EdgeLoom schema",
+        help="Check toolchain and catalog artifacts against the EdgeLoom schemas",
     )
     validate.add_argument(
         "paths",

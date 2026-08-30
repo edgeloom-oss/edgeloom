@@ -45,6 +45,7 @@ jobs:
         run: |
           edgeloom validate auto_patch/capability-map.yaml -v
           edgeloom validate auto_patch/zigbee-lock/profiles translator/ha_proxy_edge_driver/profiles
+          edgeloom validate tests/fixtures/catalog -v
           edgeloom audit auto_patch/capability-map.yaml \
             --schema schema/capability-map.schema.json \
             --schema-authority normative \
@@ -82,6 +83,7 @@ jobs:
           printf '{"sample":true}\n' > artifact.json
           /tmp/clean/bin/edgeloom audit artifact.json --output record.json
           /tmp/clean/bin/edgeloom validate record.json --kind evidence-record
+          /tmp/clean/bin/edgeloom validate "$GITHUB_WORKSPACE/tests/fixtures/catalog" -v
 
   site:
     runs-on: ubuntu-latest

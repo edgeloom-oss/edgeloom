@@ -81,6 +81,14 @@ def test_unknown_schema_kind_is_rejected() -> None:
         (VALID_PROFILE, schemas.PROFILE),
         (VALID_MAP, schemas.CAPABILITY_MAP),
         (VALID_EVIDENCE_RECORD, schemas.EVIDENCE_RECORD),
+        (
+            {"kind": "source-manifest", "repository": {}, "artifacts": []},
+            schemas.SOURCE_MANIFEST,
+        ),
+        (
+            {"kind": "catalog-mapping-set", "nodes": [], "mappings": []},
+            schemas.CATALOG_MAPPING_SET,
+        ),
         ({"components": []}, schemas.PROFILE),
         ({"drivers": {}}, schemas.CAPABILITY_MAP),
         (
@@ -301,6 +309,9 @@ def test_repo_document_census_recognizes_only_schema_artifacts(repo_root: Path) 
         Path("translator/ha_proxy_edge_driver/profiles/ha_lock_basic.yaml"),
         Path("translator/ha_proxy_edge_driver/profiles/ha_motion_sensor.yaml"),
         Path("translator/ha_proxy_edge_driver/profiles/ha_switch_basic.yaml"),
+        Path("tests/fixtures/catalog/smartthings-source.yaml"),
+        Path("tests/fixtures/catalog/onedm-source.yaml"),
+        Path("tests/fixtures/catalog/lock-mapping-set.yaml"),
     }
     recognized = {
         result.path.relative_to(repo_root)

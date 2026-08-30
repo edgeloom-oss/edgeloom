@@ -1,0 +1,393 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/edgeloom-oss/edgeloom/schema/v0.1/catalog-mapping-set.schema.json",
+  "title": "EdgeLoom catalog mapping set",
+  "description": "Records reviewable relationships among device/protocol support, native platform exposure, and neutral SDF representation. It preserves evidence and semantic loss without claiming adoption, certification, or canonical translation.",
+  "type": "object",
+  "required": [
+    "kind",
+    "schema_version",
+    "id",
+    "scope",
+    "source_manifests",
+    "nodes",
+    "evidence",
+    "mappings",
+    "review",
+    "limitations"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "kind": {
+      "const": "catalog-mapping-set"
+    },
+    "schema_version": {
+      "const": "0.1"
+    },
+    "id": {
+      "$ref": "#/$defs/identifier"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "scope": {
+      "$ref": "#/$defs/scope"
+    },
+    "source_manifests": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/manifestReference"
+      }
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 3,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/node"
+      },
+      "allOf": [
+        {
+          "contains": {
+            "type": "object",
+            "required": ["layer"],
+            "properties": {
+              "layer": { "const": "device-protocol-support" }
+            }
+          },
+          "minContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "required": ["layer"],
+            "properties": {
+              "layer": { "const": "platform-exposure" }
+            }
+          },
+          "minContains": 1
+        },
+        {
+          "contains": {
+            "type": "object",
+            "required": ["layer"],
+            "properties": {
+              "layer": { "const": "neutral-sdf-representation" }
+            }
+          },
+          "minContains": 1
+        }
+      ]
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
+    },
+    "mappings": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/mapping"
+      }
+    },
+    "review": {
+      "$ref": "#/$defs/review"
+    },
+    "limitations": {
+      "$ref": "#/$defs/limitations"
+    }
+  },
+  "$defs": {
+    "identifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120,
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
+    },
+    "repositoryPath": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)[^\\\\]+$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "scope": {
+      "type": "object",
+      "required": ["domain", "platform"],
+      "additionalProperties": false,
+      "properties": {
+        "domain": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Device or capability family, for example 'door-lock'."
+        },
+        "platform": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100,
+          "description": "Native platform whose exposure layer is being assessed."
+        },
+        "protocols": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        }
+      }
+    },
+    "manifestReference": {
+      "type": "object",
+      "required": ["id", "path", "sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "path": {
+          "$ref": "#/$defs/repositoryPath"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "artifactReference": {
+      "type": "object",
+      "required": ["manifest_id", "artifact_id"],
+      "additionalProperties": false,
+      "properties": {
+        "manifest_id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "artifact_id": {
+          "$ref": "#/$defs/identifier"
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "required": ["id", "layer", "artifact", "locator", "label"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "layer": {
+          "enum": [
+            "device-protocol-support",
+            "platform-exposure",
+            "neutral-sdf-representation"
+          ]
+        },
+        "artifact": {
+          "$ref": "#/$defs/artifactReference"
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "description": "Technology-specific locator within the pinned artifact, such as a profile path or JSON Pointer."
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["id", "artifact", "locator", "summary"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "artifact": {
+          "$ref": "#/$defs/artifactReference"
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 2000
+      }
+    },
+    "mapping": {
+      "type": "object",
+      "required": [
+        "id",
+        "from",
+        "classification",
+        "directions",
+        "evidence_refs",
+        "limitations"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/identifier"
+        },
+        "from": {
+          "$ref": "#/$defs/identifier"
+        },
+        "to": {
+          "$ref": "#/$defs/identifier"
+        },
+        "classification": {
+          "enum": ["one-to-one", "lossy", "ambiguous", "unbound"]
+        },
+        "directions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": ["read", "write", "event"]
+          }
+        },
+        "loss_dimensions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "type",
+              "range",
+              "enumeration",
+              "unit",
+              "cardinality",
+              "timing",
+              "directionality",
+              "precision",
+              "encoding",
+              "other"
+            ]
+          }
+        },
+        "unbound_reason": {
+          "enum": [
+            "device-feature-absent",
+            "platform-not-exposed",
+            "neutral-model-missing",
+            "insufficient-evidence",
+            "out-of-scope"
+          ]
+        },
+        "evidence_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/identifier"
+          }
+        },
+        "limitations": {
+          "$ref": "#/$defs/limitations"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": { "classification": { "const": "unbound" } },
+            "required": ["classification"]
+          },
+          "then": {
+            "required": ["unbound_reason"],
+            "not": { "required": ["to"] }
+          },
+          "else": {
+            "required": ["to"],
+            "not": { "required": ["unbound_reason"] }
+          }
+        },
+        {
+          "if": {
+            "properties": { "classification": { "const": "lossy" } },
+            "required": ["classification"]
+          },
+          "then": {
+            "required": ["loss_dimensions"]
+          },
+          "else": {
+            "not": { "required": ["loss_dimensions"] }
+          }
+        }
+      ]
+    },
+    "review": {
+      "type": "object",
+      "required": ["lifecycle", "reviewers"],
+      "additionalProperties": false,
+      "properties": {
+        "lifecycle": {
+          "enum": ["candidate", "reviewed", "verified", "deprecated"],
+          "description": "EdgeLoom review lifecycle. It is independent of every artifact's upstream source maturity."
+        },
+        "reviewers": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "lifecycle": { "enum": ["reviewed", "verified", "deprecated"] }
+            },
+            "required": ["lifecycle"]
+          },
+          "then": {
+            "required": ["reviewed_at"],
+            "properties": {
+              "reviewers": { "minItems": 1 }
+            }
+          }
+        }
+      ]
+    }
+  }
+}
