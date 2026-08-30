@@ -64,24 +64,24 @@ EdgeLoom is **not** planned as:
 
 ## Phase 0 — safety and evidence foundation
 
-**Status: Next**
+**Status: Shipped**
 
-Land these as independent, reviewable changes rather than one cross-cutting
-feature branch:
+These foundations landed as independent, reviewable changes rather than one
+cross-cutting feature branch:
 
-1. Resolve [restore path containment issue #40](https://github.com/edgeloom-oss/edgeloom/issues/40)
+1. Resolved [restore path containment issue #40](https://github.com/edgeloom-oss/edgeloom/issues/40)
    with symlink, traversal, and mutation-style regression tests.
-2. Add a bounded local `edgeloom audit` command and versioned evidence-record
+2. Added a bounded local `edgeloom audit` command and versioned evidence-record
    schema. A record identifies exact bytes, deterministic checks,
    operator-supplied source assertions, limitations, and review disposition;
    it is not certification or proof of provenance.
-3. Publish the standards boundary, including normative RFC 9880 CDDL versus
+3. Published the standards boundary, including normative RFC 9880 CDDL versus
    informative JSON-Schema checks and the moving status of SDF protocol
    mappings.
-4. Keep security fixes, public schemas, research evidence, and website copy in
+4. Kept security fixes, public schemas, research evidence, and website copy in
    focused pull requests with independent test evidence.
 
-**Exit gate**
+**Exit gate (met)**
 
 - Restore containment tests pass on supported Python versions.
 - Evidence records are deterministic with respect to artifact and policy
@@ -91,15 +91,19 @@ feature branch:
 
 ## Phase 1 — federated catalog contracts
 
-**Status: Planned**
+**Status: Next (contract foundation shipped)**
 
-Add reusable contracts and offline-first tooling to the core `edgeloom`
-package:
+The first contract slice is shipped in the core `edgeloom` package:
 
 - a source manifest containing repository, full commit, path, SHA-256 digest,
   declared license, source role, and upstream maturity;
 - a mapping-set contract that keeps mapping classification separate from
   review status;
+- offline structural and single-document semantic validation with bounded
+  diagnostics, safe catalog-relative paths, and synthetic contract fixtures.
+
+The next increments are:
+
 - bounded readers for SmartThings `config.yml`, `fingerprints.yml`, and
   profiles, plus SDF JSON models;
 - explicit commands to validate, fetch pinned inputs, build deterministic
@@ -128,12 +132,18 @@ neutral model lacks it, or the available evidence is insufficient.
 
 ## Phase 2 — SmartThings lock pilot
 
-**Status: Planned**
+**Status: Next (source-license and independent-review gates open)**
 
 Create 3–5 manually reviewed records before attempting broad ingestion. The
 pilot will connect pinned SmartThings Z-Wave and Zigbee lock artifacts with
 relevant experimental OneDM Door, Lock Status, and Lock Code models and with
 the existing 44-lock lexicon.
+
+Before public population, maintainers must resolve attribution and
+redistribution handling for experimental OneDM files and distinguish official
+platform evidence, community configuration evidence, manufacturer evidence,
+and standards context. A reference-and-hash-only pilot remains the conservative
+fallback when redistribution authority is incomplete.
 
 The pilot should deliberately include:
 
@@ -158,13 +168,17 @@ small searchable static view.
 
 ## Phase 3 — open catalog and community review
 
-**Status: Planned**
+**Status: Planned (repository shell established)**
 
-After the pilot validates the contracts, establish a separate
-`edgeloom-oss/edgeloom-catalog` repository. The core repository continues to
-own schemas, validators, adapters, and renderers. The catalog repository owns
-pinned manifests, original mapping assertions, review records, evidence
-outputs, and the generated static catalog.
+The public
+[`edgeloom-oss/edgeloom-catalog`](https://github.com/edgeloom-oss/edgeloom-catalog)
+repository shell is established. It intentionally contains no catalog records
+or independent Pages deployment yet. After the pilot validates the contracts
+and the licensing gate is resolved, bootstrap its local governance and begin
+reviewed population. The core repository continues to own schemas, validators,
+adapters, and renderers. The catalog repository owns pinned manifests,
+original mapping assertions, review records, evidence outputs, and the
+generated static catalog.
 
 The catalog will reference upstream projects rather than present a mutable
 mirror as authoritative. Contributions will include mapping proposals, source
