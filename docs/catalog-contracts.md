@@ -112,6 +112,9 @@ edgeloom validate --kind catalog-mapping-set path/to/mappings.yaml
 `edgeloom validate` checks the JSON Schema, duplicate stable IDs, required
 three-layer coverage, and references among manifests, nodes, evidence, and
 mappings declared inside one mapping-set document.
+Bundled-schema diagnostics share one bounded budget; when additional JSON
+Schema or semantic findings exist, the final diagnostic is an explicit,
+deterministic truncation marker.
 
 This first contract slice deliberately does **not** fetch remote content,
 recalculate a source digest, or resolve an `artifact_id` against a separate

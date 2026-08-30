@@ -5,7 +5,9 @@ from __future__ import annotations
 import ipaddress
 import json
 import re
+from collections.abc import Iterator
 from dataclasses import dataclass
+from itertools import islice
 from pathlib import Path
 from typing import Any
 from urllib.parse import urlsplit
@@ -28,6 +30,15 @@ _JSON_SUFFIXES = {".json"}
 DOCUMENT_SUFFIXES = _YAML_SUFFIXES | _JSON_SUFFIXES
 
 _WINDOWS_DRIVE = re.compile(r"^[A-Za-z]:")
+
+# Bundled schemas are trusted, but the documents they validate are not. Keep a
+# single command from flooding a terminal or retaining an unbounded list of
+# jsonschema diagnostics. The audit command has a separate, evidence-record
+# budget because it serializes a different, deliberately redacted structure.
+MAX_VALIDATION_ERRORS = 50
+VALIDATION_TRUNCATION_MARKER = (
+    f"<document root>: validation diagnostics truncated after {MAX_VALIDATION_ERRORS} errors"
+)
 
 
 class SchemaError(RuntimeError):
@@ -305,42 +316,42 @@ def _valid_repository_hostname(hostname: str) -> bool:
     )
 
 
-def _semantic_errors(document: Any, kind: str) -> tuple[str, ...]:
-    """Apply public-contract invariants beyond JSON Schema's vocabulary."""
+def _iter_semantic_errors(document: Any, kind: str) -> Iterator[str]:
+    """Yield public-contract invariants beyond JSON Schema's vocabulary."""
     if not isinstance(document, dict):
-        return ()
+        return
 
     if kind == SOURCE_MANIFEST:
         artifacts = _catalog_items(document.get("artifacts"))
-        errors = _duplicate_id_errors(artifacts, "artifacts")
-        errors.extend(_repository_url_errors(document.get("repository")))
+        yield from _duplicate_id_errors(artifacts, "artifacts")
+        yield from _repository_url_errors(document.get("repository"))
         for index, artifact in enumerate(artifacts):
             if not isinstance(artifact, dict):
                 continue
-            errors.extend(_posix_contract_path_errors(artifact.get("path"), f"artifacts/{index}/path"))
+            yield from _posix_contract_path_errors(
+                artifact.get("path"),
+                f"artifacts/{index}/path",
+            )
             license_record = artifact.get("license")
             if isinstance(license_record, dict):
-                errors.extend(
-                    _posix_contract_path_errors(
-                        license_record.get("evidence_path"),
-                        f"artifacts/{index}/license/evidence_path",
-                    )
+                yield from _posix_contract_path_errors(
+                    license_record.get("evidence_path"),
+                    f"artifacts/{index}/license/evidence_path",
                 )
-        return tuple(errors)
+        return
 
     if kind != CATALOG_MAPPING_SET:
-        return ()
+        return
 
-    errors: list[str] = []
     manifests = _catalog_items(document.get("source_manifests"))
     nodes = _catalog_items(document.get("nodes"))
     evidence = _catalog_items(document.get("evidence"))
     mappings = _catalog_items(document.get("mappings"))
 
-    errors.extend(_duplicate_id_errors(manifests, "source_manifests"))
-    errors.extend(_duplicate_id_errors(nodes, "nodes"))
-    errors.extend(_duplicate_id_errors(evidence, "evidence"))
-    errors.extend(_duplicate_id_errors(mappings, "mappings"))
+    yield from _duplicate_id_errors(manifests, "source_manifests")
+    yield from _duplicate_id_errors(nodes, "nodes")
+    yield from _duplicate_id_errors(evidence, "evidence")
+    yield from _duplicate_id_errors(mappings, "mappings")
 
     manifest_ids = {
         item["id"] for item in manifests if isinstance(item, dict) and isinstance(item.get("id"), str)
@@ -363,17 +374,18 @@ def _semantic_errors(document: Any, kind: str) -> tuple[str, ...]:
         "neutral-sdf-representation",
     ):
         if required_layer not in present_layers:
-            errors.append(f"nodes: missing required layer {required_layer!r}")
+            yield f"nodes: missing required layer {required_layer!r}"
 
     for index, reference in enumerate(manifests):
         if isinstance(reference, dict):
-            errors.extend(
-                _posix_contract_path_errors(reference.get("path"), f"source_manifests/{index}/path")
+            yield from _posix_contract_path_errors(
+                reference.get("path"),
+                f"source_manifests/{index}/path",
             )
     for index, node in enumerate(nodes):
-        errors.extend(_artifact_manifest_reference_errors(node, f"nodes/{index}", manifest_ids))
+        yield from _artifact_manifest_reference_errors(node, f"nodes/{index}", manifest_ids)
     for index, record in enumerate(evidence):
-        errors.extend(_artifact_manifest_reference_errors(record, f"evidence/{index}", manifest_ids))
+        yield from _artifact_manifest_reference_errors(record, f"evidence/{index}", manifest_ids)
 
     for index, mapping in enumerate(mappings):
         if not isinstance(mapping, dict):
@@ -381,18 +393,18 @@ def _semantic_errors(document: Any, kind: str) -> tuple[str, ...]:
         classification = mapping.get("classification")
         if classification == "unbound":
             if "unbound_reason" not in mapping:
-                errors.append(f"mappings/{index}: unbound mapping requires unbound_reason")
+                yield f"mappings/{index}: unbound mapping requires unbound_reason"
             if "to" in mapping:
-                errors.append(f"mappings/{index}: unbound mapping must not declare a target node")
+                yield f"mappings/{index}: unbound mapping must not declare a target node"
         elif isinstance(classification, str):
             if "to" not in mapping:
-                errors.append(f"mappings/{index}: bound mapping requires a target node")
+                yield f"mappings/{index}: bound mapping requires a target node"
             if "unbound_reason" in mapping:
-                errors.append(f"mappings/{index}: bound mapping must not declare unbound_reason")
+                yield f"mappings/{index}: bound mapping must not declare unbound_reason"
         for endpoint in ("from", "to"):
             node_id = mapping.get(endpoint)
             if isinstance(node_id, str) and node_id not in node_ids:
-                errors.append(f"mappings/{index}/{endpoint}: unknown node {node_id!r}")
+                yield f"mappings/{index}/{endpoint}: unknown node {node_id!r}"
         source_id = mapping.get("from")
         target_id = mapping.get("to")
         if (
@@ -403,25 +415,21 @@ def _semantic_errors(document: Any, kind: str) -> tuple[str, ...]:
             and target_id in node_layers
         ):
             if source_id == target_id:
-                errors.append(f"mappings/{index}: bound mapping must not target its source node")
+                yield f"mappings/{index}: bound mapping must not target its source node"
             elif node_layers[source_id] == node_layers[target_id]:
-                errors.append(f"mappings/{index}: bound mapping must connect different evidence layers")
+                yield f"mappings/{index}: bound mapping must connect different evidence layers"
         refs = mapping.get("evidence_refs")
         if isinstance(refs, list):
             for ref_index, evidence_id in enumerate(refs):
                 if isinstance(evidence_id, str) and evidence_id not in evidence_ids:
-                    errors.append(
-                        f"mappings/{index}/evidence_refs/{ref_index}: unknown evidence {evidence_id!r}"
-                    )
+                    yield (f"mappings/{index}/evidence_refs/{ref_index}: unknown evidence {evidence_id!r}")
 
     review = document.get("review")
     if isinstance(review, dict) and review.get("lifecycle") != "candidate":
         author = review.get("author")
         reviewers = review.get("reviewers")
         if isinstance(author, str) and isinstance(reviewers, list) and author in reviewers:
-            errors.append("review/reviewers: record author is not an independent reviewer")
-
-    return tuple(errors)
+            yield "review/reviewers: record author is not an independent reviewer"
 
 
 @dataclass(frozen=True)
@@ -440,18 +448,37 @@ class ValidationResult:
 
 
 def validation_errors(document: Any, *, kind: str) -> tuple[str, ...]:
-    """Return stable, path-qualified validation errors for an in-memory document."""
+    """Return bounded, stable diagnostics for one in-memory document."""
     import jsonschema
 
     validator = jsonschema.Draft202012Validator(
         load_schema(kind),
         format_checker=jsonschema.FormatChecker(),
     )
-    errors = []
-    for error in sorted(validator.iter_errors(document), key=lambda e: list(e.absolute_path)):
+    sampled = list(islice(validator.iter_errors(document), MAX_VALIDATION_ERRORS + 1))
+    schema_truncated = len(sampled) > MAX_VALIDATION_ERRORS
+    schema_errors = sorted(
+        sampled[:MAX_VALIDATION_ERRORS],
+        key=lambda error: (
+            tuple(str(part) for part in error.absolute_path),
+            tuple(str(part) for part in error.absolute_schema_path),
+            error.message,
+        ),
+    )
+    errors: list[str] = []
+    for error in schema_errors:
         location = "/".join(str(part) for part in error.absolute_path) or "<document root>"
         errors.append(f"{location}: {error.message}")
-    errors.extend(_semantic_errors(document, kind))
+
+    if schema_truncated:
+        errors.append(VALIDATION_TRUNCATION_MARKER)
+        return tuple(errors)
+
+    remaining = MAX_VALIDATION_ERRORS - len(errors)
+    semantic_sample = list(islice(_iter_semantic_errors(document, kind), remaining + 1))
+    errors.extend(semantic_sample[:remaining])
+    if len(semantic_sample) > remaining:
+        errors.append(VALIDATION_TRUNCATION_MARKER)
     return tuple(errors)
 
 

@@ -466,3 +466,20 @@ def test_one_to_one_mapping_rejects_loss_dimensions(tmp_path: Path, mapping_set:
     result = _validate(tmp_path, mapping_set)
     assert not result.ok
     assert any("loss_dimensions" in error for error in result.errors)
+
+
+def test_schema_and_semantic_errors_share_one_diagnostic_budget(
+    tmp_path: Path,
+    mapping_set: dict,
+) -> None:
+    mapping_set["title"] = 123
+    mapping_set["mappings"][0]["evidence_refs"] = [f"missing-evidence-{index}" for index in range(75)]
+
+    first = _validate(tmp_path, mapping_set)
+    second = _validate(tmp_path, mapping_set)
+
+    assert first.errors == second.errors
+    assert len(first.errors) == schemas.MAX_VALIDATION_ERRORS + 1
+    assert first.errors[-1] == schemas.VALIDATION_TRUNCATION_MARKER
+    assert any("title" in error for error in first.errors[:-1])
+    assert any("unknown evidence" in error for error in first.errors[:-1])

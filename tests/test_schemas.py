@@ -63,6 +63,13 @@ VALID_EVIDENCE_RECORD = {
 def test_all_schemas_are_shipped_and_valid_draft_2020_12() -> None:
     import jsonschema
 
+    assert schemas.KINDS == (
+        schemas.PROFILE,
+        schemas.CAPABILITY_MAP,
+        schemas.EVIDENCE_RECORD,
+        schemas.SOURCE_MANIFEST,
+        schemas.CATALOG_MAPPING_SET,
+    )
     for kind in schemas.KINDS:
         schema = schemas.load_schema(kind)
         assert schema["$schema"].startswith("https://json-schema.org/draft/2020-12")
@@ -201,6 +208,20 @@ def test_evidence_record_date_time_format_is_enforced(tmp_path: Path) -> None:
 
     assert not result.ok
     assert any("date-time" in message for message in result.errors)
+
+
+def test_bundled_schema_errors_are_bounded_with_stable_marker(tmp_path: Path) -> None:
+    invalid = {
+        "name": "many-invalid-components",
+        "components": [{"id": f"component-{index}"} for index in range(75)],
+    }
+
+    first = schemas.validate_document(_write(tmp_path / "many.yaml", invalid))
+    second = schemas.validation_errors(invalid, kind=schemas.PROFILE)
+
+    assert first.errors == second
+    assert len(first.errors) == schemas.MAX_VALIDATION_ERRORS + 1
+    assert first.errors[-1] == schemas.VALIDATION_TRUNCATION_MARKER
 
 
 def test_profile_missing_components_fails(tmp_path: Path) -> None:

@@ -80,7 +80,7 @@ jobs:
           /tmp/clean/bin/edgeloom --version
           # Schemas must resolve from inside the wheel, with no checkout present.
           cd /tmp
-          /tmp/clean/bin/python -c "from edgeloom import schemas; [print(schemas.schema_path(kind)) for kind in schemas.KINDS]"
+          /tmp/clean/bin/python -c "from edgeloom import schemas; expected=('profile','capability-map','evidence-record','source-manifest','catalog-mapping-set'); assert schemas.KINDS == expected; [print(schemas.schema_path(kind)) for kind in expected]"
           printf '{"sample":true}\n' > artifact.json
           /tmp/clean/bin/edgeloom audit artifact.json --output record.json
           /tmp/clean/bin/edgeloom validate record.json --kind evidence-record
