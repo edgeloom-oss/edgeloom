@@ -175,3 +175,120 @@ def test_operator_path_entry_requires_an_absolute_path(tmp_path: Path) -> None:
     """The broad entry point cannot be selected with an accidental relative value."""
     with pytest.raises(UnsafePathError):
         restore_from_backup.restore_operator_selected_driver(Path("zigbee-lock"))
+
+
+def test_sibling_rename_rejects_an_existing_destination(tmp_path: Path) -> None:
+    """A collision fails closed without replacing either directory."""
+    source = tmp_path / "source"
+    destination = tmp_path / "destination"
+    source.mkdir()
+    destination.mkdir()
+
+    with pytest.raises(UnsafePathError, match="destination already exists"):
+        restore_from_backup._rename_sibling(source, destination)
+
+    assert source.is_dir()
+    assert destination.is_dir()
+
+
+def test_destination_symlink_swap_never_redirects_parking_move(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """A link introduced after validation cannot redirect the first rename."""
+    script_root = tmp_path / "auto_patch"
+    script_root.mkdir()
+    active = script_root / "zigbee-lock"
+    backup = script_root / "zigbee-lock-backup"
+    outside = tmp_path / "outside"
+    active.mkdir()
+    backup.mkdir()
+    outside.mkdir()
+    (active / "patched.txt").write_text("patched\n", encoding="utf-8")
+    (backup / "stock.txt").write_text("stock\n", encoding="utf-8")
+    marker = outside / "marker.txt"
+    marker.write_text("untouched\n", encoding="utf-8")
+    monkeypatch.setattr(restore_from_backup, "SCRIPT_ROOT", script_root)
+
+    real_rename = Path.rename
+    swapped = False
+
+    def rename_after_swap(source: Path, destination: str | Path) -> Path:
+        nonlocal swapped
+        destination = Path(destination)
+        if source == active and not swapped:
+            destination.symlink_to(outside, target_is_directory=True)
+            swapped = True
+        return real_rename(source, destination)
+
+    monkeypatch.setattr(Path, "rename", rename_after_swap)
+
+    try:
+        parked = restore_from_backup.restore_driver("zigbee-lock")
+    except UnsafePathError:
+        # macOS rejects a directory-over-symlink rename.  Failing closed is a
+        # valid outcome: both source trees remain recoverable.
+        assert active.is_dir()
+        assert backup.is_dir()
+    else:
+        # Linux may atomically replace the link itself.  The source still lands
+        # at the selected sibling, never beneath the link target.
+        assert parked is not None
+        assert parked.is_dir()
+        assert not parked.is_symlink()
+        assert (parked / "patched.txt").read_text(encoding="utf-8") == "patched\n"
+        assert (active / "stock.txt").read_text(encoding="utf-8") == "stock\n"
+
+    assert swapped
+    assert marker.read_text(encoding="utf-8") == "untouched\n"
+    assert not (outside / "zigbee-lock").exists()
+
+
+def test_destination_symlink_swap_never_redirects_restore_move(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    """A link introduced before the backup rename cannot receive the backup."""
+    script_root = tmp_path / "auto_patch"
+    script_root.mkdir()
+    active = script_root / "zigbee-lock"
+    backup = script_root / "zigbee-lock-backup"
+    outside = tmp_path / "outside"
+    active.mkdir()
+    backup.mkdir()
+    outside.mkdir()
+    (active / "patched.txt").write_text("patched\n", encoding="utf-8")
+    (backup / "stock.txt").write_text("stock\n", encoding="utf-8")
+    marker = outside / "marker.txt"
+    marker.write_text("untouched\n", encoding="utf-8")
+    monkeypatch.setattr(restore_from_backup, "SCRIPT_ROOT", script_root)
+
+    real_rename = Path.rename
+    swapped = False
+
+    def rename_after_swap(source: Path, destination: str | Path) -> Path:
+        nonlocal swapped
+        destination = Path(destination)
+        if source == backup and destination == active and not swapped:
+            destination.symlink_to(outside, target_is_directory=True)
+            swapped = True
+        return real_rename(source, destination)
+
+    monkeypatch.setattr(Path, "rename", rename_after_swap)
+
+    try:
+        restore_from_backup.restore_driver("zigbee-lock")
+    except UnsafePathError:
+        assert backup.is_dir()
+        assert (backup / "stock.txt").read_text(encoding="utf-8") == "stock\n"
+    else:
+        assert active.is_dir()
+        assert not active.is_symlink()
+        assert (active / "stock.txt").read_text(encoding="utf-8") == "stock\n"
+
+    assert swapped
+    assert marker.read_text(encoding="utf-8") == "untouched\n"
+    assert not (outside / "zigbee-lock-backup").exists()
+    parked = [path for path in script_root.iterdir() if path.name.startswith("zigbee-lock-patched-")]
+    assert len(parked) == 1
+    assert (parked[0] / "patched.txt").read_text(encoding="utf-8") == "patched\n"

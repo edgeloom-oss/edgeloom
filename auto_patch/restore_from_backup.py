@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import logging
-import shutil
 import sys
 from collections.abc import Sequence
 from datetime import datetime
@@ -56,6 +55,36 @@ def timestamped_backup_name(active_dir: Path) -> Path:
     return candidate
 
 
+def _rename_sibling(source: Path, destination: Path) -> None:
+    """Rename one sibling to another without following the destination.
+
+    ``shutil.move`` treats an existing symlink to a directory as a directory
+    destination and moves ``source`` *through* that link.  A plain filesystem
+    rename either replaces the link itself or fails; it never descends into
+    the link target.  Requiring siblings also makes the same-filesystem
+    assumption explicit and prevents a copy-and-delete fallback.
+    """
+    if source.parent != destination.parent:
+        raise UnsafePathError(
+            f"restore moves must stay within one parent: {source} -> {destination}",
+        )
+
+    if destination.exists() or destination.is_symlink():
+        raise UnsafePathError(f"restore destination already exists: {destination}")
+
+    try:
+        source.rename(destination)
+    except OSError as exc:
+        # A destination may appear after the check above.  Some platforms
+        # replace a file or symlink atomically; others reject a directory over
+        # that entry.  Turn the latter into the same clean containment error.
+        if destination.exists() or destination.is_symlink():
+            raise UnsafePathError(
+                f"restore destination appeared during the move: {destination}",
+            ) from exc
+        raise
+
+
 def _restore_driver_at(active_dir: Path, *, dry_run: bool) -> Path | None:
     """Restore an already-authorized driver path from its sibling backup."""
     backup_dir = contained_path(active_dir.parent, f"{active_dir.name}-backup")
@@ -73,7 +102,7 @@ def _restore_driver_at(active_dir: Path, *, dry_run: bool) -> Path | None:
         if dry_run:
             LOGGER.debug("Dry-run enabled; skipping move of patched driver.")
         else:
-            shutil.move(str(active_dir), patched_dir)
+            _rename_sibling(active_dir, patched_dir)
     else:
         LOGGER.info("No active driver found at %s; skipping patched move.", active_dir)
 
@@ -81,7 +110,7 @@ def _restore_driver_at(active_dir: Path, *, dry_run: bool) -> Path | None:
     if dry_run:
         LOGGER.debug("Dry-run enabled; skipping restore move.")
     else:
-        shutil.move(str(backup_dir), active_dir)
+        _rename_sibling(backup_dir, active_dir)
 
     return patched_dir
 
