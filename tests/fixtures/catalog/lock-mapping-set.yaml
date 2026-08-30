@@ -1,0 +1,107 @@
+kind: catalog-mapping-set
+schema_version: "0.1"
+id: door-lock-contract-fixture
+title: Synthetic three-layer door-lock mapping
+scope:
+  domain: door-lock
+  platform: smartthings
+  protocols:
+    - zwave
+source_manifests:
+  - id: smartthings-lock-fixture
+    path: tests/fixtures/catalog/smartthings-source.yaml
+    sha256: b85e8fca0d0702f11a60484c0baa10ab8f7237932746976ecc0648fd589498f9
+  - id: onedm-lock-fixture
+    path: tests/fixtures/catalog/onedm-source.yaml
+    sha256: 5c2823e886af7e04f5faf0d42426e92c38be7f6ba05786c5ef60d9c4924ce3b1
+nodes:
+  - id: device.lock-state
+    layer: device-protocol-support
+    artifact:
+      manifest_id: smartthings-lock-fixture
+      artifact_id: zwave-lock-fingerprints
+    locator: /zwaveManufacturer/0/deviceProfileName
+    label: Device protocol exposes lock state
+  - id: device.auto-relock
+    layer: device-protocol-support
+    artifact:
+      manifest_id: smartthings-lock-fixture
+      artifact_id: zwave-lock-fingerprints
+    locator: /capabilities/auto-relock
+    label: Device protocol exposes auto-relock configuration
+  - id: platform.lock-state
+    layer: platform-exposure
+    artifact:
+      manifest_id: smartthings-lock-fixture
+      artifact_id: zwave-lock-profile
+    locator: /components/0/capabilities/lock
+    label: Native platform profile exposes lock state
+  - id: sdf.lock-state
+    layer: neutral-sdf-representation
+    artifact:
+      manifest_id: onedm-lock-fixture
+      artifact_id: lock-status-sdf
+    locator: /sdfObject/LockStatus/sdfProperty/lockState
+    label: Neutral SDF model represents lock state
+evidence:
+  - id: evidence.device-lock
+    artifact:
+      manifest_id: smartthings-lock-fixture
+      artifact_id: zwave-lock-fingerprints
+    locator: /zwaveManufacturer/0
+    summary: The synthetic protocol artifact declares lock-state and auto-relock support.
+  - id: evidence.platform-lock
+    artifact:
+      manifest_id: smartthings-lock-fixture
+      artifact_id: zwave-lock-profile
+    locator: /components/0
+    summary: The synthetic platform profile exposes lock state but not auto-relock.
+  - id: evidence.sdf-lock
+    artifact:
+      manifest_id: onedm-lock-fixture
+      artifact_id: lock-status-sdf
+    locator: /sdfObject/LockStatus/sdfProperty/lockState
+    summary: The synthetic neutral model declares a lock-state property.
+mappings:
+  - id: map.device-to-platform-lock
+    from: device.lock-state
+    to: platform.lock-state
+    classification: one-to-one
+    directions:
+      - read
+      - event
+    evidence_refs:
+      - evidence.device-lock
+      - evidence.platform-lock
+    limitations: []
+  - id: map.platform-to-sdf-lock
+    from: platform.lock-state
+    to: sdf.lock-state
+    classification: one-to-one
+    directions:
+      - read
+      - event
+    evidence_refs:
+      - evidence.platform-lock
+      - evidence.sdf-lock
+    limitations:
+      - This fixture does not assert full command or enum equivalence.
+  - id: map.auto-relock-gap
+    from: device.auto-relock
+    classification: unbound
+    unbound_reason: platform-not-exposed
+    directions:
+      - read
+      - write
+    evidence_refs:
+      - evidence.device-lock
+      - evidence.platform-lock
+    limitations:
+      - Absence is scoped to the pinned synthetic profile, not every platform driver.
+review:
+  author: fixture-author
+  lifecycle: candidate
+  reviewers: []
+  notes: A candidate fixture is not an adopted model, verified mapping, or certification claim.
+limitations:
+  - Synthetic paths and digests test the contract; they are not a real catalog pilot.

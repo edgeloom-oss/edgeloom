@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "edgeloom"
 dynamic = ["version"]
-description = "An open toolchain for validating, patching, and translating smart-home edge drivers across platforms"
+description = "Audit, validate, patch, restore, translate, and discover smart-home edge-driver artifacts"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
@@ -28,7 +28,7 @@ classifiers = [
 dependencies = [
     "PyYAML>=6.0",
     "requests>=2.28",
-    "jsonschema>=4.18",
+    "jsonschema[format-nongpl]>=4.18",
 ]
 
 [project.optional-dependencies]
@@ -62,7 +62,7 @@ exclude = ["auto_patch/zigbee-lock"]
 [tool.hatch.build.targets.sdist]
 include = [
     "/edgeloom", "/auto_patch", "/discovery", "/translator", "/schema", "/tests",
-    "/README.md", "/LICENSE", "/CHANGELOG.md", "/SECURITY.md", "/CITATION.cff",
+    "/README.md", "/LICENSE", "/CHANGELOG.md", "/SECURITY.md", "/CITATION.cff", "/docs",
 ]
 
 [tool.pytest.ini_options]

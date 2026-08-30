@@ -29,6 +29,7 @@ test:
 validate:
 	$(PYTHON) -m edgeloom.cli validate auto_patch/capability-map.yaml
 	$(PYTHON) -m edgeloom.cli validate auto_patch/zigbee-lock/profiles translator/ha_proxy_edge_driver/profiles
+	$(PYTHON) -m edgeloom.cli validate tests/fixtures/catalog
 
 # Everything CI runs, in one target.
 check: lint format-check test validate

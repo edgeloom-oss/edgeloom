@@ -5,8 +5,8 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11%2B-blue.svg)](pyproject.toml)
 
-**An open toolchain for validating, patching, and translating smart-home edge
-drivers across platforms.**
+**An open toolchain for auditing, validating, patching, restoring, translating,
+and discovering smart-home edge-driver artifacts.**
 
 Smart-home hubs decide what a device is allowed to be. A lock that reports nine
 configurable attributes over Zigbee may surface two of them, because the stock
@@ -14,11 +14,13 @@ driver's *profile* — the declared set of capabilities — never mentions the r
 The device is not the limit; the driver is. EdgeLoom is the toolchain for
 inspecting, rewriting, and checking those drivers.
 
-The three tools do different jobs, but they all produce or consume the same
-artifact: a device profile. EdgeLoom's position is that this artifact should be
-a **checked contract** rather than a file each tool invents privately. So the
-schema sits at the centre, and `edgeloom validate` is the gate everything passes
-through.
+The workflows do different jobs, but they all produce, consume, or inspect the
+same artifacts: device profiles, capability mappings, and the evidence around
+their transformation. EdgeLoom's position is that these artifacts should be
+**checked contracts with reviewable evidence** rather than files each tool
+interprets privately. The schemas sit at the centre; `edgeloom validate`
+applies a contract and `edgeloom audit` records the exact local byte snapshot,
+checks, authority labels, and limitations.
 
 ```mermaid
 flowchart TD
@@ -36,15 +38,18 @@ flowchart TD
     T --> S
     D -.->|"flags drivers with<br/>no mapping"| S
 
-    S{{"schema/ v0.1<br/><b>profile · capability-map</b>"}}
+    S{{"schema/ v0.1<br/><b>five artifact + evidence contracts</b>"}}
 
-    S --> V["edgeloom validate<br/><i>assurance gate, CI-ready</i>"]
+    S --> V["edgeloom validate<br/><i>contract gate, CI-ready</i>"]
     V --> O["Hub-installable driver<br/>with a checked profile"]
+    S -.-> E["edgeloom audit<br/><i>digest + checks + limitations</i>"]
 ```
 
-Because both paths converge on one schema, a profile rewritten by the patcher
-and a profile emitted by the translator are checked against identical rules —
-which is what makes `validate` an assurance layer and not just a linter.
+Because both transformation paths converge on one schema, a profile rewritten
+by the patcher and a profile emitted by the translator are checked against
+identical rules. Audit records add byte identity and check evidence without
+claiming that structural validation proves provenance, semantic correctness,
+security, or standards conformance.
 
 ## Install
 
@@ -66,9 +71,11 @@ Requires Python 3.11 or newer.
 
 ```
 edgeloom patch      DRIVER MODEL MANUFACTURER [ATTRIBUTES]  Expose hidden device attributes
+edgeloom restore    DRIVER                                 Restore a preserved pre-patch tree
 edgeloom translate  --ha-url URL --output DIR               Bridge Home Assistant to SmartThings
 edgeloom discover   [--source github|local]                 Enumerate drivers and fingerprints
 edgeloom validate   [PATHS...]                              Check artifacts against the schema
+edgeloom audit      ARTIFACT [--schema SCHEMA]              Create a local evidence record
 ```
 
 Patch a Zigbee lock so its language and auto-relock settings become visible,
@@ -82,6 +89,12 @@ edgeloom patch auto_patch/zigbee-lock "YRD226 TSDB" Yale Language:AutoRelockTime
 The original driver is copied to `<driver>-backup` before anything is written,
 and restored automatically if any step fails.
 
+Restore the preserved tree explicitly when needed:
+
+```bash
+edgeloom restore auto_patch/zigbee-lock
+```
+
 Generate SmartThings Edge proxy artifacts for your Home Assistant entities:
 
 ```bash
@@ -89,7 +102,7 @@ export HA_TOKEN=...   # a long-lived access token
 edgeloom translate --ha-url http://homeassistant.local:8123 --output ./generated_edge
 ```
 
-Check every profile and capability map in a tree:
+Check every recognized toolchain or catalog contract in a tree:
 
 ```bash
 edgeloom validate .
@@ -99,6 +112,21 @@ edgeloom validate .
 finds nothing to check — a silent pass over zero files would otherwise read as
 success.
 
+Create a reviewable local record for an artifact:
+
+```bash
+edgeloom audit model.sdf.json \
+  --source-ref 0123456789abcdef \
+  --artifact-status experimental \
+  --output reports/model.evidence.json
+```
+
+The audit command hashes a local byte snapshot and records bounded syntax and
+optional pinned-schema checks. Source URI, revision, license, maturity, and
+schema authority are operator assertions: the command does not fetch or
+authenticate them and is not a standards-conformance or certification tool.
+See [Evidence records](docs/evidence-records.md).
+
 ## Components
 
 | Path | Component | Command | Documentation |
@@ -106,7 +134,8 @@ success.
 | `auto_patch/` | Edge driver patcher | `edgeloom patch` | [docs/patching.md](docs/patching.md) |
 | `translator/` | Home Assistant bridge | `edgeloom translate` | [translator/README.md](translator/README.md) |
 | `discovery/` | Driver catalog scanner | `edgeloom discover` | [docs/discovery.md](docs/discovery.md) |
-| `schema/` | Published contracts | `edgeloom validate` | [schema/](schema/) |
+| `schema/` | Published contracts and evidence records | `edgeloom validate` | [schema/](schema/) |
+| `edgeloom/evidence.py` | Local evidence recorder | `edgeloom audit` | [docs/evidence-records.md](docs/evidence-records.md) |
 
 The translator began life as
 [HA2ST-Translator](https://github.com/edgeloom-oss/HA2ST-Translator), written by
@@ -115,7 +144,7 @@ archived and redirects to this one.
 
 ## Schema
 
-Version 0.1 publishes two JSON Schemas (draft 2020-12):
+Version 0.1 publishes five JSON Schemas (draft 2020-12):
 
 - **[`schema/profile.schema.json`](schema/profile.schema.json)** — a device
   profile: the capabilities a driver exposes for one device, and the categories
@@ -124,12 +153,26 @@ Version 0.1 publishes two JSON Schemas (draft 2020-12):
   which hidden attributes a driver may surface, and the capability each binds
   to. Capability IDs must be namespaced, so a vendor attribute cannot silently
   claim a standard identifier.
+- **[`schema/evidence-record.schema.json`](schema/evidence-record.schema.json)** —
+  local artifact identity, deterministic checks, optional unauthenticated human
+  disposition, and explicit limitations.
+- **[`schema/source-manifest.schema.json`](schema/source-manifest.schema.json)** —
+  an immutable upstream Git commit plus portable artifact paths, digests,
+  parser-independent roles, explicitly bounded source maturity, and license
+  evidence.
+- **[`schema/catalog-mapping-set.schema.json`](schema/catalog-mapping-set.schema.json)** —
+  evidence-backed mappings among device/protocol support, platform exposure,
+  and neutral SDF representation, including loss and an unauthenticated review
+  declaration whose authority comes from governed catalog history.
 
 [`auto_patch/capability-map.yaml`](auto_patch/capability-map.yaml) is the live
 map for the drivers shipped here, and is validated in CI on every push.
 
-Both schemas are versioned and shipped inside the installed package, so
-`edgeloom validate` works without a checkout.
+All five schemas are versioned and shipped inside the installed package, so
+`edgeloom validate` and `edgeloom audit` work without a checkout.
+
+See [Catalog Contracts](docs/catalog-contracts.md) for the mapping taxonomy,
+status model, validation boundary, and synthetic lock example.
 
 ## Development
 

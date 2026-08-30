@@ -61,6 +61,19 @@ without this tool. This is a limit of the tool, not a vulnerability in it.
 point it at, and the translator reads whatever your Home Assistant instance
 returns. Neither is assumed well-formed or well-intentioned.
 
+**Audited documents and schemas are untrusted.** `audit` hashes arbitrary local
+regular files and parses JSON/YAML only after an 8 MiB size gate, then applies
+the shared depth and expanded-node bounds. For parsed artifacts, hashing and
+parsing use one byte snapshot; a file that changes during the read is rejected.
+A schema supplied with `--schema` is validated as Draft 2020-12 before use. The
+command never follows schema URLs, resolves non-local references, or sends the
+artifact elsewhere. Its source URI, revision, license, maturity, and schema
+authority fields are operator assertions rather than authenticated facts.
+Schema checks run in-process: size, depth, node, and reported-error bounds
+reduce resource risk but do not impose a hard time limit on every adversarial
+schema expression. Evaluate an untrusted third-party schema in a disposable
+environment.
+
 **The operator is trusted.** Command-line arguments, `--config` files, and the
 `--output` path are the operator's own. A finding whose only attacker is the
 person running the tool on their own machine is a robustness bug, not a

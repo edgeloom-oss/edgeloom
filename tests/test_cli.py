@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -22,7 +23,7 @@ def test_bare_invocation_prints_help(capsys: pytest.CaptureFixture[str]) -> None
     assert "usage: edgeloom" in capsys.readouterr().out
 
 
-@pytest.mark.parametrize("command", ["patch", "restore", "translate", "discover", "validate"])
+@pytest.mark.parametrize("command", ["patch", "restore", "translate", "discover", "audit", "validate"])
 def test_every_subcommand_is_registered(command: str, capsys: pytest.CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit) as exc:
         main([command, "--help"])
@@ -172,7 +173,6 @@ def test_discover_says_so_when_the_capability_cross_check_is_skipped(
     assert code == 0
     out = capsys.readouterr().out
     assert "cross-check skipped" in out
-    import json
 
     catalog = json.loads((tmp_path / "c.json").read_text())
     assert catalog["capability_cross_check"] == "skipped"
@@ -234,6 +234,152 @@ def test_restore_restores_an_external_driver(tmp_path: Path) -> None:
     patched_dirs = [p for p in tmp_root.iterdir() if p.name.startswith("zigbee-lock-patched-")]
     assert len(patched_dirs) == 1
     assert (patched_dirs[0] / "fingerprints.yml").read_text(encoding="utf-8") == "patched\n"
+
+
+def test_audit_prints_a_clean_json_record(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    artifact = tmp_path / "model.json"
+    artifact.write_text('{"x": 1}', encoding="utf-8")
+
+    assert main(["audit", str(artifact)]) == 0
+
+    record = json.loads(capsys.readouterr().out)
+    assert record["record_version"] == "0.1"
+    assert record["subject"]["digest"]["algorithm"] == "sha256"
+
+
+def test_audit_schema_failure_returns_nonzero_with_record(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    artifact = tmp_path / "model.json"
+    artifact.write_text('{"x": 1}', encoding="utf-8")
+    schema = tmp_path / "schema.json"
+    schema.write_text('{"type":"object","required":["missing"]}', encoding="utf-8")
+
+    assert main(["audit", str(artifact), "--schema", str(schema)]) == 1
+
+    record = json.loads(capsys.readouterr().out)
+    assert record["checks"][-1]["status"] == "fail"
+
+
+def test_audit_refuses_to_overwrite_its_input(tmp_path: Path) -> None:
+    artifact = tmp_path / "model.json"
+    original = '{"x": 1}'
+    artifact.write_text(original, encoding="utf-8")
+
+    assert main(["audit", str(artifact), "--output", str(artifact)]) == 1
+    assert artifact.read_text(encoding="utf-8") == original
+
+
+def test_audit_refuses_to_overwrite_its_schema(tmp_path: Path) -> None:
+    artifact = tmp_path / "model.json"
+    artifact.write_text('{"x": 1}', encoding="utf-8")
+    schema = tmp_path / "schema.json"
+    original = '{"type":"object"}'
+    schema.write_text(original, encoding="utf-8")
+
+    assert (
+        main(
+            [
+                "audit",
+                str(artifact),
+                "--schema",
+                str(schema),
+                "--output",
+                str(schema),
+            ]
+        )
+        == 1
+    )
+    assert schema.read_text(encoding="utf-8") == original
+
+
+def test_audit_writes_markdown_atomically(tmp_path: Path, capsys: pytest.CaptureFixture[str]) -> None:
+    artifact = tmp_path / "model.json"
+    artifact.write_text('{"x": 1}', encoding="utf-8")
+    output = tmp_path / "reports" / "model.md"
+
+    assert main(["audit", str(artifact), "--format", "markdown", "--output", str(output)]) == 0
+
+    assert output.read_text(encoding="utf-8").startswith("# EdgeLoom evidence record")
+    assert "Evidence record written" in capsys.readouterr().out
+    assert not list(output.parent.glob(f".{output.name}.*.tmp"))
+
+
+def test_atomic_write_cleans_temporary_file_when_replace_fails(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from edgeloom import cli
+
+    output = tmp_path / "record.json"
+
+    def fail_replace(self: Path, _target: Path) -> None:
+        raise OSError("simulated replace failure")
+
+    monkeypatch.setattr(Path, "replace", fail_replace)
+
+    with pytest.raises(OSError, match="simulated"):
+        cli._atomic_write(output, "{}\n")
+
+    assert not output.exists()
+    assert not list(tmp_path.glob(f".{output.name}.*.tmp"))
+
+
+def test_audit_rejects_schema_authority_without_schema(tmp_path: Path) -> None:
+    artifact = tmp_path / "model.json"
+    artifact.write_text('{"x": 1}', encoding="utf-8")
+
+    assert main(["audit", str(artifact), "--schema-authority", "normative"]) == 1
+
+
+@pytest.mark.parametrize("flag", ["--source-uri", "--source-ref", "--license", "--title"])
+def test_audit_rejects_empty_optional_metadata_without_output(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    flag: str,
+) -> None:
+    artifact = tmp_path / "model.json"
+    artifact.write_text('{"x": 1}', encoding="utf-8")
+    output = tmp_path / "record.json"
+
+    assert main(["audit", str(artifact), flag, "  ", "--output", str(output)]) == 1
+
+    captured = capsys.readouterr()
+    assert not output.exists()
+    assert "Traceback" not in captured.out + captured.err
+
+
+def test_audit_rejects_non_string_yaml_mapping_keys_without_traceback(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    artifact = tmp_path / "model.yaml"
+    artifact.write_text("1: value\n", encoding="utf-8")
+    schema = tmp_path / "schema.json"
+    schema.write_text(
+        '{"type":"object","patternProperties":{".*":{"type":"string"}}}',
+        encoding="utf-8",
+    )
+
+    assert main(["audit", str(artifact), "--schema", str(schema)]) == 1
+
+    captured = capsys.readouterr()
+    record = json.loads(captured.out)
+    assert record["checks"][1]["status"] == "fail"
+    assert record["checks"][1]["details"]["error_type"] == "NonStringMappingKeyError"
+    assert "Traceback" not in captured.out + captured.err
+
+
+def test_validate_rejects_non_string_yaml_mapping_keys_without_traceback(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    artifact = tmp_path / "model.yaml"
+    artifact.write_text("outer:\n  1: value\n", encoding="utf-8")
+
+    assert main(["validate", str(artifact), "--kind", "profile"]) == 1
+
+    captured = capsys.readouterr()
+    assert "Traceback" not in captured.out + captured.err
 
 
 def test_patch_then_restore_an_external_driver(driver_copy: Path) -> None:

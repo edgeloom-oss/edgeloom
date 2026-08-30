@@ -1,0 +1,202 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/edgeloom-oss/edgeloom/schema/v0.1/evidence-record.schema.json",
+  "title": "EdgeLoom evidence record",
+  "description": "A versioned record of local artifact identity, deterministic checks, optional human disposition, and explicit limitations. The record preserves evidence and limitations; it is not a certification or conformance claim.",
+  "type": "object",
+  "required": [
+    "record_version",
+    "record_id",
+    "created_at",
+    "tool",
+    "subject",
+    "checks",
+    "limitations"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "record_version": {
+      "const": "0.1",
+      "description": "Version of this evidence-record contract."
+    },
+    "record_id": {
+      "type": "string",
+      "pattern": "^elr-[a-f0-9]{24}$",
+      "description": "Stable identifier derived from the audited bytes, check policy, and supplied source metadata."
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1
+    },
+    "tool": {
+      "$ref": "#/$defs/tool"
+    },
+    "subject": {
+      "$ref": "#/$defs/subject"
+    },
+    "checks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/check"
+      }
+    },
+    "review": {
+      "$ref": "#/$defs/review",
+      "description": "Optional, unauthenticated human disposition. It is an operator assertion, not a signature, certification, or governance decision."
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "$defs": {
+    "digest": {
+      "type": "object",
+      "required": ["algorithm", "value"],
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {
+          "const": "sha256"
+        },
+        "value": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
+    "tool": {
+      "type": "object",
+      "required": ["name", "version", "policy_version"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "const": "edgeloom"
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "policy_version": {
+          "const": "audit-0.1"
+        }
+      }
+    },
+    "subject": {
+      "type": "object",
+      "required": ["path", "digest", "size_bytes", "status"],
+      "additionalProperties": false,
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Path supplied to the local audit command; it is not proof of remote origin."
+        },
+        "uri": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Asserted canonical or retrieval URI, recorded without fetching or authentication."
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Pinned revision, tag, commit, version, or other source identifier."
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Asserted license identifier or expression; EdgeLoom does not verify rights."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["experimental", "draft", "stable", "deprecated", "unknown"]
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "size_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "digest": {
+          "$ref": "#/$defs/digest"
+        }
+      }
+    },
+    "check": {
+      "type": "object",
+      "required": ["id", "status", "authority", "summary"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*$"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pass", "fail", "skipped", "error"]
+        },
+        "authority": {
+          "type": "string",
+          "enum": ["deterministic", "normative", "informative", "user-supplied"]
+        },
+        "summary": {
+          "type": "string",
+          "minLength": 1
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "review": {
+      "type": "object",
+      "required": ["disposition"],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "enum": ["accepted", "rejected", "needs-work"]
+              }
+            }
+          },
+          "then": {
+            "required": ["reviewer", "reviewed_at"]
+          }
+        }
+      ],
+      "properties": {
+        "reviewer": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Operator-asserted reviewer name or identifier; EdgeLoom does not authenticate it."
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Operator-asserted review time."
+        },
+        "disposition": {
+          "type": "string",
+          "enum": ["unreviewed", "accepted", "rejected", "needs-work"],
+          "description": "Unauthenticated human disposition; it does not confer certification or governance approval."
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

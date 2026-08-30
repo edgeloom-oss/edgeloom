@@ -1,0 +1,31 @@
+kind: source-manifest
+schema_version: "0.1"
+id: smartthings-lock-fixture
+ecosystem: smartthings
+description: Synthetic pinned SmartThings source used only to exercise the public contract.
+repository:
+  url: https://example.invalid/smartthings-edge-drivers.git
+  commit: aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+artifacts:
+  - id: zwave-lock-fingerprints
+    layer: device-protocol-support
+    path: drivers/example/zwave-lock/fingerprints.yml
+    sha256: bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+    media_type: application/yaml
+    artifact_role: fingerprints
+    source_maturity: community
+    license:
+      expression: Apache-2.0
+      evidence_path: LICENSE
+    description: Synthetic fingerprint evidence for a lock capability.
+  - id: zwave-lock-profile
+    layer: platform-exposure
+    path: drivers/example/zwave-lock/profiles/base-lock.yml
+    sha256: cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc
+    media_type: application/yaml
+    artifact_role: platform-profile
+    source_maturity: community
+    license:
+      expression: Apache-2.0
+      evidence_path: LICENSE
+    description: Synthetic native-platform profile for a lock.
