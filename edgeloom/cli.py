@@ -54,13 +54,14 @@ def _cmd_patch(args: argparse.Namespace) -> int:
 
 
 def _cmd_restore(args: argparse.Namespace) -> int:
-    from auto_patch.restore_from_backup import restore_driver
+    from auto_patch.paths import UnsafePathError
+    from auto_patch.restore_from_backup import restore_operator_selected_driver
 
     driver_dir = Path(args.driver).resolve()
 
     try:
-        patched_dir = restore_driver(driver_dir, dry_run=args.dry_run)
-    except FileNotFoundError as exc:
+        patched_dir = restore_operator_selected_driver(driver_dir, dry_run=args.dry_run)
+    except (FileNotFoundError, UnsafePathError) as exc:
         LOGGER.error("%s", exc)
         return 1
 
