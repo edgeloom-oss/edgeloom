@@ -34,6 +34,17 @@ class EvidenceError(RuntimeError):
     """The requested audit could not produce a trustworthy record."""
 
 
+def _normalize_optional_text(value: str | None, *, label: str) -> str | None:
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise EvidenceError(f"{label} must be text")
+    normalized = value.strip()
+    if not normalized:
+        raise EvidenceError(f"{label} must not be empty")
+    return normalized
+
+
 @dataclass(frozen=True)
 class AuditResult:
     record: dict[str, Any]
@@ -93,13 +104,31 @@ def _media_type(path: Path) -> str:
     return "application/octet-stream"
 
 
-def _bounded_diagnostic(exc: Exception) -> dict[str, str]:
-    """Return publishable, bounded diagnostics without copying document values."""
-    message = " ".join(str(exc).split())
-    return {
-        "error_type": type(exc).__name__[:100],
-        "message": message[:2000],
+def _safe_parse_diagnostic(exc: Exception) -> dict[str, Any]:
+    """Return useful parse metadata without copying input text or values."""
+    cause = exc.__cause__ or exc
+    diagnostic: dict[str, Any] = {
+        "error_type": type(cause).__name__[:100],
+        "message": "Input parsing failed; source text is omitted from this evidence record.",
     }
+
+    line = getattr(cause, "lineno", None)
+    column = getattr(cause, "colno", None)
+    if not isinstance(line, int) or not isinstance(column, int):
+        mark = getattr(cause, "problem_mark", None)
+        mark_line = getattr(mark, "line", None)
+        mark_column = getattr(mark, "column", None)
+        if isinstance(mark_line, int) and isinstance(mark_column, int):
+            line = mark_line + 1
+            column = mark_column + 1
+    if isinstance(line, int) and isinstance(column, int):
+        diagnostic["line"] = line
+        diagnostic["column"] = column
+
+    byte_offset = getattr(cause, "start", None)
+    if isinstance(byte_offset, int):
+        diagnostic["byte_offset"] = byte_offset
+    return diagnostic
 
 
 def _parse_document(path: Path, snapshot: _FileSnapshot) -> tuple[Any | None, dict[str, Any]]:
@@ -126,7 +155,7 @@ def _parse_document(path: Path, snapshot: _FileSnapshot) -> tuple[Any | None, di
             "status": "fail",
             "authority": "deterministic",
             "summary": "Document could not be parsed within EdgeLoom's safety bounds.",
-            "details": _bounded_diagnostic(exc),
+            "details": _safe_parse_diagnostic(exc),
         }
     return document, {
         "id": "document-syntax",
@@ -146,8 +175,13 @@ def _load_user_schema(path: Path) -> tuple[dict[str, Any], str]:
     try:
         document = schemas.parse_document_bytes(snapshot.content, path=path)
     except schemas.SchemaError as exc:
-        diagnostic = _bounded_diagnostic(exc)["message"]
-        raise EvidenceError(f"Could not load schema {path}: {diagnostic}") from exc
+        diagnostic = _safe_parse_diagnostic(exc)
+        position = ""
+        if "line" in diagnostic and "column" in diagnostic:
+            position = f" at line {diagnostic['line']}, column {diagnostic['column']}"
+        raise EvidenceError(
+            f"Could not load schema {path}: {diagnostic['error_type']}{position}; source text omitted",
+        ) from exc
     if not isinstance(document, dict):
         raise EvidenceError(f"Schema must be a JSON/YAML object: {path}")
 
@@ -295,6 +329,11 @@ def audit_artifact(
             f"Unknown artifact status {artifact_status!r}; "
             f"expected one of {', '.join(sorted(_ARTIFACT_STATUSES))}",
         )
+
+    source_uri = _normalize_optional_text(source_uri, label="Source URI")
+    source_ref = _normalize_optional_text(source_ref, label="Source reference")
+    license_expression = _normalize_optional_text(license_expression, label="License")
+    title = _normalize_optional_text(title, label="Title")
 
     snapshot = _snapshot_file(artifact, label="Artifact")
     media_type = _media_type(artifact)

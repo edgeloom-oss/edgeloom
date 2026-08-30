@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/edgeloom-oss/edgeloom/schema/v0.1/evidence-record.schema.json",
   "title": "EdgeLoom evidence record",
-  "description": "A versioned record of local artifact identity, deterministic checks, semantic mapping evidence, transformations, recovery, and human disposition. The record preserves evidence and limitations; it is not a certification or conformance claim.",
+  "description": "A versioned record of local artifact identity, deterministic checks, optional human disposition, and explicit limitations. The record preserves evidence and limitations; it is not a certification or conformance claim.",
   "type": "object",
   "required": [
     "record_version",
@@ -45,17 +45,9 @@
         "$ref": "#/$defs/check"
       }
     },
-    "mappings": {
-      "type": "array",
-      "items": {
-        "$ref": "#/$defs/mapping"
-      }
-    },
-    "transformation": {
-      "$ref": "#/$defs/transformation"
-    },
     "review": {
-      "$ref": "#/$defs/review"
+      "$ref": "#/$defs/review",
+      "description": "Optional, unauthenticated human disposition. It is an operator assertion, not a signature, certification, or governance decision."
     },
     "limitations": {
       "type": "array",
@@ -167,78 +159,39 @@
         }
       }
     },
-    "mapping": {
-      "type": "object",
-      "required": ["source", "target", "classification", "rationale"],
-      "additionalProperties": false,
-      "properties": {
-        "source": {
-          "type": "string",
-          "minLength": 1
-        },
-        "target": {
-          "type": ["string", "null"]
-        },
-        "classification": {
-          "type": "string",
-          "enum": ["one-to-one", "lossy", "ambiguous", "unbound"]
-        },
-        "rationale": {
-          "type": "string",
-          "minLength": 1
-        },
-        "evidence": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
-        }
-      }
-    },
-    "transformation": {
-      "type": "object",
-      "required": ["operation", "before", "after", "recovery_status"],
-      "additionalProperties": false,
-      "properties": {
-        "operation": {
-          "type": "string",
-          "minLength": 1
-        },
-        "before": {
-          "$ref": "#/$defs/digest"
-        },
-        "after": {
-          "$ref": "#/$defs/digest"
-        },
-        "recovery_status": {
-          "type": "string",
-          "enum": ["not-tested", "pass", "fail", "partial"]
-        },
-        "recovered": {
-          "$ref": "#/$defs/digest"
-        },
-        "notes": {
-          "type": "string"
-        }
-      }
-    },
     "review": {
       "type": "object",
       "required": ["disposition"],
       "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "disposition": {
+                "enum": ["accepted", "rejected", "needs-work"]
+              }
+            }
+          },
+          "then": {
+            "required": ["reviewer", "reviewed_at"]
+          }
+        }
+      ],
       "properties": {
         "reviewer": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "Operator-asserted reviewer name or identifier; EdgeLoom does not authenticate it."
         },
         "reviewed_at": {
           "type": "string",
-          "format": "date-time"
+          "format": "date-time",
+          "description": "Operator-asserted review time."
         },
         "disposition": {
           "type": "string",
-          "enum": ["unreviewed", "accepted", "rejected", "needs-work"]
+          "enum": ["unreviewed", "accepted", "rejected", "needs-work"],
+          "description": "Unauthenticated human disposition; it does not confer certification or governance approval."
         },
         "notes": {
           "type": "string"

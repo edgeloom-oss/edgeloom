@@ -27,6 +27,10 @@ class SchemaError(RuntimeError):
     """Raised when a schema cannot be located or a document cannot be read."""
 
 
+class NonStringMappingKeyError(SchemaError):
+    """A YAML mapping cannot be represented as a JSON Schema object."""
+
+
 def schema_dir() -> Path:
     """Return the directory holding the shipped schemas.
 
@@ -56,6 +60,37 @@ def load_schema(kind: str) -> dict[str, Any]:
     return json.loads(schema_path(kind).read_text(encoding="utf-8"))
 
 
+def _require_string_mapping_keys(document: Any, *, path: Path) -> None:
+    """Reject YAML mappings that cannot enter the JSON data model safely.
+
+    PyYAML permits integer, boolean, and other hashable keys. JSON Schema object
+    member names are strings, and validators may otherwise raise while applying
+    keywords such as ``patternProperties``. The document has already passed the
+    shared depth and expanded-node bounds, but aliases can still share objects,
+    so this walk remains identity-memoised.
+    """
+    pending = [document]
+    seen: set[int] = set()
+    while pending:
+        node = pending.pop()
+        if not isinstance(node, (dict, list, tuple)):
+            continue
+        identity = id(node)
+        if identity in seen:
+            continue
+        seen.add(identity)
+        if isinstance(node, dict):
+            for key, value in node.items():
+                if not isinstance(key, str):
+                    raise NonStringMappingKeyError(
+                        f"{path}: contains a non-string YAML mapping key; "
+                        "JSON Schema object member names must be strings",
+                    )
+                pending.append(value)
+        else:
+            pending.extend(node)
+
+
 def parse_document_bytes(content: bytes, *, path: Path) -> Any:
     """Parse already-snapshotted YAML or JSON bytes within shared bounds.
 
@@ -81,9 +116,11 @@ def parse_document_bytes(content: bytes, *, path: Path) -> Any:
         # before the bounds check below can see it.
         raise SchemaError(f"{path}: nests too deeply to parse") from exc
     try:
-        return check_bounds(document)
+        bounded = check_bounds(document)
     except DocumentTooLargeError as exc:
         raise SchemaError(f"{path}: {exc}") from exc
+    _require_string_mapping_keys(bounded, path=path)
+    return bounded
 
 
 def load_document(path: Path) -> Any:

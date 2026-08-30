@@ -331,6 +331,57 @@ def test_audit_rejects_schema_authority_without_schema(tmp_path: Path) -> None:
     assert main(["audit", str(artifact), "--schema-authority", "normative"]) == 1
 
 
+@pytest.mark.parametrize("flag", ["--source-uri", "--source-ref", "--license", "--title"])
+def test_audit_rejects_empty_optional_metadata_without_output(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+    flag: str,
+) -> None:
+    artifact = tmp_path / "model.json"
+    artifact.write_text('{"x": 1}', encoding="utf-8")
+    output = tmp_path / "record.json"
+
+    assert main(["audit", str(artifact), flag, "  ", "--output", str(output)]) == 1
+
+    captured = capsys.readouterr()
+    assert not output.exists()
+    assert "Traceback" not in captured.out + captured.err
+
+
+def test_audit_rejects_non_string_yaml_mapping_keys_without_traceback(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    artifact = tmp_path / "model.yaml"
+    artifact.write_text("1: value\n", encoding="utf-8")
+    schema = tmp_path / "schema.json"
+    schema.write_text(
+        '{"type":"object","patternProperties":{".*":{"type":"string"}}}',
+        encoding="utf-8",
+    )
+
+    assert main(["audit", str(artifact), "--schema", str(schema)]) == 1
+
+    captured = capsys.readouterr()
+    record = json.loads(captured.out)
+    assert record["checks"][1]["status"] == "fail"
+    assert record["checks"][1]["details"]["error_type"] == "NonStringMappingKeyError"
+    assert "Traceback" not in captured.out + captured.err
+
+
+def test_validate_rejects_non_string_yaml_mapping_keys_without_traceback(
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    artifact = tmp_path / "model.yaml"
+    artifact.write_text("outer:\n  1: value\n", encoding="utf-8")
+
+    assert main(["validate", str(artifact), "--kind", "profile"]) == 1
+
+    captured = capsys.readouterr()
+    assert "Traceback" not in captured.out + captured.err
+
+
 def test_patch_then_restore_an_external_driver(driver_copy: Path) -> None:
     """The public patch and restore commands share one sibling-backup contract."""
 

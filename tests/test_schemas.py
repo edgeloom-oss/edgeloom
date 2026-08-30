@@ -137,6 +137,42 @@ def test_valid_evidence_record_passes(tmp_path: Path) -> None:
     assert result.kind == schemas.EVIDENCE_RECORD
 
 
+def test_evidence_record_active_review_requires_reviewer_and_time(tmp_path: Path) -> None:
+    for disposition in ("accepted", "rejected", "needs-work"):
+        incomplete = {**VALID_EVIDENCE_RECORD, "review": {"disposition": disposition}}
+
+        result = schemas.validate_document(_write(tmp_path / f"{disposition}.json", incomplete))
+
+        assert not result.ok
+        assert any("reviewer" in message for message in result.errors)
+        assert any("reviewed_at" in message for message in result.errors)
+
+
+def test_evidence_record_accepts_complete_human_review(tmp_path: Path) -> None:
+    reviewed = {
+        **VALID_EVIDENCE_RECORD,
+        "review": {
+            "disposition": "accepted",
+            "reviewer": "operator@example.test",
+            "reviewed_at": "2026-08-30T20:00:00+00:00",
+        },
+    }
+
+    result = schemas.validate_document(_write(tmp_path / "reviewed.json", reviewed))
+
+    assert result.ok
+
+
+@pytest.mark.parametrize("field", ["mappings", "transformation"])
+def test_evidence_record_defers_unproduced_contracts(tmp_path: Path, field: str) -> None:
+    unsupported = {**VALID_EVIDENCE_RECORD, field: [] if field == "mappings" else {}}
+
+    result = schemas.validate_document(_write(tmp_path / f"{field}.json", unsupported))
+
+    assert not result.ok
+    assert any("Additional properties" in message for message in result.errors)
+
+
 def test_evidence_record_date_time_format_is_enforced(tmp_path: Path) -> None:
     invalid = {**VALID_EVIDENCE_RECORD, "created_at": "not-a-date"}
 

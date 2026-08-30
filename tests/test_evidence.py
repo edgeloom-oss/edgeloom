@@ -83,6 +83,40 @@ def test_record_id_captures_media_and_syntax_policy(tmp_path: Path) -> None:
     assert opaque.record["checks"][1]["status"] == "skipped"
 
 
+def test_optional_metadata_is_normalized_once_for_record_identity(tmp_path: Path) -> None:
+    artifact = _write_json(tmp_path / "model.json", {"x": 1})
+    now = datetime(2026, 8, 26, tzinfo=UTC)
+    clean = evidence.audit_artifact(
+        artifact,
+        source_uri="https://example.test/model.json",
+        source_ref="0123456",
+        license_expression="Apache-2.0",
+        title="Example model",
+        now=now,
+    )
+    padded = evidence.audit_artifact(
+        artifact,
+        source_uri="  https://example.test/model.json  ",
+        source_ref="  0123456  ",
+        license_expression="  Apache-2.0  ",
+        title="  Example model  ",
+        now=now,
+    )
+
+    assert padded.record == clean.record
+
+
+@pytest.mark.parametrize(
+    "argument",
+    ["source_uri", "source_ref", "license_expression", "title"],
+)
+def test_empty_optional_metadata_is_rejected(tmp_path: Path, argument: str) -> None:
+    artifact = _write_json(tmp_path / "model.json", {"x": 1})
+
+    with pytest.raises(evidence.EvidenceError, match="must not be empty"):
+        evidence.audit_artifact(artifact, **{argument: " \t "})
+
+
 def test_hash_and_parse_use_one_byte_snapshot(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     artifact = _write_json(tmp_path / "model.json", {"original": True})
     schema = _write_schema(tmp_path / "schema.json", required=["original"])
@@ -114,6 +148,29 @@ def test_invalid_json_still_produces_a_failing_evidence_record(tmp_path: Path) -
     assert syntax["status"] == "fail"
     assert len(syntax["details"]["message"]) <= 2000
     assert not schemas.validation_errors(result.record, kind=schemas.EVIDENCE_RECORD)
+
+
+@pytest.mark.parametrize(
+    ("suffix", "content", "marker"),
+    [
+        (".json", '{"token":"JSON_SECRET",}', "JSON_SECRET"),
+        (".yaml", "token: [YAML_SECRET\nbad: value\n", "YAML_SECRET"),
+    ],
+)
+def test_syntax_diagnostics_do_not_copy_artifact_text(
+    tmp_path: Path,
+    suffix: str,
+    content: str,
+    marker: str,
+) -> None:
+    artifact = tmp_path / f"malformed{suffix}"
+    artifact.write_text(content, encoding="utf-8")
+
+    result = evidence.audit_artifact(artifact)
+
+    assert result.failed
+    assert marker not in evidence.render_json(result.record)
+    assert marker not in evidence.render_markdown(result.record)
 
 
 def test_schema_failure_is_recorded_not_promoted_to_conformance(tmp_path: Path) -> None:
@@ -192,6 +249,31 @@ def test_schema_format_checks_are_enforced(tmp_path: Path) -> None:
     assert result.record["checks"][-1]["details"]["errors"][0]["keyword"] == "format"
 
 
+def test_required_schema_format_checkers_are_installed() -> None:
+    import jsonschema
+
+    checker = jsonschema.FormatChecker()
+
+    assert "date-time" in checker.checkers
+    assert "uri" in checker.checkers
+
+
+def test_user_schema_rejects_invalid_uri_format(tmp_path: Path) -> None:
+    artifact = _write_json(tmp_path / "model.json", {"source": "not a uri"})
+    schema = _write_json(
+        tmp_path / "schema.json",
+        {
+            "type": "object",
+            "properties": {"source": {"type": "string", "format": "uri"}},
+        },
+    )
+
+    result = evidence.audit_artifact(artifact, schema_path=schema)
+
+    assert result.failed
+    assert result.record["checks"][-1]["details"]["errors"][0]["keyword"] == "format"
+
+
 def test_oversized_document_is_hashed_but_not_parsed(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
     artifact = _write_json(tmp_path / "large.json", {"x": 1})
     monkeypatch.setattr(evidence, "MAX_PARSE_BYTES", 1)
@@ -215,6 +297,20 @@ def test_invalid_user_schema_is_rejected(tmp_path: Path) -> None:
 
     with pytest.raises(evidence.EvidenceError, match="Invalid Draft 2020-12"):
         evidence.audit_artifact(artifact, schema_path=schema)
+
+
+def test_invalid_schema_setup_error_omits_source_text(tmp_path: Path) -> None:
+    artifact = _write_json(tmp_path / "model.json", {"x": 1})
+    schema = tmp_path / "schema.yaml"
+    schema.write_text("type: [SCHEMA_SECRET\nbad: value\n", encoding="utf-8")
+
+    with pytest.raises(evidence.EvidenceError) as captured:
+        evidence.audit_artifact(artifact, schema_path=schema)
+
+    message = str(captured.value)
+    assert "SCHEMA_SECRET" not in message
+    assert "source text omitted" in message
+    assert len(message) < 1000
 
 
 def test_oversized_user_schema_is_rejected(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:

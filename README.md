@@ -154,9 +154,8 @@ Version 0.1 publishes three JSON Schemas (draft 2020-12):
   to. Capability IDs must be namespaced, so a vendor attribute cannot silently
   claim a standard identifier.
 - **[`schema/evidence-record.schema.json`](schema/evidence-record.schema.json)** —
-  local artifact identity, deterministic checks, semantic mapping
-  classifications, transformation/recovery digests, human disposition, and
-  explicit limitations.
+  local artifact identity, deterministic checks, optional unauthenticated human
+  disposition, and explicit limitations.
 
 [`auto_patch/capability-map.yaml`](auto_patch/capability-map.yaml) is the live
 map for the drivers shipped here, and is validated in CI on every push.

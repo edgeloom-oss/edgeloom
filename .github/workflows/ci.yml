@@ -8,7 +8,8 @@ on:
       - master
   pull_request:
     branches:
-      - "*"
+      # Include stacked feature branches such as codex/audit-evidence-foundation.
+      - "**"
 
 jobs:
   build:

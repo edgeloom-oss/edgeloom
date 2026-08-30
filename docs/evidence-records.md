@@ -27,6 +27,10 @@ edgeloom audit ./model.sdf.json \
   --output ./reports/model.evidence.json
 ```
 
+Surrounding whitespace is removed from optional source, revision, license, and
+title assertions; values that become empty are rejected rather than silently
+changing record identity.
+
 Use `--format markdown` for a compact human-review view. JSON is the canonical
 machine-readable form and validates against
 [`schema/evidence-record.schema.json`](../schema/evidence-record.schema.json).
@@ -56,9 +60,10 @@ their expanded shape before a schema walks them.
 
 Schema failures record only a bounded number of failed keywords plus bounded
 instance and schema paths; rejected artifact values are not copied into the
-record. Syntax diagnostics are length-bounded. Review evidence records before
-publishing them because local paths and operator-supplied metadata may still be
-sensitive.
+record. Syntax diagnostics contain only a bounded error type and safe position
+metadata; source snippets and values are omitted. Review evidence records
+before publishing them because local paths and operator-supplied metadata may
+still be sensitive.
 
 ## Authority labels
 
@@ -103,8 +108,12 @@ Pointer references beginning with `#`; non-local `$ref` and `$dynamicRef`
 values are rejected. A broken local reference is a setup error. Pin and bundle
 every required schema before running an audit.
 
-The v0.1 schema also reserves reviewable fields for mapping classifications
-(`one-to-one`, `lossy`, `ambiguous`, and `unbound`), transformation and recovery
-digests, and human disposition. The current CLI fills the identity and
-deterministic-check portion; it does not invent semantic mappings or review
-decisions.
+The v0.1 schema permits an optional human `review` disposition. Active
+dispositions (`accepted`, `rejected`, or `needs-work`) require a reviewer and
+review time, but all three values remain operator assertions: EdgeLoom does not
+authenticate the reviewer or turn the value into certification or governance
+approval. The current CLI does not invent a review decision.
+
+Mapping, transformation, and recovery contracts are intentionally deferred
+until EdgeLoom has real producers and lifecycle semantics for them. They do not
+belong in a byte-snapshot record merely because a schema can reserve fields.
