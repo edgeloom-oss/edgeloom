@@ -17,10 +17,8 @@
       "$ref": "#/$defs/identifier"
     },
     "ecosystem": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 100,
-      "description": "Human-readable upstream ecosystem, for example 'SmartThings' or 'OneDM'."
+      "$ref": "#/$defs/aggregationIdentifier",
+      "description": "Stable lowercase aggregation identifier, for example 'smartthings' or 'onedm'. Human-readable names belong in descriptions and rendered labels."
     },
     "description": {
       "type": "string",
@@ -46,16 +44,22 @@
       "maxLength": 120,
       "pattern": "^[a-z0-9][a-z0-9._-]*$"
     },
-    "repositoryPath": {
+    "gitTreePath": {
       "type": "string",
       "minLength": 1,
       "maxLength": 1000,
-      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)[^\\\\]+$",
-      "description": "Repository-relative path. Absolute paths, parent traversal, repeated separators, and backslashes are forbidden."
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*//)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*(?:^|/)\\.[gG][iI][tT](?:/|$))(?!.*[\\u0000-\\u001F\\u007F\\\\])(?!.*/$).+$",
+      "description": "Portable POSIX path to a file in the pinned Git tree. Filesystem-absolute and drive paths, dot segments, Git administrative paths, empty segments, control characters, backslashes, and trailing slashes are forbidden."
     },
     "sha256": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
+    },
+    "aggregationIdentifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[a-z0-9][a-z0-9._-]*$"
     },
     "repository": {
       "type": "object",
@@ -65,9 +69,9 @@
         "url": {
           "type": "string",
           "format": "uri",
-          "pattern": "^https://",
+          "pattern": "^https://(?![^/?#]*@)[^/?#\\s]+(?:/[^?#\\s]*)?$",
           "maxLength": 2000,
-          "description": "HTTPS URL of the upstream Git repository."
+          "description": "HTTPS URL of the upstream Git repository, with a hostname and without credentials, query, or fragment. EdgeLoom also validates hostname syntax explicitly."
         },
         "commit": {
           "type": "string",
@@ -88,7 +92,7 @@
           "description": "Declared SPDX expression. EdgeLoom records the declaration but does not parse it or perform legal interpretation."
         },
         "evidence_path": {
-          "$ref": "#/$defs/repositoryPath"
+          "$ref": "#/$defs/gitTreePath"
         },
         "evidence_locator": {
           "type": "string",
@@ -106,6 +110,7 @@
         "path",
         "sha256",
         "media_type",
+        "artifact_role",
         "source_maturity",
         "license"
       ],
@@ -123,7 +128,7 @@
           "description": "The evidence layer for which this artifact is used; it is not a correctness claim."
         },
         "path": {
-          "$ref": "#/$defs/repositoryPath"
+          "$ref": "#/$defs/gitTreePath"
         },
         "sha256": {
           "$ref": "#/$defs/sha256"
@@ -134,9 +139,13 @@
           "maxLength": 200,
           "pattern": "^[A-Za-z0-9!#$&^_.+-]+/[A-Za-z0-9!#$&^_.+-]+$"
         },
+        "artifact_role": {
+          "enum": ["driver-config", "fingerprints", "platform-profile", "sdf-model", "evidence"],
+          "description": "Parser-independent role of the artifact. This is distinct from the evidence layer in which the artifact is used."
+        },
         "source_maturity": {
-          "enum": ["official", "community", "experimental", "draft", "deprecated"],
-          "description": "Status assigned by or inferred from the upstream source. This is independent of EdgeLoom review lifecycle."
+          "enum": ["official", "community", "experimental", "draft", "deprecated", "unknown"],
+          "description": "Unauthenticated status declared from or inferred about the upstream source. This is independent of EdgeLoom review lifecycle and becomes project-trusted only through governed catalog history."
         },
         "license": {
           "$ref": "#/$defs/license"

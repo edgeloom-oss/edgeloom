@@ -157,11 +157,13 @@ Version 0.1 publishes five JSON Schemas (draft 2020-12):
   local artifact identity, deterministic checks, optional unauthenticated human
   disposition, and explicit limitations.
 - **[`schema/source-manifest.schema.json`](schema/source-manifest.schema.json)** —
-  an immutable upstream Git commit plus artifact digests, paths, source
-  maturity, and license evidence.
+  an immutable upstream Git commit plus portable artifact paths, digests,
+  parser-independent roles, explicitly bounded source maturity, and license
+  evidence.
 - **[`schema/catalog-mapping-set.schema.json`](schema/catalog-mapping-set.schema.json)** —
   evidence-backed mappings among device/protocol support, platform exposure,
-  and neutral SDF representation, including loss and review state.
+  and neutral SDF representation, including loss and an unauthenticated review
+  declaration whose authority comes from governed catalog history.
 
 [`auto_patch/capability-map.yaml`](auto_patch/capability-map.yaml) is the live
 map for the drivers shipped here, and is validated in CI on every push.

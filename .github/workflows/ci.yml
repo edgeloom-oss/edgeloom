@@ -72,6 +72,7 @@ jobs:
           python -m pip install --upgrade pip build twine
           python -m build
           python -m twine check dist/*
+          python -c "import glob, tarfile; p=glob.glob('dist/*.tar.gz')[0]; names=tarfile.open(p).getnames(); assert any(n.endswith('/docs/catalog-contracts.md') for n in names)"
       - name: Verify the wheel installs and runs standalone
         run: |
           python -m venv /tmp/clean

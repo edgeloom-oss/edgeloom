@@ -1,7 +1,7 @@
 kind: source-manifest
 schema_version: "0.1"
 id: onedm-lock-fixture
-ecosystem: OneDM
+ecosystem: onedm
 description: Synthetic pinned SDF source used only to exercise the public contract.
 repository:
   url: https://example.invalid/onedm-playground.git
@@ -12,6 +12,7 @@ artifacts:
     path: models/sdfobject-lock-status.sdf.json
     sha256: eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
     media_type: application/json
+    artifact_role: sdf-model
     source_maturity: experimental
     license:
       expression: BSD-3-Clause

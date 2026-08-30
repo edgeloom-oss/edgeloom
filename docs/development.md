@@ -22,6 +22,14 @@ Catalog validation in this first contract slice is intentionally offline. It
 does not fetch a source repository or resolve artifact IDs across separate
 manifest files; see [Catalog Contracts](catalog-contracts.md).
 
+The catalog-contract work is designed to stack after the audit/evidence
+foundation. During integration, preserve every schema kind, the shared bounded
+document parser, format checks, the capped diagnostic path, and catalog semantic
+checks. Repository URL validation is explicit in `edgeloom.schemas`, so it does
+not silently depend on whether the optional `jsonschema` URI-format extras are
+installed. Re-run the clean-wheel and source-distribution probes after resolving
+the shared `schemas.py`, CLI, CI, README, and changelog changes.
+
 GitHub Actions (`.github/workflows/ci.yml`) runs the exact commands on every PR
 and on the `main`/`master` branches.
 

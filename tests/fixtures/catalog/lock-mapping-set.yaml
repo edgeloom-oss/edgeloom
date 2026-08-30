@@ -4,16 +4,16 @@ id: door-lock-contract-fixture
 title: Synthetic three-layer door-lock mapping
 scope:
   domain: door-lock
-  platform: SmartThings
+  platform: smartthings
   protocols:
-    - Z-Wave
+    - zwave
 source_manifests:
   - id: smartthings-lock-fixture
     path: tests/fixtures/catalog/smartthings-source.yaml
-    sha256: ab32cea7a19189226aec72071248424fffff915bcdebb939f19f6d82853dbf8c
+    sha256: b85e8fca0d0702f11a60484c0baa10ab8f7237932746976ecc0648fd589498f9
   - id: onedm-lock-fixture
     path: tests/fixtures/catalog/onedm-source.yaml
-    sha256: 084e66eb43d2cd6e885db7274d1ef04e867fcbf4a463a53c9996472c4d01d0a7
+    sha256: 5c2823e886af7e04f5faf0d42426e92c38be7f6ba05786c5ef60d9c4924ce3b1
 nodes:
   - id: device.lock-state
     layer: device-protocol-support
@@ -99,6 +99,7 @@ mappings:
     limitations:
       - Absence is scoped to the pinned synthetic profile, not every platform driver.
 review:
+  author: fixture-author
   lifecycle: candidate
   reviewers: []
   notes: A candidate fixture is not an adopted model, verified mapping, or certification claim.

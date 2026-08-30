@@ -21,7 +21,10 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   one-to-one, lossy, ambiguous, and unbound outcomes; and keep upstream source
   maturity distinct from EdgeLoom review lifecycle. `edgeloom validate` ships
   and autodetects both contracts and checks duplicate IDs and internal
-  references without fetching or executing upstream content.
+  references without fetching or executing upstream content. Portable source
+  paths, explicit artifact roles, stable aggregation identifiers, independent
+  reviewer checks, and an `unknown` maturity state preserve the boundary between
+  a well-formed declaration and governed project trust.
 - Public governance, maintainer, support, and code-ownership documents now
   define decision records, contribution roles, support channels, and review
   responsibility.

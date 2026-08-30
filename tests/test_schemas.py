@@ -89,6 +89,19 @@ def test_unknown_schema_kind_is_rejected() -> None:
             {"kind": "catalog-mapping-set", "nodes": [], "mappings": []},
             schemas.CATALOG_MAPPING_SET,
         ),
+        (
+            {"schema_version": "0.1", "repository": {}, "artifacts": []},
+            schemas.SOURCE_MANIFEST,
+        ),
+        (
+            {
+                "kind": "catalog_mapping_set",
+                "source_manifests": [],
+                "nodes": [],
+                "mappings": [],
+            },
+            schemas.CATALOG_MAPPING_SET,
+        ),
         ({"components": []}, schemas.PROFILE),
         ({"drivers": {}}, schemas.CAPABILITY_MAP),
         (

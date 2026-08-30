@@ -113,15 +113,30 @@
       "maxLength": 120,
       "pattern": "^[a-z0-9][a-z0-9._-]*$"
     },
-    "repositoryPath": {
+    "catalogPath": {
       "type": "string",
       "minLength": 1,
       "maxLength": 1000,
-      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)[^\\\\]+$"
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*//)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*(?:^|/)\\.[gG][iI][tT](?:/|$))(?!.*[\\u0000-\\u001F\\u007F\\\\])(?!.*/$).+$",
+      "description": "Portable POSIX path resolved from the catalog repository root, never from the mapping-set file's directory or the host filesystem."
     },
     "sha256": {
       "type": "string",
       "pattern": "^[0-9a-f]{64}$"
+    },
+    "aggregationIdentifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 100,
+      "pattern": "^[a-z0-9][a-z0-9._-]*$",
+      "description": "Stable lowercase identifier used for deterministic aggregation."
+    },
+    "actorIdentifier": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200,
+      "pattern": "^[a-z0-9][a-z0-9._:@/-]*$",
+      "description": "Stable lowercase contributor identifier assigned by catalog governance."
     },
     "scope": {
       "type": "object",
@@ -129,24 +144,18 @@
       "additionalProperties": false,
       "properties": {
         "domain": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 100,
-          "description": "Device or capability family, for example 'door-lock'."
+          "$ref": "#/$defs/aggregationIdentifier",
+          "description": "Stable device or capability-family identifier, for example 'door-lock'."
         },
         "platform": {
-          "type": "string",
-          "minLength": 1,
-          "maxLength": 100,
-          "description": "Native platform whose exposure layer is being assessed."
+          "$ref": "#/$defs/aggregationIdentifier",
+          "description": "Stable native-platform identifier whose exposure layer is being assessed."
         },
         "protocols": {
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 100
+            "$ref": "#/$defs/aggregationIdentifier"
           }
         }
       }
@@ -160,7 +169,8 @@
           "$ref": "#/$defs/identifier"
         },
         "path": {
-          "$ref": "#/$defs/repositoryPath"
+          "$ref": "#/$defs/catalogPath",
+          "description": "Catalog-root-relative path to the referenced source-manifest bytes."
         },
         "sha256": {
           "$ref": "#/$defs/sha256"
@@ -346,25 +356,34 @@
     },
     "review": {
       "type": "object",
-      "required": ["lifecycle", "reviewers"],
+      "required": ["author", "lifecycle", "reviewers"],
       "additionalProperties": false,
       "properties": {
+        "author": {
+          "$ref": "#/$defs/actorIdentifier",
+          "description": "Stable identifier for the mapping-set record author, not an independent reviewer."
+        },
         "lifecycle": {
           "enum": ["candidate", "reviewed", "verified", "deprecated"],
-          "description": "EdgeLoom review lifecycle. It is independent of every artifact's upstream source maturity."
+          "description": "Unauthenticated review-state declaration. It is independent of upstream source maturity and becomes project-trusted only through governed catalog history."
         },
         "reviewers": {
           "type": "array",
           "uniqueItems": true,
           "items": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 200
+            "$ref": "#/$defs/actorIdentifier"
           }
         },
         "reviewed_at": {
           "type": "string",
           "format": "date-time"
+        },
+        "decision_ref": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000,
+          "pattern": "^[^\\u0000-\\u001F\\u007F]+$",
+          "description": "Stable reference to the governed review decision. Structural validation does not authenticate or dereference it."
         },
         "notes": {
           "type": "string",
@@ -385,6 +404,17 @@
             "properties": {
               "reviewers": { "minItems": 1 }
             }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "lifecycle": { "const": "verified" }
+            },
+            "required": ["lifecycle"]
+          },
+          "then": {
+            "required": ["decision_ref"]
           }
         }
       ]
