@@ -8,7 +8,8 @@ on:
       - master
   pull_request:
     branches:
-      - "*"
+      # Include stacked feature branches such as codex/audit-evidence-foundation.
+      - "**"
 
 jobs:
   build:
@@ -44,6 +45,12 @@ jobs:
         run: |
           edgeloom validate auto_patch/capability-map.yaml -v
           edgeloom validate auto_patch/zigbee-lock/profiles translator/ha_proxy_edge_driver/profiles
+          edgeloom audit auto_patch/capability-map.yaml \
+            --schema schema/capability-map.schema.json \
+            --schema-authority normative \
+            --artifact-status stable \
+            --output /tmp/capability-map.evidence.json
+          edgeloom validate /tmp/capability-map.evidence.json --kind evidence-record
 
       # The shell entrypoint was unlinted for the whole life of the project,
       # which is how an `else:` typo survived in the backup guard.
@@ -70,7 +77,11 @@ jobs:
           /tmp/clean/bin/pip install dist/*.whl
           /tmp/clean/bin/edgeloom --version
           # Schemas must resolve from inside the wheel, with no checkout present.
-          cd /tmp && /tmp/clean/bin/python -c "from edgeloom import schemas; print(schemas.schema_path('profile'))"
+          cd /tmp
+          /tmp/clean/bin/python -c "from edgeloom import schemas; [print(schemas.schema_path(kind)) for kind in schemas.KINDS]"
+          printf '{"sample":true}\n' > artifact.json
+          /tmp/clean/bin/edgeloom audit artifact.json --output record.json
+          /tmp/clean/bin/edgeloom validate record.json --kind evidence-record
 
   site:
     runs-on: ubuntu-latest

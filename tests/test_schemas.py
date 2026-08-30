@@ -37,12 +37,37 @@ VALID_MAP = {
     "drivers": {"zigbee-lock": {"attributes": {"Language": "adminmusic34435.language"}}},
 }
 
+VALID_EVIDENCE_RECORD = {
+    "record_version": "0.1",
+    "record_id": "elr-0123456789abcdef01234567",
+    "created_at": "2026-08-26T20:00:00+00:00",
+    "tool": {"name": "edgeloom", "version": "0.1.1", "policy_version": "audit-0.1"},
+    "subject": {
+        "path": "model.sdf.json",
+        "status": "experimental",
+        "size_bytes": 2,
+        "digest": {"algorithm": "sha256", "value": "0" * 64},
+    },
+    "checks": [
+        {
+            "id": "content-digest",
+            "status": "pass",
+            "authority": "deterministic",
+            "summary": "Digest computed.",
+        }
+    ],
+    "limitations": ["A digest is not proof of provenance."],
+}
 
-def test_both_schemas_are_shipped_and_parse() -> None:
+
+def test_all_schemas_are_shipped_and_valid_draft_2020_12() -> None:
+    import jsonschema
+
     for kind in schemas.KINDS:
         schema = schemas.load_schema(kind)
         assert schema["$schema"].startswith("https://json-schema.org/draft/2020-12")
         assert schema["title"].startswith("EdgeLoom")
+        jsonschema.Draft202012Validator.check_schema(schema)
 
 
 def test_unknown_schema_kind_is_rejected() -> None:
@@ -55,6 +80,7 @@ def test_unknown_schema_kind_is_rejected() -> None:
     [
         (VALID_PROFILE, schemas.PROFILE),
         (VALID_MAP, schemas.CAPABILITY_MAP),
+        (VALID_EVIDENCE_RECORD, schemas.EVIDENCE_RECORD),
         ({"components": []}, schemas.PROFILE),
         ({"drivers": {}}, schemas.CAPABILITY_MAP),
         (
@@ -103,6 +129,57 @@ def test_valid_capability_map_passes(tmp_path: Path) -> None:
     result = schemas.validate_document(_write(tmp_path / "m.yaml", VALID_MAP))
     assert result.ok
     assert result.kind == schemas.CAPABILITY_MAP
+
+
+def test_valid_evidence_record_passes(tmp_path: Path) -> None:
+    result = schemas.validate_document(_write(tmp_path / "record.json", VALID_EVIDENCE_RECORD))
+    assert result.ok
+    assert result.kind == schemas.EVIDENCE_RECORD
+
+
+def test_evidence_record_active_review_requires_reviewer_and_time(tmp_path: Path) -> None:
+    for disposition in ("accepted", "rejected", "needs-work"):
+        incomplete = {**VALID_EVIDENCE_RECORD, "review": {"disposition": disposition}}
+
+        result = schemas.validate_document(_write(tmp_path / f"{disposition}.json", incomplete))
+
+        assert not result.ok
+        assert any("reviewer" in message for message in result.errors)
+        assert any("reviewed_at" in message for message in result.errors)
+
+
+def test_evidence_record_accepts_complete_human_review(tmp_path: Path) -> None:
+    reviewed = {
+        **VALID_EVIDENCE_RECORD,
+        "review": {
+            "disposition": "accepted",
+            "reviewer": "operator@example.test",
+            "reviewed_at": "2026-08-30T20:00:00+00:00",
+        },
+    }
+
+    result = schemas.validate_document(_write(tmp_path / "reviewed.json", reviewed))
+
+    assert result.ok
+
+
+@pytest.mark.parametrize("field", ["mappings", "transformation"])
+def test_evidence_record_defers_unproduced_contracts(tmp_path: Path, field: str) -> None:
+    unsupported = {**VALID_EVIDENCE_RECORD, field: [] if field == "mappings" else {}}
+
+    result = schemas.validate_document(_write(tmp_path / f"{field}.json", unsupported))
+
+    assert not result.ok
+    assert any("Additional properties" in message for message in result.errors)
+
+
+def test_evidence_record_date_time_format_is_enforced(tmp_path: Path) -> None:
+    invalid = {**VALID_EVIDENCE_RECORD, "created_at": "not-a-date"}
+
+    result = schemas.validate_document(_write(tmp_path / "record.json", invalid))
+
+    assert not result.ok
+    assert any("date-time" in message for message in result.errors)
 
 
 def test_profile_missing_components_fails(tmp_path: Path) -> None:
