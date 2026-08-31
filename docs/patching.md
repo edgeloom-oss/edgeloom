@@ -216,6 +216,14 @@ values must match the inputs passed to the patcher.
   <tr><td>FastPollTimeout</td></tr>
 
   <tr>
+    <td rowspan="4">zigbee-humidity-sensor</td>
+    <td>IdentifyTime</td>
+  </tr>
+  <tr><td>DeviceEnabled</td></tr>
+  <tr><td>CheckInInterval</td></tr>
+  <tr><td>FastPollTimeout</td></tr>
+
+  <tr>
     <td rowspan="3">zigbee-presence-sensor</td>
     <td>IdentifyTime</td>
   </tr>

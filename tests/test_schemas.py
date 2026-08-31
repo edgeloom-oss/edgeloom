@@ -315,6 +315,20 @@ def test_repo_capability_map_conforms(repo_root: Path) -> None:
     assert result.ok, result.errors
 
 
+def test_humidity_sensor_is_mapped(repo_root: Path) -> None:
+    """The INI and its schema-checked mirror must agree for every driver."""
+    import configparser
+
+    ini = configparser.ConfigParser()
+    ini.optionxform = str
+    ini.read(repo_root / "auto_patch" / "custom_capability_list.config")
+
+    document = schemas.load_document(repo_root / "auto_patch" / "capability-map.yaml")
+    mapped = document["drivers"]["zigbee-humidity-sensor"]["attributes"]
+
+    assert dict(ini["zigbee-humidity-sensor"]) == mapped
+
+
 def test_every_shipped_profile_conforms(repo_root: Path) -> None:
     """Both toolchain paths must emit profiles that satisfy one contract."""
     targets = [
