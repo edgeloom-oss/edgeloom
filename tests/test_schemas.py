@@ -247,6 +247,7 @@ def test_profile_rejects_exact_duplicate_components(tmp_path: Path) -> None:
     result = schemas.validate_document(_write(tmp_path / "p.yaml", bad))
 
     assert not result.ok
+    assert "components/1: duplicate component id 'main'" in result.errors
 
 
 def test_profile_rejects_exact_duplicate_capabilities(tmp_path: Path) -> None:
@@ -265,6 +266,42 @@ def test_profile_rejects_exact_duplicate_capabilities(tmp_path: Path) -> None:
     result = schemas.validate_document(_write(tmp_path / "p.yaml", bad))
 
     assert not result.ok
+    assert "components/0/capabilities/1: duplicate capability id 'lock'" in result.errors
+
+
+def test_profile_rejects_duplicate_component_ids(tmp_path: Path) -> None:
+    """uniqueItems misses two components that share an id but differ elsewhere."""
+    bad = {
+        "name": "x",
+        "components": [
+            {"id": "main", "capabilities": [{"id": "lock", "version": 1}]},
+            {"id": "main", "capabilities": [{"id": "switch", "version": 1}]},
+        ],
+    }
+    result = schemas.validate_document(_write(tmp_path / "p.yaml", bad))
+
+    assert not result.ok
+    assert "components/1: duplicate component id 'main'" in result.errors
+
+
+def test_profile_rejects_duplicate_capability_ids_across_versions(tmp_path: Path) -> None:
+    """uniqueItems misses the same capability id at two versions."""
+    bad = {
+        "name": "x",
+        "components": [
+            {
+                "id": "main",
+                "capabilities": [
+                    {"id": "lock", "version": 1},
+                    {"id": "lock", "version": 2},
+                ],
+            }
+        ],
+    }
+    result = schemas.validate_document(_write(tmp_path / "p.yaml", bad))
+
+    assert not result.ok
+    assert "components/0/capabilities/1: duplicate capability id 'lock'" in result.errors
 
 
 def test_capability_map_rejects_unnamespaced_capability(tmp_path: Path) -> None:
