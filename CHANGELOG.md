@@ -54,6 +54,8 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Fixed
 
+- `edgeloom validate` now rejects a profile that reuses a component id or a
+  capability id even when the objects are not byte-identical. Completes #8.
 - The profile schema now rejects exact duplicate component and capability entries.
 - `discover --limit N` now counts drivers that actually yield fingerprints.
   A `fingerprints.yml` without a `zigbeeManufacturer` key (e.g. Matter

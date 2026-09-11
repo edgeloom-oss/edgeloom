@@ -204,6 +204,41 @@ def _duplicate_id_errors(items: Any, location: str) -> list[str]:
     return [f"{location}: duplicate id {identifier!r}" for identifier in sorted(duplicates)]
 
 
+def _profile_duplicate_id_errors(document: dict[str, Any]) -> Iterator[str]:
+    """Reject reused component and capability IDs that ``uniqueItems`` cannot see.
+
+    ``uniqueItems`` compares whole objects, so ``{id: lock, version: 1}`` next
+    to ``{id: lock, version: 2}`` is accepted. The schema says IDs are unique
+    within the profile / component; this pass enforces that in document order.
+    """
+    components = document.get("components")
+    if not isinstance(components, list):
+        return
+
+    seen_component_ids: set[str] = set()
+    for component_index, component in enumerate(components):
+        if not isinstance(component, dict):
+            continue
+        capabilities = component.get("capabilities")
+        if isinstance(capabilities, list):
+            seen_capability_ids: set[str] = set()
+            for capability_index, capability in enumerate(capabilities):
+                if not isinstance(capability, dict) or not isinstance(capability.get("id"), str):
+                    continue
+                capability_id = capability["id"]
+                if capability_id in seen_capability_ids:
+                    yield (
+                        f"components/{component_index}/capabilities/{capability_index}: "
+                        f"duplicate capability id {capability_id!r}"
+                    )
+                seen_capability_ids.add(capability_id)
+        component_id = component.get("id")
+        if isinstance(component_id, str):
+            if component_id in seen_component_ids:
+                yield f"components/{component_index}: duplicate component id {component_id!r}"
+            seen_component_ids.add(component_id)
+
+
 def _artifact_manifest_reference_errors(
     item: Any,
     location: str,
@@ -338,6 +373,10 @@ def _iter_semantic_errors(document: Any, kind: str) -> Iterator[str]:
                     license_record.get("evidence_path"),
                     f"artifacts/{index}/license/evidence_path",
                 )
+        return
+
+    if kind == PROFILE:
+        yield from _profile_duplicate_id_errors(document)
         return
 
     if kind != CATALOG_MAPPING_SET:
