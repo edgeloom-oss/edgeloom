@@ -7,8 +7,8 @@ older releases are not backported.
 
 | Version | Supported |
 | --- | --- |
-| 0.1.x | Yes |
-| < 0.1 | No |
+| 0.2.x | Yes |
+| < 0.2 | No |
 
 ## Reporting a vulnerability
 
@@ -30,9 +30,9 @@ you if a fix will take longer.
 
 ## Scope
 
-In scope: the `edgeloom` package and CLI, the patching, translation, discovery,
-and validation logic, the published schemas, and the packaging and release
-pipeline.
+In scope: the `edgeloom` package and CLI; the patching, restoration,
+translation, discovery, validation, and audit logic; the published artifact,
+evidence, and catalog schemas; and the packaging and release pipeline.
 
 Out of scope: vulnerabilities in SmartThings, Home Assistant, or vendor
 firmware, which should go to those vendors; and the intended behaviour described
@@ -91,6 +91,12 @@ That is the point of the research it accompanies, not a flaw in the tool:
   the device exposes to your account. Review the diff before installing on a hub
   you depend on. Every run backs the driver up first and restores that backup if
   a step fails.
+- **Restoration replaces one driver tree with its sibling backup.** A successful
+  `edgeloom restore` parks the patched tree under a timestamped sibling name and
+  renames `<driver>-backup` into its place. It refuses symlinked or colliding
+  move targets and supports `--dry-run`, but it still changes local filesystem
+  state selected by the operator. Inspect the paths and keep an independent
+  copy when restoring a driver you depend on.
 - **The translator handles Home Assistant credentials.** A long-lived access
   token is a bearer credential for your entire HA instance. Pass it via
   `HA_TOKEN` rather than on the command line, where it lands in shell history.

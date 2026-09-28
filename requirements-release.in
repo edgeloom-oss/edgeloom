@@ -1,0 +1,6 @@
+# Release-only tooling. Regenerate requirements-release.txt with the command
+# recorded at the top of that file, then review the complete hash-locked diff.
+build==1.6.1
+hatchling==1.32.4
+pip==26.2.1
+twine==7.0.0

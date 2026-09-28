@@ -16,6 +16,6 @@ The package exposes six related workflows behind one entrypoint:
 snapshot, asserted source metadata, checks, authority labels, and limitations.
 """
 
-__version__ = "0.1.1"
+__version__ = "0.2.0"
 
 __all__ = ["__version__"]
