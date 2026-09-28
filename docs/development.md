@@ -33,6 +33,10 @@ the shared `schemas.py`, CLI, CI, README, and changelog changes.
 GitHub Actions (`.github/workflows/ci.yml`) runs the exact commands on every PR
 and on the `main`/`master` branches.
 
+Maintainers preparing a versioned package should also follow the
+[release checklist](releasing.md), including the clean-wheel, workflow-security,
+and post-publication read-back gates.
+
 ## Containerized Development
 
 Build the reusable image (installs all dev dependencies):

@@ -7,8 +7,18 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-27
+
+This release makes the six-workflow toolchain and its evidence/catalog
+contracts available from one installable distribution. It contains every
+change merged after the `v0.1.1` tag. The Home Assistant token-permission and
+`--no-token` entries had appeared in the 0.1.1 changelog before their code was
+merged; they are correctly attributed to 0.2.0 below.
+
 ### Added
 
+- `edgeloom restore` is now a first-class CLI workflow, with dry-run support
+  and explicit handling for drivers selected outside the repository checkout.
 - `edgeloom audit` and the v0.1 evidence-record schema capture one local
   artifact byte snapshot, asserted source metadata, bounded syntax results,
   optional pinned JSON-Schema checks with explicit authority labels, and
@@ -28,6 +38,14 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - Public governance, maintainer, support, and code-ownership documents now
   define decision records, contribution roles, support channels, and review
   responsibility.
+- A federated driver–SDF evidence-catalog roadmap defines the two-repository
+  boundary, candidate-only ingestion gate, provenance requirements, semantic
+  loss taxonomy, human-review roles, and staged sustainability plan.
+- A lightweight project homepage, social-preview metadata, link checks, and a
+  GitHub Pages workflow publish the project's verified public evidence from
+  `main`.
+- The patcher's capability map now includes the four hidden-attribute mappings
+  used by the `zigbee-humidity-sensor` driver.
 
 ### Security
 
@@ -41,6 +59,18 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   rather than the expansion it describes, and report a diagnostic instead.
   Closes #44 and #45. `load_document` also reports non-UTF-8 and
   over-deep documents instead of raising a traceback.
+- **Restore paths and filesystem moves are contained.** The legacy helper now
+  accepts only a bare driver name below its trusted root, while the unified CLI
+  has a separate absolute operator-path entry point. Restore refuses symlinked
+  backups and colliding destinations, and uses sibling filesystem renames so a
+  destination link cannot redirect a move outside the selected parent.
+- The translator writes `config/ha_devices.yaml` with owner-only permissions
+  (`0600`) when it contains a Home Assistant token, and tightens a previously
+  broader mode on overwrite. `translate --no-token`, available from both CLIs,
+  omits the credential so `HA_EDGE_TOKEN` can be supplied on the hub instead.
+- CI, Pages, and release workflows now use least-privilege tokens, non-persistent
+  checkout credentials, and immutable action revisions. Release tags enter the
+  shell through an environment boundary and must match stable `vX.Y.Z` SemVer.
 
 ### Changed
 
@@ -51,6 +81,11 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 - `SECURITY.md` now states what EdgeLoom trusts. The absence of that section is
   what made GHSA-4f7m-wgh7-46xf possible to misjudge: a driver's own files are
   attacker-controlled on the primary path, and the document did not say so.
+- A maintainer release checklist now makes exact-commit review, clean-wheel
+  smoke tests, workflow security checks, Trusted Publishing, and public-state
+  read-back explicit gates.
+- Runtime installations now include JSON Schema's non-GPL format checkers, so
+  URI and date-time checks behave consistently in development and from wheels.
 
 ### Fixed
 
@@ -61,6 +96,8 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
   A `fingerprints.yml` without a `zigbeeManufacturer` key (e.g. Matter
   drivers) no longer consumes the limit, which made small limits return
   nothing even though Zigbee drivers followed.
+- `discover --limit 0` now processes zero drivers instead of treating zero as
+  an omitted, unlimited value; negative limits are rejected at the CLI boundary.
 
 ## [0.1.1] - 2026-08-24
 
@@ -107,15 +144,6 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 - `edgeloom validate` now reports profiles and capability maps that omit their
   required `name` or `version` key instead of silently skipping them.
-- The translator now writes `config/ha_devices.yaml` with owner-only
-  permissions (`0600`) when it contains the Home Assistant token, and a
-  previously world-readable file is tightened on overwrite.
-
-### Added
-
-- `translate --no-token` (both the `edgeloom` and `ha2st_edge` CLIs) keeps the
-  Home Assistant token out of the generated config; supply `HA_EDGE_TOKEN` on
-  the hub instead.
 
 ## [0.1.0] - 2026-08-23
 
@@ -179,5 +207,7 @@ published schema between them.
 - The README is now an umbrella; component detail moved to `docs/`.
 - The merged translator is covered by the repository's `ruff` and pytest gates.
 
-[Unreleased]: https://github.com/edgeloom-oss/edgeloom/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/edgeloom-oss/edgeloom/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/edgeloom-oss/edgeloom/compare/v0.1.1...v0.2.0
+[0.1.1]: https://github.com/edgeloom-oss/edgeloom/releases/tag/v0.1.1
 [0.1.0]: https://github.com/edgeloom-oss/edgeloom/releases/tag/v0.1.0

@@ -184,7 +184,8 @@ make test      # pytest
 
 CI runs lint, the full test suite, `edgeloom validate`, and shellcheck on every
 push and pull request. See [docs/development.md](docs/development.md) for the
-container workflow.
+container workflow. Maintainers should use the evidence-oriented
+[release checklist](docs/releasing.md) before publishing a versioned package.
 
 ## Roadmap
 

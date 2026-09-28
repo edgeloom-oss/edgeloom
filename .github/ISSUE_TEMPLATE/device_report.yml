@@ -94,7 +94,7 @@ body:
     attributes:
       label: EdgeLoom version
       description: Output of `edgeloom --version`, or the commit SHA.
-      placeholder: edgeloom 0.1.0
+      placeholder: edgeloom 0.2.0
     validations:
       required: true
 

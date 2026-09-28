@@ -35,7 +35,8 @@ dependencies = [
 dev = ["pytest>=7.0", "pytest-cov", "ruff"]
 
 [project.urls]
-Homepage = "https://github.com/edgeloom-oss/edgeloom"
+Homepage = "https://edgeloom-oss.github.io/edgeloom/"
+Documentation = "https://edgeloom-oss.github.io/edgeloom/"
 Repository = "https://github.com/edgeloom-oss/edgeloom"
 Issues = "https://github.com/edgeloom-oss/edgeloom/issues"
 Changelog = "https://github.com/edgeloom-oss/edgeloom/blob/main/CHANGELOG.md"
