@@ -6,7 +6,7 @@
     <title>EdgeLoom — Checked, reversible smart-home edge drivers</title>
     <meta
       name="description"
-      content="EdgeLoom is an active open-source toolchain to validate, patch, restore, translate, and discover smart-home edge-driver artifacts."
+      content="EdgeLoom is an active open-source toolchain to audit, validate, patch, restore, translate, and discover smart-home edge-driver artifacts."
     >
     <meta name="theme-color" content="#f5f7f1">
     <meta name="robots" content="index, follow">
@@ -17,7 +17,7 @@
     <meta property="og:title" content="EdgeLoom — Checked. Reversible. Open.">
     <meta
       property="og:description"
-      content="An open toolchain for smart-home edge-driver artifacts: validate, patch, restore, translate, and discover."
+      content="An open toolchain for smart-home edge-driver artifacts: audit, validate, patch, restore, translate, and discover."
     >
     <meta property="og:url" content="https://edgeloom-oss.github.io/edgeloom/">
     <meta property="og:image" content="https://edgeloom-oss.github.io/edgeloom/assets/og-card.png">
@@ -28,7 +28,7 @@
     <meta name="twitter:title" content="EdgeLoom — Checked. Reversible. Open.">
     <meta
       name="twitter:description"
-      content="An open toolchain for smart-home edge-driver artifacts: validate, patch, restore, translate, and discover."
+      content="An open toolchain for smart-home edge-driver artifacts: audit, validate, patch, restore, translate, and discover."
     >
     <meta name="twitter:image" content="https://edgeloom-oss.github.io/edgeloom/assets/og-card.png">
     <meta name="twitter:image:alt" content="EdgeLoom — Checked. Reversible. Open.">
@@ -38,13 +38,13 @@
         "@context": "https://schema.org",
         "@type": "SoftwareSourceCode",
         "name": "EdgeLoom",
-        "description": "An open toolchain for validating, patching, restoring, translating, and discovering smart-home edge-driver artifacts.",
+        "description": "An open toolchain for auditing, validating, patching, restoring, translating, and discovering smart-home edge-driver artifacts.",
         "codeRepository": "https://github.com/edgeloom-oss/edgeloom",
         "downloadUrl": "https://pypi.org/project/edgeloom/",
         "license": "https://www.apache.org/licenses/LICENSE-2.0",
         "programmingLanguage": ["Python", "Lua"],
         "runtimePlatform": "Python 3.11 or newer",
-        "softwareVersion": "0.1.1",
+        "softwareVersion": "0.2.0",
         "applicationCategory": "DeveloperApplication"
       }
     </script>
@@ -72,12 +72,12 @@
     <main id="main">
       <section class="hero" id="top" aria-labelledby="hero-title">
         <div class="hero-copy">
-          <a class="release-pill" href="https://github.com/edgeloom-oss/edgeloom/releases/tag/v0.1.1">
-            <span>Active open source</span><span aria-hidden="true">·</span><strong>v0.1.1</strong>
+          <a class="release-pill" href="https://github.com/edgeloom-oss/edgeloom/releases/tag/v0.2.0">
+            <span>Active open source</span><span aria-hidden="true">·</span><strong>v0.2.0</strong>
           </a>
           <h1 id="hero-title">Inspect edge drivers. Change them with a <em>way back.</em></h1>
           <p class="hero-lede">
-            EdgeLoom validates, patches, restores, translates, and discovers smart-home edge-driver artifacts.
+            EdgeLoom audits, validates, patches, restores, translates, and discovers smart-home edge-driver artifacts.
           </p>
           <div class="hero-actions">
             <a class="button button-primary" href="https://github.com/edgeloom-oss/edgeloom">View on GitHub</a>
@@ -129,15 +129,15 @@
 
       <section class="section capabilities" id="capabilities" aria-labelledby="capabilities-title">
         <div class="section-heading split-heading">
-          <div><p class="eyebrow">Core capabilities</p><h2 id="capabilities-title">One artifact layer, four focused workflows.</h2></div>
+          <div><p class="eyebrow">Core capabilities</p><h2 id="capabilities-title">Six commands. Four focused workflow families.</h2></div>
           <p>EdgeLoom leaves packaging, review, and hub installation with the operator.</p>
         </div>
         <div class="capability-list">
           <article>
-            <span class="capability-index">01</span><h3>Validate</h3>
-            <p>Check profiles and capability maps against versioned JSON Schemas.</p>
-            <code>edgeloom validate .</code>
-            <a href="https://github.com/edgeloom-oss/edgeloom/tree/main/schema" aria-label="Inspect the validation schemas">↗</a>
+            <span class="capability-index">01</span><h3>Audit / Validate</h3>
+            <p>Record bounded evidence, then check artifacts against versioned contracts.</p>
+            <code>edgeloom audit ARTIFACT</code>
+            <a href="https://github.com/edgeloom-oss/edgeloom/blob/main/docs/evidence-records.md" aria-label="Read the audit and evidence-record guide">↗</a>
           </article>
           <article>
             <span class="capability-index">02</span><h3>Patch / Restore</h3>
@@ -168,12 +168,12 @@
       <section class="section evidence" id="evidence" aria-labelledby="evidence-title">
         <div class="section-heading split-heading">
           <div><p class="eyebrow">Project health</p><h2 id="evidence-title">Active means inspectable.</h2></div>
-          <p class="verified-date">Verified <time datetime="2026-08-26">26 August 2026</time></p>
+          <p class="verified-date">Verified <time datetime="2026-09-27">27 September 2026</time></p>
         </div>
         <div class="evidence-ledger">
-          <a href="https://github.com/edgeloom-oss/edgeloom/releases"><span>Releases</span><strong>2 public</strong><small>v0.1.0 · v0.1.1</small></a>
-          <a href="https://pypi.org/project/edgeloom/"><span>Package</span><strong>PyPI 0.1.1</strong><small>wheel + sdist</small></a>
-          <a href="https://github.com/edgeloom-oss/edgeloom/actions/workflows/ci.yml"><span>Current main</span><strong class="passing"><i></i>CI passing</strong><small>3.11 · 3.12 · build</small></a>
+          <a href="https://github.com/edgeloom-oss/edgeloom/releases"><span>Releases</span><strong>3 public</strong><small>through v0.2.0</small></a>
+          <a href="https://pypi.org/project/edgeloom/0.2.0/"><span>Package</span><strong>PyPI 0.2.0</strong><small>wheel + sdist</small></a>
+          <a href="https://github.com/edgeloom-oss/edgeloom/actions/workflows/ci.yml"><span>Current main</span><strong class="passing"><i></i>CI passing</strong><small>3.11 · 3.12 · package · site</small></a>
           <a href="https://github.com/edgeloom-oss/edgeloom/pulls?q=is%3Apr+is%3Amerged"><span>Contributions</span><strong>Public record</strong><small>authorship + review</small></a>
           <a href="https://github.com/edgeloom-oss/edgeloom/security/advisories/GHSA-4f7m-wgh7-46xf"><span>Security</span><strong>GHSA response</strong><small>fixed in v0.1.1</small></a>
           <a href="https://github.com/edgeloom-oss/edgeloom/blob/main/GOVERNANCE.md"><span>Stewardship</span><strong>Open governance</strong><small>roles + decisions</small></a>
@@ -268,6 +268,20 @@
             </a>
           </li>
           <li>
+            <a href="https://github.com/bluo-ku">
+              <span><strong>@bluo-ku</strong><small>schema validation</small></span>
+              <p>Duplicate-entry rejection for profile contracts.</p>
+              <em>Contributor ↗</em>
+            </a>
+          </li>
+          <li>
+            <a href="https://github.com/HavocFiXer">
+              <span><strong>@HavocFiXer</strong><small>capability maps</small></span>
+              <p>Humidity-sensor capability-map coverage.</p>
+              <em>Contributor ↗</em>
+            </a>
+          </li>
+          <li>
             <a href="https://github.com/chuxiongwu">
               <span><strong>@chuxiongwu</strong><small>early contributor</small></span>
               <p>An early code contribution preserved in the project history.</p>
@@ -276,7 +290,7 @@
           </li>
         </ul>
         <p class="credit-source">
-          Based on commits and merged pull requests in current <code>main</code>, verified <time datetime="2026-08-26">26 August 2026</time>.
+          Based on commits and merged pull requests in current <code>main</code>, verified <time datetime="2026-09-27">27 September 2026</time>.
           <a href="https://github.com/edgeloom-oss/edgeloom/graphs/contributors">Contributor graph</a>
           <span aria-hidden="true">·</span>
           <a href="https://github.com/edgeloom-oss/edgeloom/pulls?q=is%3Apr+is%3Amerged">Merged pull requests</a>
@@ -317,10 +331,10 @@
           <a class="section-link" href="https://github.com/edgeloom-oss/edgeloom/blob/main/CHANGELOG.md">Changelog →</a>
         </div>
         <div class="news-list">
+          <a href="https://github.com/edgeloom-oss/edgeloom/releases/tag/v0.2.0"><time datetime="2026-09-27">27 Sep 2026</time><strong>v0.2.0 — audit, restore, and catalog contracts</strong><span>release</span></a>
           <a href="https://github.com/edgeloom-oss/edgeloom/pull/48"><time datetime="2026-08-26">26 Aug 2026</time><strong>Restore becomes a first-class CLI command</strong><span>PR #48</span></a>
           <a href="https://github.com/edgeloom-oss/edgeloom/pull/49"><time datetime="2026-08-26">26 Aug 2026</time><strong>Community governance and support paths established</strong><span>PR #49</span></a>
           <a href="https://github.com/edgeloom-oss/edgeloom/releases/tag/v0.1.1"><time datetime="2026-08-24">24 Aug 2026</time><strong>v0.1.1 — security patch release</strong><span>release</span></a>
-          <a href="https://github.com/edgeloom-oss/edgeloom/releases/tag/v0.1.0"><time datetime="2026-08-23">23 Aug 2026</time><strong>v0.1.0 — first EdgeLoom release</strong><span>release</span></a>
         </div>
       </section>
     </main>
