@@ -2,30 +2,27 @@ name: Publish to PyPI
 
 # Publishing uses PyPI Trusted Publishing (OIDC). There is no API token stored
 # in this repository and no secret to rotate: PyPI verifies the identity of this
-# workflow directly. See https://docs.pypi.org/trusted-publishers/
+# workflow directly. See https://docs.pypi.org/trusted-publishers/. The
+# repository_dispatch trigger makes GitHub load this workflow from the default
+# branch; a release tag can select artifacts but cannot replace these gates.
 on:
-  release:
-    types: [published]
-  # Lets an existing release tag be pushed to PyPI manually if the automatic
-  # publication needs to be retried.
-  workflow_dispatch:
-    inputs:
-      tag:
-        description: "Existing tag to build and publish"
-        required: true
-        default: "v0.2.0"
+  repository_dispatch:
+    types: [publish_release]
 
 permissions:
   contents: read
+  actions: read
 
 jobs:
   build:
     name: Build distributions
     runs-on: ubuntu-latest
+    outputs:
+      release_id: ${{ steps.gate.outputs.release_id }}
     steps:
       - name: Validate stable release tag
         env:
-          TAG: ${{ github.event.inputs.tag || github.ref_name }}
+          TAG: ${{ github.event.client_payload.tag }}
         run: |
           set -euo pipefail
           if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -35,43 +32,123 @@ jobs:
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
-          # For a release event this is the tag; for a manual run it is the
-          # tag typed into the form. Building from the tag rather than a branch
+          # Build the tag named by the dispatch payload rather than a branch. This
           # guarantees the artifact matches what the release points at.
-          ref: ${{ github.event_name == 'workflow_dispatch' && format('refs/tags/{0}', github.event.inputs.tag) || github.ref }}
+          ref: ${{ format('refs/tags/{0}', github.event.client_payload.tag) }}
           persist-credentials: false
+          fetch-depth: 0
+
+      - name: Verify published tag is on main and fully checked
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.client_payload.tag }}
+        run: |
+          set -euo pipefail
+
+          git fetch --no-tags origin \
+            "+refs/heads/main:refs/remotes/origin/main" \
+            "+refs/tags/${TAG}:refs/remotes/origin/release-tag"
+          commit="$(git rev-parse HEAD^{commit})"
+          main_commit="$(git rev-parse refs/remotes/origin/main^{commit})"
+          tag_commit="$(git rev-parse refs/remotes/origin/release-tag^{commit})"
+          if [[ "$commit" != "$main_commit" || "$commit" != "$tag_commit" ]]; then
+            echo "::error::release tag $TAG, checkout, and the current main tip must be the same commit"
+            exit 1
+          fi
+
+          release_json="$(
+            gh api \
+              -H "Accept: application/vnd.github+json" \
+              "repos/${GITHUB_REPOSITORY}/releases/tags/${TAG}"
+          )"
+          release_tag="$(jq -r '.tag_name // ""' <<< "$release_json")"
+          release_id="$(jq -r '.id // ""' <<< "$release_json")"
+          release_draft="$(jq -r '.draft' <<< "$release_json")"
+          release_prerelease="$(jq -r '.prerelease' <<< "$release_json")"
+          release_published_at="$(jq -r '.published_at // ""' <<< "$release_json")"
+          if [[ "$release_tag" != "$TAG" || ! "$release_id" =~ ^[0-9]+$ || \
+                "$release_draft" != "false" || "$release_prerelease" != "false" || \
+                -z "$release_published_at" ]]; then
+            echo "::error::$TAG must identify a published, non-prerelease GitHub Release"
+            exit 1
+          fi
+          echo "release_id=$release_id" >> "$GITHUB_OUTPUT"
+
+          runs_json="$(
+            gh api --method GET \
+              -H "Accept: application/vnd.github+json" \
+              "repos/${GITHUB_REPOSITORY}/actions/workflows/ci.yml/runs" \
+              -f branch=main \
+              -f event=push \
+              -f head_sha="$commit" \
+              -f per_page=100
+          )"
+          run_id="$(
+            jq -r --arg commit "$commit" \
+              '[.workflow_runs[] | select(.head_sha == $commit and .event == "push" and .head_branch == "main")] | sort_by([.run_number, .run_attempt]) | last | .id // ""' \
+              <<< "$runs_json"
+          )"
+          run_status="$(
+            jq -r --argjson run_id "${run_id:-0}" \
+              '.workflow_runs[] | select(.id == $run_id) | .status // ""' \
+              <<< "$runs_json"
+          )"
+          run_conclusion="$(
+            jq -r --argjson run_id "${run_id:-0}" \
+              '.workflow_runs[] | select(.id == $run_id) | .conclusion // ""' \
+              <<< "$runs_json"
+          )"
+          if [[ ! "$run_id" =~ ^[0-9]+$ || "$run_status" != "completed" || "$run_conclusion" != "success" ]]; then
+            echo "::error::latest ci.yml push run for $commit is not completed successfully"
+            exit 1
+          fi
+
+          jobs_json="$(
+            gh api --method GET \
+              -H "Accept: application/vnd.github+json" \
+              "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/jobs" \
+              -f filter=latest \
+              -f per_page=100
+          )"
+          required_checks=("build (3.11)" "build (3.12)" "package" "site")
+          for required in "${required_checks[@]}"; do
+            conclusion="$(
+              jq -r --arg name "$required" \
+                '[.jobs[] | select(.name == $name)] | last | select(.status == "completed") | .conclusion // ""' \
+                <<< "$jobs_json"
+            )"
+            if [[ "$conclusion" != "success" ]]; then
+              echo "::error::required job '$required' is not successful in CI run $run_id for $commit"
+              exit 1
+            fi
+          done
 
       - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7
         with:
           python-version: "3.11"
 
       - name: Build sdist and wheel
-        run: |
-          python -m pip install --upgrade pip build twine
-          python -m build
-          python -m twine check dist/*
-
-      - name: Verify the built version matches the tag
         env:
-          TAG: ${{ github.event.inputs.tag || github.ref_name }}
+          TAG: ${{ github.event.client_payload.tag }}
         run: |
           set -euo pipefail
-          BUILT=$(python -c "
-          import pathlib, re
-          w = next(pathlib.Path('dist').glob('*.whl')).name
-          print(re.match(r'edgeloom-([^-]+)-', w).group(1))
-          ")
-          echo "tag=$TAG built=$BUILT"
-          if [ "v$BUILT" != "$TAG" ]; then
-            echo "::error::built version $BUILT does not match tag $TAG"
-            exit 1
-          fi
+          python -m pip install --disable-pip-version-check \
+            --require-hashes -r requirements-release.txt
+          mkdir -p release-bundle/dist
+          python -m build --no-isolation --outdir release-bundle/dist
+          python -m twine check release-bundle/dist/*
+          python scripts/verify_release_dist.py \
+            --dist-dir release-bundle/dist \
+            --version "${TAG#v}" \
+            --write-manifest release-bundle/SHA256SUMS
 
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
-          name: dist
-          path: dist/
+          name: release-bundle
+          path: release-bundle/
           if-no-files-found: error
+          retention-days: 7
 
   publish:
     name: Publish to PyPI
@@ -85,12 +162,111 @@ jobs:
     # Mandatory for Trusted Publishing, and scoped to this job only so the
     # build steps above never see the OIDC token.
     permissions:
+      actions: read
+      contents: read
       id-token: write
     steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ format('refs/tags/{0}', github.event.client_payload.tag) }}
+          persist-credentials: false
+          fetch-depth: 0
+
       - uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
         with:
-          name: dist
-          path: dist/
+          name: release-bundle
+          path: release-bundle/
+
+      - name: Reconfirm ref and distribution integrity
+        env:
+          EXPECTED_RELEASE_ID: ${{ needs.build.outputs.release_id }}
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.event.client_payload.tag }}
+        run: |
+          set -euo pipefail
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "::error::release tag must be stable SemVer in vX.Y.Z form"
+            exit 1
+          fi
+          git fetch --no-tags origin \
+            "+refs/heads/main:refs/remotes/origin/main" \
+            "+refs/tags/${TAG}:refs/remotes/origin/release-tag"
+          commit="$(git rev-parse HEAD^{commit})"
+          if [[ "$commit" != "$(git rev-parse refs/remotes/origin/main^{commit})" || \
+                "$commit" != "$(git rev-parse refs/remotes/origin/release-tag^{commit})" ]]; then
+            echo "::error::release ref changed or no longer equals the current main tip"
+            exit 1
+          fi
+          release_json="$(
+            gh api \
+              -H "Accept: application/vnd.github+json" \
+              "repos/${GITHUB_REPOSITORY}/releases/tags/${TAG}"
+          )"
+          release_id="$(jq -r '.id // ""' <<< "$release_json")"
+          release_tag="$(jq -r '.tag_name // ""' <<< "$release_json")"
+          release_draft="$(jq -r '.draft' <<< "$release_json")"
+          release_prerelease="$(jq -r '.prerelease' <<< "$release_json")"
+          release_published_at="$(jq -r '.published_at // ""' <<< "$release_json")"
+          if [[ "$release_id" != "$EXPECTED_RELEASE_ID" || "$release_tag" != "$TAG" || \
+                "$release_draft" != "false" || "$release_prerelease" != "false" || \
+                -z "$release_published_at" ]]; then
+            echo "::error::GitHub Release state changed before publication"
+            exit 1
+          fi
+
+          runs_json="$(
+            gh api --method GET \
+              -H "Accept: application/vnd.github+json" \
+              "repos/${GITHUB_REPOSITORY}/actions/workflows/ci.yml/runs" \
+              -f branch=main \
+              -f event=push \
+              -f head_sha="$commit" \
+              -f per_page=100
+          )"
+          run_id="$(
+            jq -r --arg commit "$commit" \
+              '[.workflow_runs[] | select(.head_sha == $commit and .event == "push" and .head_branch == "main")] | sort_by([.run_number, .run_attempt]) | last | .id // ""' \
+              <<< "$runs_json"
+          )"
+          run_status="$(
+            jq -r --argjson run_id "${run_id:-0}" \
+              '.workflow_runs[] | select(.id == $run_id) | .status // ""' \
+              <<< "$runs_json"
+          )"
+          run_conclusion="$(
+            jq -r --argjson run_id "${run_id:-0}" \
+              '.workflow_runs[] | select(.id == $run_id) | .conclusion // ""' \
+              <<< "$runs_json"
+          )"
+          if [[ ! "$run_id" =~ ^[0-9]+$ || "$run_status" != "completed" || "$run_conclusion" != "success" ]]; then
+            echo "::error::latest ci.yml push run for $commit changed or is not successful"
+            exit 1
+          fi
+          jobs_json="$(
+            gh api --method GET \
+              -H "Accept: application/vnd.github+json" \
+              "repos/${GITHUB_REPOSITORY}/actions/runs/${run_id}/jobs" \
+              -f filter=latest \
+              -f per_page=100
+          )"
+          required_checks=("build (3.11)" "build (3.12)" "package" "site")
+          for required in "${required_checks[@]}"; do
+            conclusion="$(
+              jq -r --arg name "$required" \
+                '[.jobs[] | select(.name == $name)] | last | select(.status == "completed") | .conclusion // ""' \
+                <<< "$jobs_json"
+            )"
+            if [[ "$conclusion" != "success" ]]; then
+              echo "::error::required job '$required' changed or is not successful in CI run $run_id"
+              exit 1
+            fi
+          done
+          python scripts/verify_release_dist.py \
+            --dist-dir release-bundle/dist \
+            --version "${TAG#v}" \
+            --check-manifest release-bundle/SHA256SUMS
 
       - name: Publish
         uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1
+        with:
+          packages-dir: release-bundle/dist/

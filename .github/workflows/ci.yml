@@ -76,9 +76,15 @@ jobs:
           python-version: "3.11"
       - name: Build distributions
         run: |
-          python -m pip install --upgrade pip build twine
-          python -m build
+          python -m pip install --disable-pip-version-check \
+            --require-hashes -r requirements-release.txt
+          python -m build --no-isolation
           python -m twine check dist/*
+          version="$(python -c 'from edgeloom import __version__; print(__version__)')"
+          python scripts/verify_release_dist.py \
+            --dist-dir dist \
+            --version "$version" \
+            --write-manifest /tmp/edgeloom-SHA256SUMS
           python -c "import glob, tarfile; p=glob.glob('dist/*.tar.gz')[0]; names=tarfile.open(p).getnames(); assert any(n.endswith('/docs/catalog-contracts.md') for n in names)"
       - name: Verify the wheel installs and runs standalone
         run: |

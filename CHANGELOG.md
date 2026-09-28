@@ -71,6 +71,12 @@ merged; they are correctly attributed to 0.2.0 below.
 - CI, Pages, and release workflows now use least-privilege tokens, non-persistent
   checkout credentials, and immutable action revisions. Release tags enter the
   shell through an environment boundary and must match stable `vX.Y.Z` SemVer.
+- PyPI publication now loads its workflow only from the default branch, requires
+  the tag and checkout to equal the current `main` tip, binds the gate to the
+  exact successful `ci.yml` push run, and rechecks GitHub Release state before
+  the OIDC-backed upload. The build toolchain is SHA-256 locked; exactly one
+  wheel and one source distribution must pass embedded-metadata and digest
+  verification before publication.
 
 ### Changed
 

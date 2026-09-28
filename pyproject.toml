@@ -1,5 +1,5 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling==1.32.4"]
 build-backend = "hatchling.build"
 
 [project]
@@ -64,6 +64,8 @@ exclude = ["auto_patch/zigbee-lock"]
 include = [
     "/edgeloom", "/auto_patch", "/discovery", "/translator", "/schema", "/tests",
     "/README.md", "/LICENSE", "/CHANGELOG.md", "/SECURITY.md", "/CITATION.cff", "/docs",
+    "/requirements-release.in", "/requirements-release.txt",
+    "/scripts/verify_release_dist.py",
 ]
 
 [tool.pytest.ini_options]
