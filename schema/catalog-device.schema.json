@@ -1,0 +1,82 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/edgeloom-oss/edgeloom/schema/v0.1/catalog-device.schema.json",
+  "title": "EdgeLoom catalog device entry (draft v0.1)",
+  "description": "Explicit device identity and human-authored feature navigation. Associations are declarations, not compatibility or hardware-test claims.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["kind", "schema_version", "id", "manufacturer", "model", "protocol", "identifiers", "identity_evidence", "firmware", "hardware_evidence", "features", "limitations"],
+  "properties": {
+    "kind": {"const": "catalog-device"},
+    "schema_version": {"const": "0.1"},
+    "id": {"$ref": "#/$defs/id"},
+    "manufacturer": {"$ref": "#/$defs/text"},
+    "model": {"$ref": "#/$defs/text"},
+    "protocol": {"enum": ["zwave", "zigbee"]},
+    "identifiers": {"type": "object"},
+    "identity_evidence": {"$ref": "#/$defs/reference"},
+    "firmware": {"$ref": "#/$defs/text"},
+    "hardware_evidence": {
+      "type": "array",
+      "maxItems": 50,
+      "uniqueItems": true,
+      "items": {"type": "string", "format": "uri", "pattern": "^https://", "maxLength": 2000},
+      "description": "Links to reported observations, not independently authenticated tests. Empty means no hardware evidence recorded."
+    },
+    "features": {
+      "type": "array", "minItems": 1, "maxItems": 100,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "title", "summary", "mapping_ids", "next_steps"],
+        "properties": {
+          "id": {"$ref": "#/$defs/id"},
+          "title": {"$ref": "#/$defs/text"},
+          "summary": {"$ref": "#/$defs/text"},
+          "mapping_ids": {"type": "array", "minItems": 1, "maxItems": 100, "uniqueItems": true, "items": {"$ref": "#/$defs/recordId"}},
+          "next_steps": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"$ref": "#/$defs/text"}}
+        }
+      }
+    },
+    "limitations": {"type": "array", "minItems": 1, "maxItems": 50, "items": {"$ref": "#/$defs/text"}}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"protocol": {"const": "zwave"}}},
+      "then": {"properties": {"identifiers": {
+        "type": "object", "additionalProperties": false,
+        "required": ["manufacturer_id", "product_type", "product_id"],
+        "properties": {
+          "manufacturer_id": {"$ref": "#/$defs/hex"},
+          "product_type": {"$ref": "#/$defs/hex"},
+          "product_id": {"$ref": "#/$defs/hex"}
+        }
+      }}}
+    },
+    {
+      "if": {"properties": {"protocol": {"const": "zigbee"}}},
+      "then": {"properties": {"identifiers": {
+        "type": "object", "additionalProperties": false,
+        "required": ["manufacturer", "model"],
+        "properties": {
+          "manufacturer": {"$ref": "#/$defs/text"},
+          "model": {"$ref": "#/$defs/text"}
+        }
+      }}}
+    }
+  ],
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,119}$"},
+    "recordId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"},
+    "text": {"type": "string", "minLength": 1, "maxLength": 2000},
+    "hex": {"type": "string", "pattern": "^0x[0-9A-Fa-f]{4}$"},
+    "reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["manifest_id", "artifact_id", "locator"],
+      "properties": {
+        "manifest_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"},
+        "artifact_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"},
+        "locator": {"$ref": "#/$defs/text"}
+      }
+    }
+  }
+}

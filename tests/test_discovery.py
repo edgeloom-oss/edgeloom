@@ -8,6 +8,7 @@ from discovery.discover_drivers import (
     detect_unsupported_drivers,
     discover_from_local,
     parse_args,
+    parse_fingerprints,
     summarize_fingerprints,
 )
 
@@ -105,3 +106,36 @@ def test_discovery_script_accepts_zero_as_a_real_limit(monkeypatch: pytest.Monke
 
     monkeypatch.setattr(sys, "argv", ["discover_drivers.py"])
     assert parse_args().limit is None
+
+
+def test_zwave_identity_is_normalized_without_inventing_a_model() -> None:
+    result = parse_fingerprints(
+        "zwave-lock",
+        {
+            "zwaveManufacturer": [
+                {
+                    "id": "Yale/YRD156",
+                    "manufacturerId": 0x0129,
+                    "productType": "0x803a",
+                    "productId": 0x0508,
+                    "deviceProfileName": "base-lock",
+                }
+            ]
+        },
+    )
+    assert len(result) == 1
+    fingerprint = result[0]
+    assert fingerprint.protocol == "zwave"
+    assert fingerprint.manufacturer_id == "0x0129"
+    assert fingerprint.product_type == "0x803A"
+    assert fingerprint.product_id == "0x0508"
+    assert fingerprint.model is None
+    assert fingerprint.device_id == "Yale/YRD156"
+
+
+@pytest.mark.parametrize("identifier", [True, -1, 65536, None, "not-hex"])
+def test_invalid_zwave_identifiers_fail_cleanly(identifier) -> None:
+    with pytest.raises(ValueError, match="Z-Wave identifier"):
+        parse_fingerprints(
+            "lock", {"zwaveManufacturer": [{"manufacturerId": identifier, "productType": 2, "productId": 3}]}
+        )

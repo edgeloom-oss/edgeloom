@@ -1,6 +1,6 @@
 # Discovering drivers
 
-Enumerate Edge drivers and their Zigbee fingerprints from GitHub or a local
+Enumerate Edge drivers and Zigbee/Z-Wave manufacturer fingerprints from GitHub or a local
 clone, and flag drivers that have no capability mapping yet. This is the
 `discovery` component, reachable as `edgeloom discover`.
 
@@ -18,7 +18,7 @@ rate limits):
 ```bash
 edgeloom discover \
   --source github \
-  --repo SmartThingsCommunity/edge-drivers \
+  --repo SmartThingsCommunity/SmartThingsEdgeDrivers \
   --branch main \
   --output discovery/catalog.json
 ```
@@ -30,12 +30,18 @@ directories with `fingerprints.yml`):
 edgeloom discover \
   --source local \
   --local-dir ~/edge-drivers \
-  --driver-subpath drivers \
+  --driver-subpath drivers/SmartThings \
   --output discovery/catalog-local.yaml \
   --format yaml
 ```
 
-`unsupported_drivers` in the generated report flags candidates that have no
-entry in `custom_capability_list.config`, making it easy to decide which
-drivers should be patched next.
+`unsupported_drivers` means no entry in the selected capability config, not
+that the device is incompatible or an automatic patch is available. Z-Wave
+manufacturer fingerprints retain `manufacturer_id`, `product_type`,
+`product_id` (normalized `0x0000` values), profile assignment, ID and label.
+Marketing model/manufacturer names are not inferred from protocol identifiers.
+Generic Z-Wave and Matter fingerprints are not parsed by this increment.
 
+This driver inventory is distinct from the source-linked device evidence
+[catalog](catalog.md). Discovery does not execute drivers or establish their
+behavior on a real device. Z-Wave discovery does not add Z-Wave patch support.

@@ -78,16 +78,17 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def parse_site() -> SiteParser:
+def parse_site(index: Path | None = None) -> SiteParser:
     parser = SiteParser()
-    parser.feed(INDEX.read_text(encoding="utf-8"))
+    parser.feed((index or INDEX).read_text(encoding="utf-8"))
     parser.close()
     return parser
 
 
-def lint(parser: SiteParser) -> list[str]:
+def lint(parser: SiteParser, index: Path | None = None) -> list[str]:
+    index = index or INDEX
     errors: list[str] = []
-    html = INDEX.read_text(encoding="utf-8")
+    html = index.read_text(encoding="utf-8")
     css = (SITE / "styles.css").read_text(encoding="utf-8")
     required_meta = {
         "description",
@@ -132,18 +133,25 @@ def lint(parser: SiteParser) -> list[str]:
     return errors
 
 
-def local_target(reference: str) -> tuple[Path | None, str | None]:
+def local_target(reference: str, source: Path | None = None) -> tuple[Path | None, str | None]:
+    source = source or INDEX
     parsed = urlparse(reference)
     if parsed.scheme or reference.startswith("//"):
         return None, None
     path_text = unquote(parsed.path)
-    target = INDEX if path_text in {"", ".", "./"} else (SITE / path_text).resolve()
+    if not path_text:
+        target = source
+    elif path_text.startswith("/"):
+        target = (SITE / path_text.lstrip("/")).resolve()
+    else:
+        target = (source.parent / path_text).resolve()
     if target.is_dir():
         target /= "index.html"
     return target, parsed.fragment or None
 
 
-def check_local_links(parser: SiteParser) -> tuple[list[str], set[str]]:
+def check_local_links(parser: SiteParser, source: Path | None = None) -> tuple[list[str], set[str]]:
+    source = source or INDEX
     errors: list[str] = []
     external: set[str] = set()
     site_root = SITE.resolve()
@@ -154,7 +162,7 @@ def check_local_links(parser: SiteParser) -> tuple[list[str], set[str]]:
         if parsed.scheme in {"http", "https"}:
             external.add(reference)
             continue
-        target, fragment = local_target(reference)
+        target, fragment = local_target(reference, source)
         if target is None:
             continue
         try:
@@ -164,8 +172,10 @@ def check_local_links(parser: SiteParser) -> tuple[list[str], set[str]]:
             continue
         if not target.is_file():
             errors.append(f"missing local target: {reference}")
-        if fragment and target == INDEX and fragment not in parser.ids:
-            errors.append(f"missing fragment #{fragment}")
+        if fragment and target.is_file():
+            target_ids = parser.ids if target == source else parse_site(target).ids
+            if fragment not in target_ids:
+                errors.append(f"missing fragment #{fragment} in {target.relative_to(site_root)}")
     return errors, external
 
 
@@ -199,21 +209,25 @@ def main() -> None:
     args = parse_args()
     if not args.lint and not args.links:
         args.lint = args.links = True
-    parser = parse_site()
     errors: list[str] = []
-    if args.lint:
-        errors.extend(lint(parser))
-    if args.links:
-        local_errors, external = check_local_links(parser)
-        errors.extend(local_errors)
-        if args.external:
-            errors.extend(check_external_links(external))
-            print(f"Checked {len(external)} public links")
+    external: set[str] = set()
+    pages = sorted(SITE.rglob("*.html"))
+    for page in pages:
+        parser = parse_site(page)
+        if args.lint:
+            errors.extend(f"{page.relative_to(SITE)}: {error}" for error in lint(parser, page))
+        if args.links:
+            local_errors, public = check_local_links(parser, page)
+            errors.extend(f"{page.relative_to(SITE)}: {error}" for error in local_errors)
+            external.update(public)
+    if args.links and args.external:
+        errors.extend(check_external_links(external))
+        print(f"Checked {len(external)} public links")
     if errors:
         for error in errors:
             print(f"ERROR: {error}", file=sys.stderr)
         raise SystemExit(1)
-    print("Site checks passed")
+    print(f"Site checks passed ({len(pages)} HTML pages)")
 
 
 if __name__ == "__main__":

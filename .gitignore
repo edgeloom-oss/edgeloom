@@ -6,6 +6,7 @@ __pycache__/
 *.egg-info/
 build/
 dist/
+_catalog-dist/
 release-bundle/
 _site/
 .venv/

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>$title — EdgeLoom Catalog</title>
+  <meta name="description" content="$description">
+  <meta name="theme-color" content="#f5f7f1">
+  <link rel="canonical" href="$canonical">
+  <link rel="icon" href="https://edgeloom-oss.github.io/edgeloom/assets/favicon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="$title — EdgeLoom Catalog">
+  <meta property="og:description" content="$description">
+  <meta property="og:url" content="$canonical">
+  <meta property="og:image" content="https://edgeloom-oss.github.io/edgeloom/assets/og-card.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="$title — EdgeLoom Catalog">
+  <meta name="twitter:description" content="$description">
+  <meta name="twitter:image" content="https://edgeloom-oss.github.io/edgeloom/assets/og-card.png">
+  <link rel="stylesheet" href="${prefix}styles.css">
+  <script src="${prefix}script.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header>
+    <a class="brand" href="https://edgeloom-oss.github.io/edgeloom/">
+      <span class="mark" aria-hidden="true">≋</span> EdgeLoom <span class="brand-label">/ catalog</span>
+    </a>
+    <nav aria-label="Catalog navigation">
+      <a href="$prefix">Browse</a>
+      <a href="https://github.com/edgeloom-oss/edgeloom-catalog">Contribute <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+  <main id="main" tabindex="-1">$content</main>
+  <footer>
+    <p>Open evidence. Not a certification, driver installer, or compatibility guarantee.</p>
+    <p>Catalog revision: $revision · <a href="${prefix}catalog.json">Machine-readable index</a></p>
+    <details>
+      <summary>Build provenance &amp; boundaries</summary>
+      <p>Input SHA-256: <code>$input_digest</code></p>
+      <p>Generator policy: catalog/v0.1. Implementation SHA-256: <code>$generator_digest</code>.</p>
+      <p>Declared core revision: <code>$core_pin</code> (see the catalog's CORE_REVISION).</p>
+      <p>Contracts and cross-record references passed. Manifest file digests matched.
+        Upstream source bytes: $source_bytes.</p>
+      $limitations
+    </details>
+  </footer>
+</body>
+</html>

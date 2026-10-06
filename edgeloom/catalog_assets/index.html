@@ -1,0 +1,50 @@
+<section class="intro">
+  <p class="eyebrow">An open, source-linked evidence catalog</p>
+  <h1>What does your<br>driver <em>expose?</em></h1>
+  <p class="lede">Find a device. Inspect a feature. Follow the evidence.</p>
+  <p class="scope-note">Early pilot: $devices device model(s) · $mapping_sets mapping sets · $assertions assertions.
+    Counts are evidence inventory, not supported-device or adoption metrics.</p>
+</section>
+<section class="browser" aria-label="Device browser">
+  <form id="filters" role="search">
+    <div class="search-field">
+      <label for="query">Device, feature, or protocol identifier</label>
+      <input id="query" type="search" placeholder="Try YRD156, auto relock, or 0x0508" autocomplete="off">
+    </div>
+    <div>
+      <label for="protocol">Protocol</label>
+      <select id="protocol">
+        <option value="">All protocols</option><option value="zwave">Z-Wave</option>
+        <option value="zigbee">Zigbee</option>
+      </select>
+    </div>
+    <div>
+      <label for="review">Mapping review</label>
+      <select id="review">
+        <option value="">All declared states</option><option value="candidate">Candidate</option>
+        <option value="reviewed">Reviewed</option><option value="verified">Verified</option>
+        <option value="deprecated">Deprecated</option>
+      </select>
+    </div>
+    <button type="reset" class="reset">Reset</button>
+  </form>
+  <p id="result-count" role="status" aria-live="polite">$devices device model(s) indexed</p>
+  <div class="device-grid">$cards</div>
+  <div id="empty" class="empty" hidden>
+    <h2>Not indexed — not necessarily unsupported.</h2>
+    <p>This is a small pilot, not a complete device directory. Try another term or
+      <a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=device-observation.yml">
+        suggest a device or report an observation</a>.</p>
+  </div>
+  <noscript><p>Search needs JavaScript; all device reports above remain available without it.</p></noscript>
+</section>
+<section class="how">
+  <div><span class="eyebrow">Read this catalog in three layers</span><h2>A gap is a question,<br>not a verdict.</h2></div>
+  <ol>
+    <li><strong>Device / protocol</strong><span>What do published configurations describe?</span></li>
+    <li><strong>Platform exposure</strong><span>What do the examined profiles and handlers expose?</span></li>
+    <li><strong>Neutral model</strong><span>What can this particular SDF model represent?</span></li>
+  </ol>
+  <p>Source-level findings need review and device feedback. Profile absence does not establish whole-driver
+    or UI absence; a missing model property does not establish a limitation of SDF.</p>
+</section>

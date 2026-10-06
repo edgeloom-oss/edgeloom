@@ -32,6 +32,10 @@ class DriverFingerprint:
     profile: str | None
     device_id: str | None
     label: str | None
+    protocol: str = "zigbee"
+    manufacturer_id: str | None = None
+    product_type: str | None = None
+    product_id: str | None = None
 
 
 def configure_logging(verbose: bool) -> None:
@@ -40,8 +44,15 @@ def configure_logging(verbose: bool) -> None:
 
 
 def parse_fingerprints(driver_name: str, fingerprint_data: dict) -> list[DriverFingerprint]:
+    if not isinstance(fingerprint_data, dict):
+        raise ValueError("fingerprints must be an object")
+    for key in ("zigbeeManufacturer", "zwaveManufacturer"):
+        if key in fingerprint_data and not isinstance(fingerprint_data[key], list):
+            raise ValueError(f"{key} must be a list")
     devices = []
     for device in fingerprint_data.get("zigbeeManufacturer", []):
+        if not isinstance(device, dict):
+            raise ValueError("zigbeeManufacturer entries must be objects")
         devices.append(
             DriverFingerprint(
                 driver=driver_name,
@@ -52,7 +63,36 @@ def parse_fingerprints(driver_name: str, fingerprint_data: dict) -> list[DriverF
                 label=device.get("deviceLabel"),
             )
         )
+    for device in fingerprint_data.get("zwaveManufacturer", []):
+        if not isinstance(device, dict):
+            raise ValueError("zwaveManufacturer entries must be objects")
+        devices.append(
+            DriverFingerprint(
+                driver=driver_name,
+                manufacturer=None,
+                model=None,
+                profile=device.get("deviceProfileName"),
+                device_id=device.get("id"),
+                label=device.get("deviceLabel"),
+                protocol="zwave",
+                manufacturer_id=_zwave_identifier(device.get("manufacturerId")),
+                product_type=_zwave_identifier(device.get("productType")),
+                product_id=_zwave_identifier(device.get("productId")),
+            )
+        )
     return devices
+
+
+def _zwave_identifier(value: object) -> str:
+    """Normalize 16-bit numeric protocol IDs; do not infer a marketing model."""
+    if isinstance(value, str):
+        try:
+            value = int(value, 16 if value.lower().startswith("0x") else 10)
+        except ValueError as exc:
+            raise ValueError(f"Invalid Z-Wave identifier {value!r}") from exc
+    if isinstance(value, bool) or not isinstance(value, int) or not 0 <= value <= 0xFFFF:
+        raise ValueError(f"Invalid Z-Wave identifier {value!r}")
+    return f"0x{value:04X}"
 
 
 def load_yaml(path: Path) -> dict:

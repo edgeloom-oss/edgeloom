@@ -1,0 +1,30 @@
+<a class="back" href="../../">← All device evidence</a>
+<section class="device-intro">
+  <p class="eyebrow">$protocol · source-level report</p>
+  <h1>$name</h1>
+  <p class="lede">Inspect what the published artifacts preserve, expose, or leave unresolved.</p>
+  <nav class="feature-nav" aria-label="Feature navigation">$navigation</nav>
+  <div class="facts">
+    <div><span>Identity</span><strong>$identifiers</strong><a href="$identity_url">Pinned identity source ↗</a></div>
+    <div><span>Firmware / conditions</span><strong>$firmware</strong></div>
+    <div><span>Hardware evidence</span><strong>$hardware</strong></div>
+    <div><span>Source bytes</span><strong>$source_bytes</strong><small>Not semantic verification</small></div>
+  </div>
+  <p class="notice">Source-level evidence, not an installation or patch recommendation.
+    See each mapping's declared review state below.</p>
+  <div class="report-actions">
+    <a class="button" href="$feedback">Report a mismatch ↗</a>
+    <a href="../../reports/$id.md" download>Download Markdown</a><a href="../../catalog.json">JSON index</a>
+  </div>
+</section>
+<div class="report-layout">
+  <div>$sections</div>
+  <aside>
+    <p class="eyebrow">Keep the scope visible</p><h2>Before acting</h2>
+    $limitations
+    <p>No automatic repair is offered for this case.</p>
+    <p>Feedback should identify the driver version and observation. Never post PINs, access codes, tokens,
+      household IDs, or private telemetry.</p>
+    $hardware_links
+  </aside>
+</div>

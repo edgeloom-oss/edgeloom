@@ -132,15 +132,45 @@ neutral model lacks it, or the available evidence is insufficient.
 
 ## Phase 2 — SmartThings lock pilot
 
-**Status: Next (source-license and independent-review gates open)**
+**Status: Candidate pilot populated; first usable-device-evidence slice implemented on a review branch**
+
+The separate catalog now contains one Yale YRD156 device case, three mapping
+sets, and six assertions. These are founder-authored candidates, not three
+supported devices. No independent review or physical-device test is recorded.
+Sources are referenced at fixed commits with digests rather than redistributed.
+
+### Current construction milestone — Catalog v0.1: usable device evidence
+
+1. Reconcile public status and introduce typed device identities and feature
+   associations without changing existing mapping assertions or review state.
+2. Add offline cross-record/digest checks, an explicit bounded pinned-source
+   fetch, and deterministic JSON/Markdown reports with separate source-byte,
+   locator, review, and hardware-evidence states.
+3. Generate a small searchable static browser and shareable device pages from
+   the same data. Embed a commit-pinned snapshot in the existing project site;
+   no new service, login, upstream mirror, or automatic deployment is required.
+4. Add Z-Wave manufacturer fingerprints to discovery and a five-minute,
+   no-account walkthrough. A source-level gap is not a patch-availability claim.
+5. After this vertical slice is accepted, add 3–5 distinct lock models and invite
+   targeted external review. Do not fabricate review or hardware evidence to
+   satisfy this follow-on gate. AI triage remains a later optional increment.
+
+Acceptance: a reader can understand one case in 30 seconds, reproduce a local
+report in approximately five minutes, share a source-linked finding, and report
+a mismatch without authoring a mapping. Automated checks must not promote
+candidate records or equate profile absence with complete driver/UI absence.
+
+Steps 1–4 are implemented in the current review increment. They are not yet a
+published package release or deployment. Step 5 and independent review remain
+open; this slice does not satisfy the full pilot exit gate below.
 
 Create 3–5 manually reviewed records before attempting broad ingestion. The
 pilot will connect pinned SmartThings Z-Wave and Zigbee lock artifacts with
 relevant experimental OneDM Door, Lock Status, and Lock Code models and with
 the existing 44-lock lexicon.
 
-Before public population, maintainers must resolve attribution and
-redistribution handling for experimental OneDM files and distinguish official
+Before expanding population, maintainers must resolve attribution and
+redistribution handling for any additional OneDM files and distinguish official
 platform evidence, community configuration evidence, manufacturer evidence,
 and standards context. A reference-and-hash-only pilot remains the conservative
 fallback when redistribution authority is incomplete.
@@ -168,14 +198,14 @@ small searchable static view.
 
 ## Phase 3 — open catalog and community review
 
-**Status: Planned (repository shell established)**
+**Status: Repository and contribution processes established; external review pending**
 
 The public
 [`edgeloom-oss/edgeloom-catalog`](https://github.com/edgeloom-oss/edgeloom-catalog)
-repository shell is established. It intentionally contains no catalog records
-or independent Pages deployment yet. After the pilot validates the contracts
-and the licensing gate is resolved, bootstrap its local governance and begin
-reviewed population. The core repository continues to own schemas, validators,
+repository contains the candidate pilot and its governance, licensing, source
+update, correction, submission, and independent-review processes. It has no
+independent Pages deployment. Broader population and external review remain
+future work. The core repository continues to own schemas, validators,
 adapters, and renderers. The catalog repository owns pinned manifests,
 original mapping assertions, review records, evidence outputs, and the
 generated static catalog.

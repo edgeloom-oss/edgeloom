@@ -127,6 +127,24 @@ schema authority are operator assertions: the command does not fetch or
 authenticate them and is not a standards-conformance or certification tool.
 See [Evidence records](docs/evidence-records.md).
 
+### Device evidence catalog (development increment)
+
+New `catalog check/fetch/build` commands and a draft device-navigation schema
+are in this development tree, **not PyPI 0.2.0**. The companion catalog pins
+the required core commit. Start with the
+[five-minute, no-account walkthrough](docs/catalog-quickstart.md) or the
+[catalog command and trust-boundary guide](docs/catalog.md).
+
+```bash
+edgeloom catalog check /path/to/edgeloom-catalog
+edgeloom catalog build /path/to/edgeloom-catalog --output /path/to/new-view
+```
+
+Both commands are offline. Only the explicit `catalog fetch` downloads pinned
+source bytes. Reports do not install drivers, infer patch availability, or
+promote candidate mappings. Device entries, features, sources and mapping sets
+remain separate from the existing driver discovery inventory.
+
 ## Components
 
 | Path | Component | Command | Documentation |
@@ -197,7 +215,10 @@ audit/evidence records, and the first catalog-contract slice are now on `main`.
 The next gate is a 3–5-record SmartThings lock pilot with explicit licensing and
 independent-review boundaries, rather than bulk ingestion. A separate
 [`edgeloom-catalog`](https://github.com/edgeloom-oss/edgeloom-catalog)
-repository shell exists but is not yet populated with catalog records.
+contains a founder-seeded Yale YRD156 pilot: one device case, three mapping
+sets, and six candidate assertions. None implies independent review or hardware
+testing. The next increment makes this evidence searchable and reproducible;
+see the [usable-device-evidence milestone](ROADMAP.md#current-construction-milestone--catalog-v01-usable-device-evidence).
 
 Device reports from real hardware remain especially useful; see the
 [device report template](.github/ISSUE_TEMPLATE/device_report.yml).

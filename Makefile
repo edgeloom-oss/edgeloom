@@ -49,6 +49,7 @@ site-build:
 site-lint:
 	$(PYTHON) scripts/site_check.py --lint
 	node --check site/script.js
+	node --check site/catalog/script.js
 
 site-links:
 	$(PYTHON) scripts/site_check.py --links --external

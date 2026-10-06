@@ -7,6 +7,28 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ## [Unreleased]
 
+### Added
+
+- Development-only `catalog check/fetch/build` commands join source manifests,
+  mapping sets and explicitly identified device entries, check cross-record
+  references and manifest digests, explicitly fetch bounded commit-pinned
+  source bytes, and generate deterministic JSON/Markdown/static HTML reports.
+  Source-byte checks, bounded JSON-pointer resolution, declared review states,
+  hardware evidence and semantic limitations remain separate. No imported Lua
+  is executed and no record is automatically promoted.
+- Draft v0.1 `catalog-device` navigation contract, a searchable candidate
+  catalog view, a no-account walkthrough and a disposable Zigbee
+  patch/validate/restore demonstration. Catalog tooling is not in PyPI 0.2.0.
+- Z-Wave manufacturer fingerprint discovery preserves normalized 16-bit
+  identifiers without guessing a manufacturer name or device model. Generic
+  Z-Wave/Matter fingerprints and automatic Z-Wave patching remain out of scope.
+
+### Changed
+
+- Reconcile catalog roadmap status with the populated founder-seeded pilot;
+  distinguish one indexed model from three mapping sets and six assertions.
+- Site link/lint checks now cover nested HTML and cross-page fragments.
+
 ## [0.2.0] - 2026-09-27
 
 This release makes the six-workflow toolchain and its evidence/catalog
