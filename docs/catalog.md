@@ -1,6 +1,6 @@
 # Device evidence catalog (development increment)
 
-The `catalog` commands and draft `catalog-device` schema below are **not in
+The `catalog` commands and draft `catalog-device` / `catalog-corroboration` schemas are **not in
 PyPI 0.2.0**. Use the exact core commit pinned by the catalog checkout. Existing
 source-manifest and mapping-set v0.1 contracts are unchanged.
 
@@ -33,7 +33,7 @@ artifacts per run, and writes only digest-matched UTF-8 bytes to a local cache.
 The cache is not redistributed and is separate from report output. License
 fields remain assertions; downloading bytes does not establish legal authority.
 
-Catalog input is limited to 500 structured source/mapping/device documents,
+Catalog input is limited to 500 structured source/mapping/device/corroboration documents,
 1 MiB each and 16 MiB total. Unsafe paths, symlinks, duplicate IDs, broken
 references, mismatching manifest hashes and protocol inconsistencies fail.
 Existing nonempty output is refused unless it carries the generated-file
@@ -57,6 +57,27 @@ Lua runs. A missing profile field is not whole-driver/UI absence, and a missing
 property in one SDF model is not a limitation of SDF. Existing mapping
 limitations, handler-path conditions and source maturity are retained in JSON
 and the expanded HTML evidence panels. No patch availability is inferred.
+
+## External corroboration
+
+Candidate-only sidecars in `catalog/corroboration/` add parallel observations,
+not same-layer semantic mapping edges or reviewer credits. They cite manifest
+bytes, source locators, conditions, and a declared source-family dependency DAG.
+Each device feature must reference a mapping or corroboration record. Orphan
+records, wrong device/feature joins, mismatching declared identity fields,
+unindexed sources, bad digests and cyclic/unknown lineage fail closed.
+
+Model-specific observations declare only fields the upstream matcher actually
+uses. A model-only matcher remains visibly weaker than a manufacturer/model
+signature. Generic platform paths cannot carry a device identity match.
+Neither check authenticates the interpretation of the upstream code. Python
+and TypeScript selectors remain manual-review; no imports or execution occur.
+
+`supports`, `conflicts`, `context` and `unresolved` are human-authored labels,
+not inferred outcomes. All observations survive the build: no voting,
+independence score or automatic review promotion. A simulated upstream test is
+identified as `test-fixture`, not a hardware test or a test run performed here.
+See [the evidence workflow](catalog-external-evidence.md).
 
 ## Static publication and reproducibility
 

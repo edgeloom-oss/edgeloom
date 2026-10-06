@@ -328,3 +328,187 @@ def test_author_text_is_escaped_in_html_and_markdown(dataset: Path, tmp_path: Pa
     assert "&lt;script&gt;" in html
     markdown = (tmp_path / "view/reports/acme-lock.md").read_text()
     assert "[unsafe](javascript:" not in markdown
+
+
+@pytest.fixture
+def corroborated(dataset: Path) -> Path:
+    loaded = catalog.load_catalog(dataset)
+    sources = list(loaded.sources.values())
+    first = sources[0]
+    reference = {"manifest_id": first["id"], "artifact_id": first["artifacts"][0]["id"], "locator": "/value"}
+    record = {
+        "kind": schemas.CATALOG_CORROBORATION,
+        "schema_version": "0.1",
+        "id": "acme-comparison",
+        "device_id": "acme-lock",
+        "feature_id": "state",
+        "title": "Synthetic comparison",
+        "summary": "Keep competing declarations visible.",
+        "source_manifests": [{"id": source["id"], **loaded.records[source["id"]]} for source in sources],
+        "lineage": [
+            {
+                "manifest_id": source["id"],
+                "family": "shared-backend",
+                "depends_on": [sources[0]["id"]] if index else [],
+            }
+            for index, source in enumerate(sources)
+        ],
+        "observations": [
+            {
+                "id": "generic",
+                "platform": "Synthetic platform",
+                "scope": "platform-generic",
+                "evidence_kind": "code-declaration",
+                "relationship": "context",
+                "claim": "Generic code is not device validation.",
+                "references": [reference],
+                "conditions": ["No real device observation."],
+            }
+        ],
+        "review": {"lifecycle": "candidate", "author": "synthetic-author", "reviewers": []},
+        "limitations": ["Synthetic comparison; no independent review."],
+    }
+    write_document(dataset / "catalog/corroboration/comparison.yaml", record)
+    path = dataset / "catalog/devices/acme.yaml"
+    device = schemas.load_document(path)
+    device["features"][0]["corroboration_ids"] = [record["id"]]
+    write_document(path, device)
+    return dataset
+
+
+@pytest.mark.parametrize(
+    "mutation, message",
+    [
+        ("missing-source", "not indexed"),
+        ("manifest-digest", "digest mismatch"),
+        ("manifest-id", "identity mismatch"),
+        ("undeclared-artifact", "undeclared source"),
+        ("unknown-artifact", "Unknown artifact"),
+        ("feature", "association mismatch"),
+        ("orphan", "unknown corroboration"),
+        ("cycle", "cyclic source"),
+        ("missing-lineage", "cover exactly"),
+        ("unknown-dependency", "cover exactly"),
+        ("duplicate-lineage", "duplicate id"),
+        ("duplicate-observation", "duplicate id"),
+        ("identity", "identity match differs"),
+        ("unknown-identity-key", "identity match differs"),
+        ("review-upgrade", "candidate"),
+        ("path-traversal", "segments"),
+    ],
+)
+def test_corroboration_integrity(corroborated: Path, mutation: str, message: str) -> None:
+    path = corroborated / "catalog/corroboration/comparison.yaml"
+    record = schemas.load_document(path)
+    if mutation == "missing-source":
+        record["source_manifests"][0]["path"] = "catalog/sources/missing.yaml"
+    elif mutation == "manifest-digest":
+        record["source_manifests"][0]["sha256"] = "0" * 64
+    elif mutation == "manifest-id":
+        record["source_manifests"][0]["id"] = "wrong-source"
+    elif mutation == "undeclared-artifact":
+        record["observations"][0]["references"][0]["manifest_id"] = "not-declared"
+    elif mutation == "unknown-artifact":
+        record["observations"][0]["references"][0]["artifact_id"] = "not-present"
+    elif mutation == "feature":
+        record["feature_id"] = "different-feature"
+    elif mutation == "orphan":
+        record["id"] = "different-record"
+    elif mutation == "cycle":
+        record["lineage"][0]["depends_on"] = [record["lineage"][1]["manifest_id"]]
+    elif mutation == "missing-lineage":
+        record["lineage"].pop()
+    elif mutation == "unknown-dependency":
+        record["lineage"][0]["depends_on"] = ["unknown-source"]
+    elif mutation == "duplicate-lineage":
+        record["lineage"].append(copy.deepcopy(record["lineage"][0]))
+    elif mutation == "duplicate-observation":
+        record["observations"].append(copy.deepcopy(record["observations"][0]))
+    elif mutation in {"identity", "unknown-identity-key"}:
+        observation = record["observations"][0]
+        observation["scope"] = "device-model"
+        observation["identity_evidence"] = copy.deepcopy(observation["references"][0])
+        observation["identity_match"] = (
+            {"product_id": "0x9999"} if mutation == "identity" else {"model": "Synthetic Lock"}
+        )
+    elif mutation == "review-upgrade":
+        record["review"]["lifecycle"] = "verified"
+    else:
+        record["source_manifests"][0]["path"] = "catalog/sources/../sources/file.yaml"
+    write_document(path, record)
+    with pytest.raises(catalog.CatalogError, match=message):
+        catalog.load_catalog(corroborated)
+
+
+def test_corroboration_only_feature_and_conflicts_survive(
+    corroborated: Path, tmp_path: Path, monkeypatch
+) -> None:
+    monkeypatch.setattr(catalog.requests, "get", lambda *args, **kwargs: pytest.fail("Implicit network"))
+    path = corroborated / "catalog/devices/acme.yaml"
+    device = schemas.load_document(path)
+    device["features"][0]["mapping_ids"] = []
+    write_document(path, device)
+    path = corroborated / "catalog/corroboration/comparison.yaml"
+    record = schemas.load_document(path)
+    conflicting = copy.deepcopy(record["observations"][0])
+    conflicting.update(id="conflicting", relationship="conflicts", claim="A contrary source declaration.")
+    record["observations"].append(conflicting)
+    write_document(path, record)
+    original = path.read_bytes()
+    loaded = catalog.load_catalog(corroborated)
+    index = catalog.build_index(loaded)
+    assert index == catalog.build_index(loaded)
+    assert index["counts"]["corroboration_records"] == 1
+    assert index["counts"]["source_observations"] == 2
+    assert index["corroborations"][0]["review"]["lifecycle"] == "candidate"
+    assert index["corroborations"][0]["lineage"] == record["lineage"]
+    assert all(item["review"]["lifecycle"] == "candidate" for item in index["mapping_sets"])
+    assert index["devices"][0]["hardware_evidence"] == []
+    assert "independent_sources" not in index["counts"]
+    catalog.write_site(loaded, index, tmp_path / "view")
+    html = (tmp_path / "view/devices/acme-lock/index.html").read_text()
+    report = (tmp_path / "view/reports/acme-lock.md").read_text()
+    for text in (html, report):
+        text = text.replace("\\", "")
+        assert "A contrary source declaration." in text
+        assert "conflicts" in text
+        assert "not an independence score" in text
+        assert "shared-backend" in text
+    assert path.read_bytes() == original
+
+
+def test_corroboration_identity_and_generic_scope(corroborated: Path) -> None:
+    path = corroborated / "catalog/corroboration/comparison.yaml"
+    record = schemas.load_document(path)
+    observation = record["observations"][0]
+    observation["identity_match"] = {"product_id": "0x0003"}
+    write_document(path, record)
+    with pytest.raises(catalog.CatalogError):
+        catalog.load_catalog(corroborated)  # Generic paths must not claim a device match.
+    observation["scope"] = "device-model"
+    observation["identity_evidence"] = copy.deepcopy(observation["references"][0])
+    write_document(path, record)
+    catalog.load_catalog(corroborated)
+    assert schemas.detect_kind({**record, "kind": "misspelled"}) == schemas.CATALOG_CORROBORATION
+
+
+def test_corroboration_escapes_author_content(corroborated: Path, tmp_path: Path) -> None:
+    path = corroborated / "catalog/corroboration/comparison.yaml"
+    record = schemas.load_document(path)
+    record["observations"][0]["claim"] = '<img src=x onerror="alert(1)"> [x](javascript:alert(1))'
+    write_document(path, record)
+    loaded = catalog.load_catalog(corroborated)
+    catalog.write_site(loaded, catalog.build_index(loaded), tmp_path / "view")
+    html = (tmp_path / "view/devices/acme-lock/index.html").read_text()
+    assert '<img src=x onerror="alert(1)">' not in html
+    assert "&lt;img" in html
+    assert "[x](javascript:" not in (tmp_path / "view/reports/acme-lock.md").read_text()
+
+
+def test_feature_needs_evidence_reference(dataset: Path) -> None:
+    path = dataset / "catalog/devices/acme.yaml"
+    device = schemas.load_document(path)
+    device["features"][0]["mapping_ids"] = []
+    write_document(path, device)
+    with pytest.raises(catalog.CatalogError, match="needs a mapping or corroboration"):
+        catalog.load_catalog(dataset)

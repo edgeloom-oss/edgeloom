@@ -4,12 +4,12 @@ Requires Git, Python 3.11+ and internet for installation. No SmartThings account
 hub, Home Assistant token, AI key or physical lock is needed. The new commands
 are a development increment, **not included in PyPI 0.2.0**.
 
-Until these PRs merge, clone the catalog's `codex/catalog-usable-evidence`
+Until these stacked PRs merge, clone the catalog's `codex/catalog-external-evidence`
 branch. After merge, use its default branch instead. The core checkout below
 always uses the exact `CORE_REVISION`, not an unpinned software branch.
 
 ```bash
-git clone --branch codex/catalog-usable-evidence \
+git clone --branch codex/catalog-external-evidence \
   https://github.com/edgeloom-oss/edgeloom-catalog.git
 cd edgeloom-catalog
 git clone https://github.com/edgeloom-oss/edgeloom.git .edgeloom-core
@@ -22,10 +22,10 @@ edgeloom catalog build . --output _site
 python -m http.server 4178 --bind 127.0.0.1 --directory _site
 ```
 
-Open `http://127.0.0.1:4178/`. Search **YRD156**, **auto relock**, or **0x0508**.
+Open `http://127.0.0.1:4178/`. Search **YRD156**, **YRD210**, **battery**, or **0x0508**.
 Open the report, then expand its evidence panel. Download Markdown if you want
-to share a readable finding. Choosing Zigbee or searching an absent model
-should show **Not indexed**, not an incompatibility verdict. Reports also work
+to share a readable finding. Choosing Zigbee shows the new YRD210 comparison;
+searching an absent model shows **Not indexed**, not an incompatibility verdict. Reports also work
 with JavaScript disabled; only search requires it.
 
 On Windows PowerShell, read the core pin with
@@ -58,6 +58,10 @@ need manual review. No mapping lifecycle or hardware-evidence state changes.
   an unresolved real-unit migration condition.
 - **Access identity:** an unresolved representation problem; no PIN conversion
   or credential values are provided.
+- **YRD210 battery:** distinct upstream adaptations at different layers;
+  the raw-to-final entity mapping and physical-device behavior remain untested.
+- **HA context:** generic actions and a simulated Schlage test are not model-
+  specific Yale validation or independent EdgeLoom review.
 
 Use **Report a mismatch** to contribute a version-specific observation. Remove
 PINs, lock codes, tokens, private device/household identifiers and private logs.

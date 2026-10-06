@@ -24,7 +24,16 @@ EVIDENCE_RECORD = "evidence-record"
 SOURCE_MANIFEST = "source-manifest"
 CATALOG_MAPPING_SET = "catalog-mapping-set"
 CATALOG_DEVICE = "catalog-device"
-KINDS = (PROFILE, CAPABILITY_MAP, EVIDENCE_RECORD, SOURCE_MANIFEST, CATALOG_MAPPING_SET, CATALOG_DEVICE)
+CATALOG_CORROBORATION = "catalog-corroboration"
+KINDS = (
+    PROFILE,
+    CAPABILITY_MAP,
+    EVIDENCE_RECORD,
+    SOURCE_MANIFEST,
+    CATALOG_MAPPING_SET,
+    CATALOG_DEVICE,
+    CATALOG_CORROBORATION,
+)
 
 _YAML_SUFFIXES = {".yaml", ".yml"}
 _JSON_SUFFIXES = {".json"}
@@ -160,7 +169,7 @@ def detect_kind(document: Any) -> str | None:
     if not isinstance(document, dict):
         return None
     tagged_kind = document.get("kind")
-    if tagged_kind in {SOURCE_MANIFEST, CATALOG_MAPPING_SET, CATALOG_DEVICE}:
+    if tagged_kind in {SOURCE_MANIFEST, CATALOG_MAPPING_SET, CATALOG_DEVICE, CATALOG_CORROBORATION}:
         return tagged_kind
     if (
         document.get("record_version") == "0.1"
@@ -174,6 +183,8 @@ def detect_kind(document: Any) -> str | None:
     # generic YAML with a Kubernetes-style ``kind`` remains unrelated.
     if "repository" in document and ("artifacts" in document or "ecosystem" in document):
         return SOURCE_MANIFEST
+    if "device_id" in document and "observations" in document and "lineage" in document:
+        return CATALOG_CORROBORATION
     if "source_manifests" in document or ("nodes" in document and "mappings" in document):
         return CATALOG_MAPPING_SET
     if "identity_evidence" in document and "features" in document:
@@ -384,6 +395,23 @@ def _iter_semantic_errors(document: Any, kind: str) -> Iterator[str]:
 
     if kind == CATALOG_DEVICE:
         yield from _duplicate_id_errors(document.get("features"), "features")
+        for feature in _catalog_items(document.get("features")):
+            if isinstance(feature, dict) and not (
+                feature.get("mapping_ids") or feature.get("corroboration_ids")
+            ):
+                yield "features: each feature needs a mapping or corroboration reference"
+        return
+
+    if kind == CATALOG_CORROBORATION:
+        for key in ("source_manifests", "observations"):
+            yield from _duplicate_id_errors(document.get(key), key)
+        lineage = _catalog_items(document.get("lineage"))
+        yield from _duplicate_id_errors(
+            [{"id": row.get("manifest_id")} for row in lineage if isinstance(row, dict)], "lineage"
+        )
+        for reference in _catalog_items(document.get("source_manifests")):
+            if isinstance(reference, dict):
+                yield from _posix_contract_path_errors(reference.get("path"), "source_manifests/path")
         return
 
     if kind != CATALOG_MAPPING_SET:

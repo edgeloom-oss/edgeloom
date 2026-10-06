@@ -217,7 +217,10 @@ independent-review boundaries, rather than bulk ingestion. A separate
 [`edgeloom-catalog`](https://github.com/edgeloom-oss/edgeloom-catalog)
 contains a founder-seeded Yale YRD156 pilot: one device case, three mapping
 sets, and six candidate assertions. None implies independent review or hardware
-testing. The next increment makes this evidence searchable and reproducible;
+testing. Review branches make this evidence searchable and reproducible and
+add a YRD210 Zigbee case with candidate-only HA/ZHA/Zigbee2MQTT
+[external corroboration](docs/catalog-external-evidence.md), not borrowed
+independent review or hardware validity;
 see the [usable-device-evidence milestone](ROADMAP.md#current-construction-milestone--catalog-v01-usable-device-evidence).
 
 Device reports from real hardware remain especially useful; see the

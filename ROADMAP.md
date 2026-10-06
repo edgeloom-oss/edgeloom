@@ -164,6 +164,33 @@ Steps 1–4 are implemented in the current review increment. They are not yet a
 published package release or deployment. Step 5 and independent review remain
 open; this slice does not satisfy the full pilot exit gate below.
 
+### Next review increment — external corroboration, not borrowed review
+
+Implemented on a separate stacked review branch: a draft candidate-only
+corroboration contract, exact manifest joins, scoped identity matches, declared
+acyclic source lineage, and side-by-side observations in JSON/Markdown/HTML.
+The populated first slice adds HA Z-Wave JS configuration/unknown-state context
+to YRD156 and a Yale `YRD210 PB DB` Zigbee battery/lock-exposure case from merged
+ZHA and Zigbee2MQTT snapshots. No existing mapping is promoted or rewritten.
+
+Remaining sequence:
+
+1. Review the two pending usability PRs, then this stacked increment, before
+   release or public snapshot publication.
+2. Trace the complete downstream ZHA battery entity path and request sanitized
+   raw/final-value observations; neither is evidenced by a cluster quirk alone.
+3. Add further distinct lock identities only with pinned overlap and explicit
+   variant/firmware boundaries. Do not inflate model counts from aliases.
+4. Explore Homebridge bridging loss using a bounded overlapping device case.
+   A bridge inheriting Zigbee2MQTT facts is not an independent device source;
+   its config UI schema is not a device capability description.
+5. Invite independent review of a specific candidate finding. Upstream code,
+   test fixtures, CI and source counts do not meet this human-review gate.
+
+No bulk ingestion, upstream execution, hardware-validity badge, majority-vote
+conflict resolution or AI-generated verification is included. AI-assisted
+candidate extraction remains exploratory and must preserve human disposition.
+
 Create 3–5 manually reviewed records before attempting broad ingestion. The
 pilot will connect pinned SmartThings Z-Wave and Zigbee lock artifacts with
 relevant experimental OneDM Door, Lock Status, and Lock Code models and with
