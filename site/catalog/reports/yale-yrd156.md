@@ -5,8 +5,8 @@ Source-level evidence, not a compatibility or installation recommendation.
 - Protocol: zwave
 - Identifiers: \{   "manufacturer\_id": "0x0129",   "product\_id": "0x0508",   "product\_type": "0x803A" \}
 - Firmware: Unknown; no real\-unit firmware or SLGA\_MIGRATED state recorded
-- Catalog revision: working-tree
-- Input digest: 83a216161c9b1925484747a0883cb9743da714a6ba31b4b886bbc3fb153c44ad
+- Catalog revision: 140d146f81913c213574702810098ae7a4f5f4cc
+- Input digest: 3b8ce4d6d019462230dd70781bf1de1919da83ffa7ce32e9dfa3ae7333e502a9
 - Source byte check: matched
 - Hardware evidence: none recorded
 

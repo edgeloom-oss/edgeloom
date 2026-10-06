@@ -1,6 +1,6 @@
 {
   "catalog_repository": "https://github.com/edgeloom-oss/edgeloom-catalog",
-  "catalog_revision": "working-tree",
+  "catalog_revision": "140d146f81913c213574702810098ae7a4f5f4cc",
   "checks": {
     "contracts": "passed",
     "cross_record_references": "passed",
@@ -86,13 +86,13 @@
     }
   ],
   "generator": {
-    "declared_core_revision": "c04f9c207ac40fc2a33e9b0abb4b9a739e89c6ed",
+    "declared_core_revision": "624a68a03b07b1b5aee029109f479e2b6e966e93",
     "implementation_digest": "c289ae34c44b751b0abc970a2aaaf454e70517fb24831b8af2eb929d4c4380ce",
     "package_version_label": "0.2.0",
     "policy": "catalog/v0.1",
     "version_label_is_not_release_attestation": true
   },
-  "input_digest": "83a216161c9b1925484747a0883cb9743da714a6ba31b4b886bbc3fb153c44ad",
+  "input_digest": "3b8ce4d6d019462230dd70781bf1de1919da83ffa7ce32e9dfa3ae7333e502a9",
   "limitations": [
     "Device associations, classifications, license labels, and review states are catalog-author declarations, not independently authenticated by this build.",
     "Resolved locators establish field existence only, not the interpretation, completeness, runtime behavior, SDF conformance, or interoperability of an artifact.",

@@ -60,7 +60,7 @@
 <details><summary>Evidence, source links &amp; scope boundaries</summary>
 <div class="mapping-detail"><h3>Yale YRD156 auto-relock exposure and neutral-model gaps</h3>
 <p>Declared lifecycle: candidate. Author: github:@infinitywings.
-Founder-authored candidate; not independently reviewed or verified.</p><p><a href="https://github.com/edgeloom-oss/edgeloom-catalog/blob/main/catalog/mappings/smartthings-yrd156-auto-relock-gap.yaml">Mapping record ↗</a> ·
+Founder-authored candidate; not independently reviewed or verified.</p><p><a href="https://github.com/edgeloom-oss/edgeloom-catalog/blob/140d146f81913c213574702810098ae7a4f5f4cc/catalog/mappings/smartthings-yrd156-auto-relock-gap.yaml">Mapping record ↗</a> ·
 SHA-256: <code>fc7a93164bcca584a4f7dabc60c2ee322f426f80bc52cb8edbf943ad235fafe8</code></p><ul><li>The zwave-js configuration is community evidence, not Yale authority.</li><li>No physical YRD156 or SmartThings hub was tested for this candidate.</li><li>The current schema requires a neutral-layer context node even when the mapping conclusion is neutral-model-missing; that context is the bounded lock-status property set examined for this record.</li></ul>
 <p><strong>map.yrd156-auto-relock-to-smartthings</strong>: unbound · read, write</p><ul><li>Absence is established only for the pinned base-lock profile; another profile, custom capability, or later commit could expose this setting.</li></ul><p><strong>map.yrd156-auto-relock-to-sdf</strong>: unbound · read, write</p><ul><li>The finding is bounded to the pinned OCF-derived lock-status model and does not assert that no other SDF model can describe auto relock.</li></ul>
 <ul class="evidence-list"><li><p>The community configuration identifies the YRD156 with product tuple 0x0129/0x803A/0x0508.</p>
@@ -87,7 +87,7 @@ SHA-256: <code>fc7a93164bcca584a4f7dabc60c2ee322f426f80bc52cb8edbf943ad235fafe8<
 <details><summary>Evidence, source links &amp; scope boundaries</summary>
 <div class="mapping-detail"><h3>Yale YRD156 migrated-path SmartThings lock-state mapping candidate</h3>
 <p>Declared lifecycle: candidate. Author: github:@infinitywings.
-Founder-authored candidate for the migrated handler path; not independently reviewed or verified.</p><p><a href="https://github.com/edgeloom-oss/edgeloom-catalog/blob/main/catalog/mappings/smartthings-yrd156-lock-state.yaml">Mapping record ↗</a> ·
+Founder-authored candidate for the migrated handler path; not independently reviewed or verified.</p><p><a href="https://github.com/edgeloom-oss/edgeloom-catalog/blob/140d146f81913c213574702810098ae7a4f5f4cc/catalog/mappings/smartthings-yrd156-lock-state.yaml">Mapping record ↗</a> ·
 SHA-256: <code>845267251582e4d658983c0716f7150a0ff302f25979d093a766e7d3be9ef5f7</code></p><ul><li>The analysis is based on pinned published artifacts, not physical-device tests.</li><li>No pinned record establishes the SLGA_MIGRATED state of a real YRD156. Devices without a true migration flag use legacy/default handlers whose behavior is outside this mapping set.</li><li>The OCF-derived SDF repository location is not evidence of OneDM adoption, endorsement, active maintenance, or interoperability.</li><li>Contract version 0.1 lacks a driver-source artifact role; the pinned Lua source is transparently recorded under the generic evidence role.</li></ul>
 <p><strong>map.smartthings-binary-state-to-sdf</strong>: one-to-one · event</p><ul><li>This classification covers only the strict locked/unlocked subset and does not claim a complete SmartThings lock-state translation.</li><li>Enum spelling conversion is not represented by contract version 0.1.</li></ul><p><strong>map.smartthings-extended-event-to-sdf</strong>: lossy · event</p><ul><li>The SDF property has no value corresponding to SmartThings unknown.</li><li>Method, user index, user name, and user type metadata are not preserved.</li></ul>
 <ul class="evidence-list"><li><p>The pinned fingerprint identifies product tuple 0x0129/0x803A/0x0508 and assigns the YRD156 to the base-lock profile.</p>
@@ -112,7 +112,7 @@ SHA-256: <code>845267251582e4d658983c0716f7150a0ff302f25979d093a766e7d3be9ef5f7<
 <details><summary>Evidence, source links &amp; scope boundaries</summary>
 <div class="mapping-detail"><h3>Yale YRD156 migrated-path access identity and lock-code candidate</h3>
 <p>Declared lifecycle: candidate. Author: github:@infinitywings.
-Founder-authored candidate for the migrated handler path; not independently reviewed or verified.</p><p><a href="https://github.com/edgeloom-oss/edgeloom-catalog/blob/main/catalog/mappings/smartthings-yrd156-access-identities.yaml">Mapping record ↗</a> ·
+Founder-authored candidate for the migrated handler path; not independently reviewed or verified.</p><p><a href="https://github.com/edgeloom-oss/edgeloom-catalog/blob/140d146f81913c213574702810098ae7a4f5f4cc/catalog/mappings/smartthings-yrd156-access-identities.yaml">Mapping record ↗</a> ·
 SHA-256: <code>91af6fbea3eec1f63f49782b5d54ddfc67b4663a6a3860f521cb92f0bcdd8fe7</code></p><ul><li>No real PIN, lock code, user identifier, or device credential is stored here.</li><li>The analysis is based on pinned source artifacts, not device or account tests.</li><li>No pinned record establishes the SLGA_MIGRATED state of a real YRD156. Devices without a true migration flag use legacy/default handlers whose user-code behavior is outside this mapping set.</li><li>The SDF object is a neutral data model, not an authorization or credential management specification.</li><li>Contract version 0.1 lacks a driver-source artifact role; the pinned Lua source is transparently recorded under the generic evidence role.</li></ul>
 <p><strong>map.smartthings-access-identities-to-sdf</strong>: unbound · read, write, event</p><ul><li>The conclusion is bounded to the pinned lock-code SDF object; other SDF objects or future extensions might represent identity metadata.</li></ul><p><strong>map.smartthings-credential-payload-to-sdf-list</strong>: ambiguous · write</p><ul><li>The write path accepts credentialData as a PIN payload, while the report path represents slot occupancy and identity metadata; the files do not establish one reversible value-level representation.</li><li>No transformation is proposed for security-sensitive credential values.</li></ul>
 <ul class="evidence-list"><li><p>The pinned fingerprint identifies product tuple 0x0129/0x803A/0x0508 and assigns the YRD156 to the base-lock profile used by this record.</p>
@@ -144,12 +144,12 @@ SHA-256: <code>91af6fbea3eec1f63f49782b5d54ddfc67b4663a6a3860f521cb92f0bcdd8fe7<
 </main>
   <footer>
     <p>Open evidence. Not a certification, driver installer, or compatibility guarantee.</p>
-    <p>Catalog revision: working-tree export (not commit-pinned) · <a href="../../catalog.json">Machine-readable index</a></p>
+    <p>Catalog revision: <a href="https://github.com/edgeloom-oss/edgeloom-catalog/tree/140d146f81913c213574702810098ae7a4f5f4cc">140d146f8191</a> · <a href="../../catalog.json">Machine-readable index</a></p>
     <details>
       <summary>Build provenance &amp; boundaries</summary>
-      <p>Input SHA-256: <code>83a216161c9b1925484747a0883cb9743da714a6ba31b4b886bbc3fb153c44ad</code></p>
+      <p>Input SHA-256: <code>3b8ce4d6d019462230dd70781bf1de1919da83ffa7ce32e9dfa3ae7333e502a9</code></p>
       <p>Generator policy: catalog/v0.1. Implementation SHA-256: <code>c289ae34c44b751b0abc970a2aaaf454e70517fb24831b8af2eb929d4c4380ce</code>.</p>
-      <p>Declared core revision: <code>c04f9c207ac40fc2a33e9b0abb4b9a739e89c6ed</code> (see the catalog's CORE_REVISION).</p>
+      <p>Declared core revision: <code>624a68a03b07b1b5aee029109f479e2b6e966e93</code> (see the catalog's CORE_REVISION).</p>
       <p>Contracts and cross-record references passed. Manifest file digests matched.
         Upstream source bytes: matched.</p>
       <ul><li>Device associations, classifications, license labels, and review states are catalog-author declarations, not independently authenticated by this build.</li><li>Resolved locators establish field existence only, not the interpretation, completeness, runtime behavior, SDF conformance, or interoperability of an artifact.</li><li>Selectors, JSON5 and Lua locators need manual review. No upstream Lua is executed.</li><li>Profile absence is not whole-driver or UI absence. A missing property in a particular SDF model is not a limitation of SDF itself.</li><li>Hardware-evidence links are reported observations, not tests performed by this tool. No patch availability is inferred.</li></ul>
