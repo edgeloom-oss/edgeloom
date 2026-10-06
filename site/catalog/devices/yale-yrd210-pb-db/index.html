@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Yale YRD210 PB DB (Zigbee) — EdgeLoom Catalog</title>
+  <meta name="description" content="Source-linked feature evidence for Yale YRD210 PB DB (Zigbee). Read findings, limits, and pinned sources; no hardware test or automatic patch is implied.">
+  <meta name="theme-color" content="#f5f7f1">
+  <link rel="canonical" href="https://edgeloom-oss.github.io/edgeloom/catalog/devices/yale-yrd210-pb-db/">
+  <link rel="icon" href="https://edgeloom-oss.github.io/edgeloom/assets/favicon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Yale YRD210 PB DB (Zigbee) — EdgeLoom Catalog">
+  <meta property="og:description" content="Source-linked feature evidence for Yale YRD210 PB DB (Zigbee). Read findings, limits, and pinned sources; no hardware test or automatic patch is implied.">
+  <meta property="og:url" content="https://edgeloom-oss.github.io/edgeloom/catalog/devices/yale-yrd210-pb-db/">
+  <meta property="og:image" content="https://edgeloom-oss.github.io/edgeloom/assets/og-card.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Yale YRD210 PB DB (Zigbee) — EdgeLoom Catalog">
+  <meta name="twitter:description" content="Source-linked feature evidence for Yale YRD210 PB DB (Zigbee). Read findings, limits, and pinned sources; no hardware test or automatic patch is implied.">
+  <meta name="twitter:image" content="https://edgeloom-oss.github.io/edgeloom/assets/og-card.png">
+  <link rel="stylesheet" href="../../styles.css">
+  <script src="../../script.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header>
+    <a class="brand" href="https://edgeloom-oss.github.io/edgeloom/">
+      <span class="mark" aria-hidden="true">≋</span> EdgeLoom <span class="brand-label">/ catalog</span>
+    </a>
+    <nav aria-label="Catalog navigation">
+      <a href="../../">Browse</a>
+      <a href="https://github.com/edgeloom-oss/edgeloom-catalog">Contribute <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+  <main id="main" tabindex="-1"><a class="back" href="../../">← All device evidence</a>
+<section class="device-intro">
+  <p class="eyebrow">zigbee · source-level report</p>
+  <h1>Yale YRD210 PB DB (Zigbee)</h1>
+  <p class="lede">Inspect what the published artifacts preserve, expose, or leave unresolved.</p>
+  <nav class="feature-nav" aria-label="Feature navigation"><a href="#battery">Battery normalization</a><a href="#lock-state">Lock control and observed state</a></nav>
+  <div class="facts">
+    <div><span>Identity</span><strong>Yale / YRD210 PB DB</strong><a href="https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py">Pinned identity source ↗</a></div>
+    <div><span>Firmware / conditions</span><strong>Unknown; exact endpoint/cluster signature and installed platform versions unconfirmed</strong></div>
+    <div><span>Hardware evidence</span><strong>None recorded</strong></div>
+    <div><span>Source bytes</span><strong>matched</strong><small>Not semantic verification</small></div>
+  </div>
+  <p class="notice">Source-level evidence, not an installation or patch recommendation.
+    See each record's declared review state below.</p>
+  <div class="report-actions">
+    <a class="button" href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=device-observation.yml&amp;title=%5BDevice%20observation%5D%20Yale%20YRD210%20PB%20DB%20%28Zigbee%29">Report a mismatch ↗</a>
+    <a href="../../reports/yale-yrd210-pb-db.md" download>Download Markdown</a><a href="../../catalog.json">JSON index</a>
+  </div>
+</section>
+<div class="report-layout">
+  <div><section id="battery" class="feature">
+<p class="eyebrow">Feature evidence</p><h2>Battery normalization</h2>
+<p class="feature-summary">Two upstream adaptations for the same model string, at different layers. Raw cluster values and final entity percentages are not interchangeable.</p>
+<div class="comparison">
+<p class="eyebrow">External corroboration · candidate</p><h3>Same battery intent, different adaptation</h3>
+<p>Both snapshots account for nonstandard battery reporting, but at different layers. Compare the raw attribute and the final entity value before proposing a numeric binding; do not copy either adjustment twice.</p>
+<div class="comparison-grid"><article class="observation">
+<h3>ZHA quirk</h3>
+<p class="state">supports · code-declaration</p>
+<p>The Yale YRD210 PB DB signature selects a replacement DoublingPowerConfigurationCluster. That cluster multiplies battery_percentage_remaining (0x0021) by two.</p>
+<p class="identity-match">Declared match: manufacturer: Yale; model: YRD210 PB DB</p></article><article class="observation">
+<h3>Zigbee2MQTT converter</h3>
+<p class="state">supports · code-declaration</p>
+<p>The YRD210 PB DB entry uses dontDividePercentage: true. The battery converter therefore skips its default divide-by-two step, when the reported percentage exists and is below 255.</p>
+<p class="identity-match">Declared match: model: YRD210 PB DB</p></article></div>
+<details><summary>Pinned sources, conditions &amp; declared lineage</summary>
+<p>Curator: github:@infinitywings. No independent EdgeLoom reviewer recorded.
+<a href="https://github.com/edgeloom-oss/edgeloom-catalog/blob/f52d6eebf2092b323c71069dee84c3aa12d51f3e/catalog/corroboration/yrd210-battery-normalization.json">Canonical record ↗</a></p>
+<h4>ZHA quirk</h4><ul><li>The full endpoint/cluster signature must also match; manufacturer/model alone is insufficient for quirk selection.</li><li>This is a cluster-attribute adjustment, not a claim that the final HA entity shows twice the battery percentage.</li><li>Firmware and downstream ZHA entity normalization are not inspected in this record.</li></ul><ul><li><a href="https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py">Pinned source ↗</a> <code>YRD210PBDB220TSLL.signature and replacement</code> <span class="locator-state">Locator: manual-review</span></li><li><a href="https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/__init__.py">Pinned source ↗</a> <code>DoublingPowerConfigurationCluster._update_attribute</code> <span class="locator-state">Locator: manual-review</span></li><li><a href="https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py">Pinned source ↗</a> <code>YRD210PBDB220TSLL.signature.MODELS_INFO</code> <span class="locator-state">Locator: manual-review</span></li></ul><h4>Zigbee2MQTT converter</h4><ul><li>This definition matches zigbeeModel, without an explicit manufacturer constraint; vendor is descriptive metadata.</li><li>voltageToPercentage must be absent for the selected percentage branch.</li><li>Static source inspection only; no converter or upstream driver is executed.</li></ul><ul><li><a href="https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts">Pinned source ↗</a> <code>YRD210-HA-605; lockExtend({battery: {dontDividePercentage: true}})</code> <span class="locator-state">Locator: manual-review</span></li><li><a href="https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/converters/fromZigbee.ts">Pinned source ↗</a> <code>battery.convert; batteryPercentageRemaining; dontDividePercentage</code> <span class="locator-state">Locator: manual-review</span></li><li><a href="https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts">Pinned source ↗</a> <code>definitions[zigbeeModel includes YRD210 PB DB]</code> <span class="locator-state">Locator: manual-review</span></li></ul><h4>Source lineage — not an independence score</h4><ul><li>zha-yale-d6fcec5 · family: zha-quirks · depends on: none declared in this record</li><li>z2m-yale-5750b44 · family: zigbee-herdsman-converters · depends on: none declared in this record</li></ul>
+<ul><li>Human-authored candidate observations; no independent EdgeLoom review or physical-device test.</li><li>Sources are pinned snapshots, not a claim about the currently installed integration, coordinator or firmware.</li><li>Relationship labels are curator interpretations, not computed semantic equivalence. Conflicting observations must remain visible.</li><li>Different declared source families are not proof of independence: shared specs, authors or copied knowledge may exist.</li><li>No raw device report, final-entity comparison, unit-test result or SDF binding is established.</li></ul></details></div>
+<div class="next"><h3>What you can do next</h3><ul><li>Compare the exact manufacturer/model and full endpoint/cluster signature.</li><li>Report a sanitized raw battery attribute and final entity value, including firmware and platform versions.</li><li>Do not apply either adjustment twice or treat this report as a patch recommendation.</li></ul></div>
+</section>
+<section id="lock-state" class="feature">
+<p class="eyebrow">Feature evidence</p><h2>Lock control and observed state</h2>
+<p class="feature-summary">A cluster declaration and a richer exposes declaration are different evidence scopes. No complete cross-platform or SDF mapping has been established.</p>
+<div class="comparison">
+<p class="eyebrow">External corroboration · candidate</p><h3>Cluster declaration versus exposed state</h3>
+<p>The matching ZHA quirk retains a DoorLock cluster. Zigbee2MQTT declares separate command/state and actual-state fields. These artifacts alone do not establish equal UI behavior or a complete cross-platform mapping.</p>
+<div class="comparison-grid"><article class="observation">
+<h3>ZHA quirk</h3>
+<p class="state">context · code-declaration</p>
+<p>YRD210PBDB220TSLL includes DoorLock in its signature and replacement input clusters. The quirk itself does not define the downstream HA lock entity&#x27;s states.</p>
+<p class="identity-match">Declared match: manufacturer: Yale; model: YRD210 PB DB</p></article><article class="observation">
+<h3>Zigbee2MQTT exposes</h3>
+<p class="state">context · code-declaration</p>
+<p>The shared e.lock() constructor declares state as LOCK/UNLOCK with state/set/get access, and lock_state as not_fully_locked/locked/unlocked with state-only access.</p>
+<p class="identity-match">Declared match: model: YRD210 PB DB</p></article></div>
+<details><summary>Pinned sources, conditions &amp; declared lineage</summary>
+<p>Curator: github:@infinitywings. No independent EdgeLoom reviewer recorded.
+<a href="https://github.com/edgeloom-oss/edgeloom-catalog/blob/f52d6eebf2092b323c71069dee84c3aa12d51f3e/catalog/corroboration/yrd210-lock-exposure.json">Canonical record ↗</a></p>
+<h4>ZHA quirk</h4><ul><li>Endpoint and complete cluster signature must match.</li><li>Cluster presence is not whole-platform exposure or hardware success.</li></ul><ul><li><a href="https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py">Pinned source ↗</a> <code>YRD210PBDB220TSLL.signature and replacement; DoorLock.cluster_id</code> <span class="locator-state">Locator: manual-review</span></li><li><a href="https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py">Pinned source ↗</a> <code>YRD210PBDB220TSLL.signature.MODELS_INFO</code> <span class="locator-state">Locator: manual-review</span></li></ul><h4>Zigbee2MQTT exposes</h4><ul><li>Model-only matcher; no explicit manufacturer constraint in this definition.</li><li>Exposed metadata is not a firmware capability test or confirmation that all state values occur.</li></ul><ul><li><a href="https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts">Pinned source ↗</a> <code>YRD210-HA-605; lockExtend; exposes e.lock()</code> <span class="locator-state">Locator: manual-review</span></li><li><a href="https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/lib/exposes.ts">Pinned source ↗</a> <code>presets.lock; Lock.withState; Lock.withLockState; access</code> <span class="locator-state">Locator: manual-review</span></li><li><a href="https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts">Pinned source ↗</a> <code>definitions[zigbeeModel includes YRD210 PB DB]</code> <span class="locator-state">Locator: manual-review</span></li></ul><h4>Source lineage — not an independence score</h4><ul><li>zha-yale-d6fcec5 · family: zha-quirks · depends on: none declared in this record</li><li>z2m-yale-5750b44 · family: zigbee-herdsman-converters · depends on: none declared in this record</li></ul>
+<ul><li>Human-authored candidate observations; no independent EdgeLoom review or physical-device test.</li><li>Sources are pinned snapshots, not a claim about the currently installed integration, coordinator or firmware.</li><li>Relationship labels are curator interpretations, not computed semantic equivalence. Conflicting observations must remain visible.</li><li>No SDF correspondence is added for this Zigbee case; lack of a catalog binding is not a limitation of SDF.</li><li>Commands, observations and partially locked state must not be collapsed into a single binary semantic binding.</li></ul></details></div>
+<div class="next"><h3>What you can do next</h3><ul><li>Distinguish a requested lock command from the reported actual lock state.</li><li>Retain partially locked and unknown values when investigating a correspondence.</li><li>Contribute a source correction or sanitized observation; never include real PINs or user identifiers.</li></ul></div>
+</section></div>
+  <aside>
+    <p class="eyebrow">Keep the scope visible</p><h2>Before acting</h2>
+    <ul><li>Founder-authored candidate corroboration only; no independent review or hardware testing.</li><li>Not the YRD156 Z-Wave case; protocol variants and nearby marketing models are not interchangeable.</li><li>ZHA requires the full device signature; Zigbee2MQTT&#x27;s selected entry uses a weaker model-only matcher.</li><li>No SDF binding, safe installation recipe or automatic repair is provided for this case.</li><li>Source lineage is declared and incomplete; no independent-source or adoption score is inferred.</li></ul>
+    <p>No automatic repair is offered for this case.</p>
+    <p>Feedback should identify the driver version and observation. Never post PINs, access codes, tokens,
+      household IDs, or private telemetry.</p>
+    <ul></ul>
+  </aside>
+</div>
+</main>
+  <footer>
+    <p>Open evidence. Not a certification, driver installer, or compatibility guarantee.</p>
+    <p>Catalog revision: <a href="https://github.com/edgeloom-oss/edgeloom-catalog/tree/f52d6eebf2092b323c71069dee84c3aa12d51f3e">f52d6eebf209</a> · <a href="../../catalog.json">Machine-readable index</a></p>
+    <details>
+      <summary>Build provenance &amp; boundaries</summary>
+      <p>Input SHA-256: <code>acc594d4fa969e56779ef8fa717bf9ac1880711db81ae5ce3ca04b660e6cbba1</code></p>
+      <p>Generator policy: catalog/v0.1. Implementation SHA-256: <code>2a56cda3068f3238f23558f48aeb85af830c8a68119c594c0e55c221d135c4e8</code>.</p>
+      <p>Declared core revision: <code>4f321798aa7352c65c080aa4b8a6ff0d1e3a45c6</code> (see the catalog's CORE_REVISION).</p>
+      <p>Contracts and cross-record references passed. Manifest file digests matched.
+        Upstream source bytes: matched.</p>
+      <ul><li>Device associations, classifications, license labels, and review states are catalog-author declarations, not independently authenticated by this build.</li><li>Resolved locators establish field existence only, not the interpretation, completeness, runtime behavior, SDF conformance, or interoperability of an artifact.</li><li>Selectors, JSON5 and Lua locators need manual review. No upstream Lua is executed.</li><li>Profile absence is not whole-driver or UI absence. A missing property in a particular SDF model is not a limitation of SDF itself.</li><li>Hardware-evidence links are reported observations, not tests performed by this tool. No patch availability is inferred.</li><li>Cross-source observations and lineage are curator declarations. Shared backends are not independent evidence; upstream test fixtures are not physical-device tests or independent EdgeLoom review. No source count promotes a candidate.</li></ul>
+    </details>
+  </footer>
+</body>
+</html>

@@ -2,8 +2,10 @@
   "files": [
     "catalog.json",
     "devices/yale-yrd156/index.html",
+    "devices/yale-yrd210-pb-db/index.html",
     "index.html",
     "reports/yale-yrd156.md",
+    "reports/yale-yrd210-pb-db.md",
     "script.js",
     "styles.css"
   ]

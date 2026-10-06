@@ -1,21 +1,633 @@
 {
   "catalog_repository": "https://github.com/edgeloom-oss/edgeloom-catalog",
-  "catalog_revision": "140d146f81913c213574702810098ae7a4f5f4cc",
+  "catalog_revision": "f52d6eebf2092b323c71069dee84c3aa12d51f3e",
   "checks": {
     "contracts": "passed",
     "cross_record_references": "passed",
     "manifest_digests": "matched",
     "source_bytes": "matched"
   },
+  "corroborations": [
+    {
+      "device_id": "yale-yrd156",
+      "feature_id": "auto-relock",
+      "id": "yrd156-ha-configuration-path",
+      "kind": "catalog-corroboration",
+      "limitations": [
+        "Human-authored candidate observations; no independent EdgeLoom review or physical-device test.",
+        "Sources are pinned snapshots, not a claim about the currently installed integration, coordinator or firmware.",
+        "Relationship labels are curator interpretations, not computed semantic equivalence. Conflicting observations must remain visible.",
+        "HA and Z-Wave JS share a backend lineage; they are not two independent attestations of the device's behavior.",
+        "The lineage edge records shared stack ancestry, not an exact runtime dependency/version lock."
+      ],
+      "lineage": [
+        {
+          "depends_on": [],
+          "family": "zwave-js-stack",
+          "manifest_id": "zwave-js-yrd156-c4c599e"
+        },
+        {
+          "depends_on": [
+            "zwave-js-yrd156-c4c599e"
+          ],
+          "family": "zwave-js-stack",
+          "manifest_id": "ha-zwave-lock-067f882"
+        }
+      ],
+      "observations": [
+        {
+          "claim": "The YRD156 configuration imports parameter 3's auto-relock duration definition: seconds, 0–180, default 30. Parameter 2 separately enables auto-relock.",
+          "conditions": [
+            "Community configuration only; parameter availability and enable/disable semantics need firmware-specific confirmation.",
+            "The chosen tuple is not interchangeable with every Yale model or protocol variant."
+          ],
+          "evidence_kind": "code-declaration",
+          "id": "zwjs-parameter",
+          "identity_evidence": {
+            "artifact_id": "zwave-js-yrd156-config",
+            "locator": "/devices/0",
+            "manifest_id": "zwave-js-yrd156-c4c599e"
+          },
+          "identity_match": {
+            "manufacturer_id": "0x0129",
+            "product_id": "0x0508",
+            "product_type": "0x803A"
+          },
+          "locator_checks": [
+            {
+              "artifact_id": "zwave-js-yrd156-config",
+              "locator": "/paramInformation",
+              "manifest_id": "zwave-js-yrd156-c4c599e",
+              "status": "resolved",
+              "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json"
+            },
+            {
+              "artifact_id": "zwave-js-yale-template",
+              "locator": "auto_relock_time_180; auto_relock",
+              "manifest_id": "zwave-js-yrd156-c4c599e",
+              "status": "manual-review",
+              "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/templates/yale_template.json"
+            },
+            {
+              "artifact_id": "zwave-js-master-template",
+              "locator": "base_0-180_nounit",
+              "manifest_id": "zwave-js-yrd156-c4c599e",
+              "status": "manual-review",
+              "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/templates/master_template.json"
+            },
+            {
+              "artifact_id": "zwave-js-yrd156-config",
+              "locator": "/devices/0",
+              "manifest_id": "zwave-js-yrd156-c4c599e",
+              "status": "resolved",
+              "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json"
+            }
+          ],
+          "platform": "Z-Wave JS configuration",
+          "references": [
+            {
+              "artifact_id": "zwave-js-yrd156-config",
+              "locator": "/paramInformation",
+              "manifest_id": "zwave-js-yrd156-c4c599e"
+            },
+            {
+              "artifact_id": "zwave-js-yale-template",
+              "locator": "auto_relock_time_180; auto_relock",
+              "manifest_id": "zwave-js-yrd156-c4c599e"
+            },
+            {
+              "artifact_id": "zwave-js-master-template",
+              "locator": "base_0-180_nounit",
+              "manifest_id": "zwave-js-yrd156-c4c599e"
+            }
+          ],
+          "relationship": "supports",
+          "scope": "device-model"
+        },
+        {
+          "claim": "set_config_parameter declares parameter, value, endpoint and optional value_size fields. This is a generic entry point for configuration parameters, not a YRD156-specific successful write.",
+          "conditions": [
+            "Requires the relevant runtime node metadata, permissions and supported parameter.",
+            "The pinned catalog Z-Wave JS config is a comparison baseline, not a claim that HA deploys exactly that revision."
+          ],
+          "evidence_kind": "code-declaration",
+          "id": "ha-configuration-action",
+          "locator_checks": [
+            {
+              "artifact_id": "ha-zwave-services",
+              "locator": "/set_config_parameter/fields",
+              "manifest_id": "ha-zwave-lock-067f882",
+              "status": "resolved",
+              "url": "https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/services.yaml"
+            }
+          ],
+          "platform": "Home Assistant · Z-Wave JS",
+          "references": [
+            {
+              "artifact_id": "ha-zwave-services",
+              "locator": "/set_config_parameter/fields",
+              "manifest_id": "ha-zwave-lock-067f882"
+            }
+          ],
+          "relationship": "context",
+          "scope": "platform-generic"
+        },
+        {
+          "claim": "async_set_lock_configuration passes auto_relock_time to DoorLockCCConfigurationSetOptions. This protocol-level option is not proof of equivalence to Yale's configuration parameter 3.",
+          "conditions": [
+            "Device command-class version and actual supported options are unknown for this case.",
+            "No operational instructions, write payloads or safe setting recommendation are provided."
+          ],
+          "evidence_kind": "code-declaration",
+          "id": "ha-doorlock-configuration",
+          "locator_checks": [
+            {
+              "artifact_id": "ha-zwave-lock",
+              "locator": "ZWaveLock.async_set_lock_configuration; DoorLockCCConfigurationSetOptions",
+              "manifest_id": "ha-zwave-lock-067f882",
+              "status": "manual-review",
+              "url": "https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/lock.py"
+            },
+            {
+              "artifact_id": "ha-zwave-services",
+              "locator": "/set_lock_configuration/fields/auto_relock_time",
+              "manifest_id": "ha-zwave-lock-067f882",
+              "status": "resolved",
+              "url": "https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/services.yaml"
+            }
+          ],
+          "platform": "Home Assistant · Door Lock CC",
+          "references": [
+            {
+              "artifact_id": "ha-zwave-lock",
+              "locator": "ZWaveLock.async_set_lock_configuration; DoorLockCCConfigurationSetOptions",
+              "manifest_id": "ha-zwave-lock-067f882"
+            },
+            {
+              "artifact_id": "ha-zwave-services",
+              "locator": "/set_lock_configuration/fields/auto_relock_time",
+              "manifest_id": "ha-zwave-lock-067f882"
+            }
+          ],
+          "relationship": "unresolved",
+          "scope": "platform-generic"
+        }
+      ],
+      "path": "catalog/corroboration/yrd156-ha-configuration-path.json",
+      "review": {
+        "author": "github:@infinitywings",
+        "lifecycle": "candidate",
+        "reviewers": []
+      },
+      "schema_version": "0.1",
+      "sha256": "0ff17f9fa50da77e247cb87411a24832435ccce59d1bb2f5528cf3096c21c4f0",
+      "source_manifests": [
+        {
+          "id": "zwave-js-yrd156-c4c599e",
+          "path": "catalog/sources/zwave-js-yrd156-c4c599e.yaml",
+          "sha256": "72d981b9af12b3d525a45bb0f5dc37941bab918287ac327294e5ac87c97790de"
+        },
+        {
+          "id": "ha-zwave-lock-067f882",
+          "path": "catalog/sources/ha-zwave-lock-067f882.json",
+          "sha256": "1caaa16559465dee408eb216185ea6ed590dc1f7938729a4e68d405e023a8c25"
+        }
+      ],
+      "summary": "The model-specific community configuration and HA's generic actions describe different interfaces. A configuration-parameter write must not be equated with Door Lock CC auto_relock_time.",
+      "title": "Configuration parameter versus lock configuration"
+    },
+    {
+      "device_id": "yale-yrd156",
+      "feature_id": "lock-state",
+      "id": "yrd156-ha-unknown-state",
+      "kind": "catalog-corroboration",
+      "limitations": [
+        "Human-authored candidate observations; no independent EdgeLoom review or physical-device test.",
+        "Sources are pinned snapshots, not a claim about the currently installed integration, coordinator or firmware.",
+        "Relationship labels are curator interpretations, not computed semantic equivalence. Conflicting observations must remain visible.",
+        "This record does not broaden the existing locked/unlocked SDF subset or establish a reversible mapping.",
+        "Existing SmartThings SLGA_MIGRATED uncertainty and all original mapping limits remain unchanged."
+      ],
+      "lineage": [
+        {
+          "depends_on": [],
+          "family": "zwave-js-stack",
+          "manifest_id": "zwave-js-yrd156-c4c599e"
+        },
+        {
+          "depends_on": [
+            "zwave-js-yrd156-c4c599e"
+          ],
+          "family": "zwave-js-stack",
+          "manifest_id": "ha-zwave-lock-067f882"
+        }
+      ],
+      "observations": [
+        {
+          "claim": "ZWaveLock.is_locked returns None for a missing primary value or DoorLockMode.UNKNOWN, instead of treating it as unlocked.",
+          "conditions": [
+            "Generic entity code; no YRD156-specific node capture is present.",
+            "The underlying Z-Wave JS stack supplies command-class values."
+          ],
+          "evidence_kind": "code-declaration",
+          "id": "ha-unknown-state",
+          "locator_checks": [
+            {
+              "artifact_id": "ha-zwave-lock",
+              "locator": "ZWaveLock.is_locked",
+              "manifest_id": "ha-zwave-lock-067f882",
+              "status": "manual-review",
+              "url": "https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/lock.py"
+            }
+          ],
+          "platform": "Home Assistant · Z-Wave JS",
+          "references": [
+            {
+              "artifact_id": "ha-zwave-lock",
+              "locator": "ZWaveLock.is_locked",
+              "manifest_id": "ha-zwave-lock-067f882"
+            }
+          ],
+          "relationship": "context",
+          "scope": "platform-generic"
+        },
+        {
+          "claim": "test_door_lock_no_value replaces a Schlage BE469 fixture's mode value with None and asserts STATE_UNKNOWN.",
+          "conditions": [
+            "This is a Schlage fixture, not a YRD156 hardware test.",
+            "The upstream test was inspected, not executed by EdgeLoom; repository CI is not inherited as a per-device pass."
+          ],
+          "evidence_kind": "test-fixture",
+          "id": "ha-missing-value-test",
+          "locator_checks": [
+            {
+              "artifact_id": "ha-zwave-test-lock",
+              "locator": "test_door_lock_no_value",
+              "manifest_id": "ha-zwave-lock-067f882",
+              "status": "manual-review",
+              "url": "https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/tests/components/zwave_js/test_lock.py"
+            }
+          ],
+          "platform": "Home Assistant · simulated test",
+          "references": [
+            {
+              "artifact_id": "ha-zwave-test-lock",
+              "locator": "test_door_lock_no_value",
+              "manifest_id": "ha-zwave-lock-067f882"
+            }
+          ],
+          "relationship": "context",
+          "scope": "platform-generic"
+        }
+      ],
+      "path": "catalog/corroboration/yrd156-ha-unknown-state.json",
+      "review": {
+        "author": "github:@infinitywings",
+        "lifecycle": "candidate",
+        "reviewers": []
+      },
+      "schema_version": "0.1",
+      "sha256": "ba71e36b6a781fb3359b1945840f2f98d8aa5ac1bfb0ed63dc9e9b5a07c51cc9",
+      "source_manifests": [
+        {
+          "id": "ha-zwave-lock-067f882",
+          "path": "catalog/sources/ha-zwave-lock-067f882.json",
+          "sha256": "1caaa16559465dee408eb216185ea6ed590dc1f7938729a4e68d405e023a8c25"
+        },
+        {
+          "id": "zwave-js-yrd156-c4c599e",
+          "path": "catalog/sources/zwave-js-yrd156-c4c599e.yaml",
+          "sha256": "72d981b9af12b3d525a45bb0f5dc37941bab918287ac327294e5ac87c97790de"
+        }
+      ],
+      "summary": "HA's generic lock path retains an unknown result. Its simulated missing-value test is useful implementation context, but does not validate the YRD156 candidate mapping or its SmartThings migration condition.",
+      "title": "Keep unknown state separate"
+    },
+    {
+      "device_id": "yale-yrd210-pb-db",
+      "feature_id": "battery",
+      "id": "yrd210-battery-normalization",
+      "kind": "catalog-corroboration",
+      "limitations": [
+        "Human-authored candidate observations; no independent EdgeLoom review or physical-device test.",
+        "Sources are pinned snapshots, not a claim about the currently installed integration, coordinator or firmware.",
+        "Relationship labels are curator interpretations, not computed semantic equivalence. Conflicting observations must remain visible.",
+        "Different declared source families are not proof of independence: shared specs, authors or copied knowledge may exist.",
+        "No raw device report, final-entity comparison, unit-test result or SDF binding is established."
+      ],
+      "lineage": [
+        {
+          "depends_on": [],
+          "family": "zha-quirks",
+          "manifest_id": "zha-yale-d6fcec5"
+        },
+        {
+          "depends_on": [],
+          "family": "zigbee-herdsman-converters",
+          "manifest_id": "z2m-yale-5750b44"
+        }
+      ],
+      "observations": [
+        {
+          "claim": "The Yale YRD210 PB DB signature selects a replacement DoublingPowerConfigurationCluster. That cluster multiplies battery_percentage_remaining (0x0021) by two.",
+          "conditions": [
+            "The full endpoint/cluster signature must also match; manufacturer/model alone is insufficient for quirk selection.",
+            "This is a cluster-attribute adjustment, not a claim that the final HA entity shows twice the battery percentage.",
+            "Firmware and downstream ZHA entity normalization are not inspected in this record."
+          ],
+          "evidence_kind": "code-declaration",
+          "id": "zha-doubling",
+          "identity_evidence": {
+            "artifact_id": "zha-yale-realliving",
+            "locator": "YRD210PBDB220TSLL.signature.MODELS_INFO",
+            "manifest_id": "zha-yale-d6fcec5"
+          },
+          "identity_match": {
+            "manufacturer": "Yale",
+            "model": "YRD210 PB DB"
+          },
+          "locator_checks": [
+            {
+              "artifact_id": "zha-yale-realliving",
+              "locator": "YRD210PBDB220TSLL.signature and replacement",
+              "manifest_id": "zha-yale-d6fcec5",
+              "status": "manual-review",
+              "url": "https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py"
+            },
+            {
+              "artifact_id": "zha-battery-cluster",
+              "locator": "DoublingPowerConfigurationCluster._update_attribute",
+              "manifest_id": "zha-yale-d6fcec5",
+              "status": "manual-review",
+              "url": "https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/__init__.py"
+            },
+            {
+              "artifact_id": "zha-yale-realliving",
+              "locator": "YRD210PBDB220TSLL.signature.MODELS_INFO",
+              "manifest_id": "zha-yale-d6fcec5",
+              "status": "manual-review",
+              "url": "https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py"
+            }
+          ],
+          "platform": "ZHA quirk",
+          "references": [
+            {
+              "artifact_id": "zha-yale-realliving",
+              "locator": "YRD210PBDB220TSLL.signature and replacement",
+              "manifest_id": "zha-yale-d6fcec5"
+            },
+            {
+              "artifact_id": "zha-battery-cluster",
+              "locator": "DoublingPowerConfigurationCluster._update_attribute",
+              "manifest_id": "zha-yale-d6fcec5"
+            }
+          ],
+          "relationship": "supports",
+          "scope": "device-model"
+        },
+        {
+          "claim": "The YRD210 PB DB entry uses dontDividePercentage: true. The battery converter therefore skips its default divide-by-two step, when the reported percentage exists and is below 255.",
+          "conditions": [
+            "This definition matches zigbeeModel, without an explicit manufacturer constraint; vendor is descriptive metadata.",
+            "voltageToPercentage must be absent for the selected percentage branch.",
+            "Static source inspection only; no converter or upstream driver is executed."
+          ],
+          "evidence_kind": "code-declaration",
+          "id": "z2m-no-halving",
+          "identity_evidence": {
+            "artifact_id": "z2m-yale-definitions",
+            "locator": "definitions[zigbeeModel includes YRD210 PB DB]",
+            "manifest_id": "z2m-yale-5750b44"
+          },
+          "identity_match": {
+            "model": "YRD210 PB DB"
+          },
+          "locator_checks": [
+            {
+              "artifact_id": "z2m-yale-definitions",
+              "locator": "YRD210-HA-605; lockExtend({battery: {dontDividePercentage: true}})",
+              "manifest_id": "z2m-yale-5750b44",
+              "status": "manual-review",
+              "url": "https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts"
+            },
+            {
+              "artifact_id": "z2m-battery-converter",
+              "locator": "battery.convert; batteryPercentageRemaining; dontDividePercentage",
+              "manifest_id": "z2m-yale-5750b44",
+              "status": "manual-review",
+              "url": "https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/converters/fromZigbee.ts"
+            },
+            {
+              "artifact_id": "z2m-yale-definitions",
+              "locator": "definitions[zigbeeModel includes YRD210 PB DB]",
+              "manifest_id": "z2m-yale-5750b44",
+              "status": "manual-review",
+              "url": "https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts"
+            }
+          ],
+          "platform": "Zigbee2MQTT converter",
+          "references": [
+            {
+              "artifact_id": "z2m-yale-definitions",
+              "locator": "YRD210-HA-605; lockExtend({battery: {dontDividePercentage: true}})",
+              "manifest_id": "z2m-yale-5750b44"
+            },
+            {
+              "artifact_id": "z2m-battery-converter",
+              "locator": "battery.convert; batteryPercentageRemaining; dontDividePercentage",
+              "manifest_id": "z2m-yale-5750b44"
+            }
+          ],
+          "relationship": "supports",
+          "scope": "device-model"
+        }
+      ],
+      "path": "catalog/corroboration/yrd210-battery-normalization.json",
+      "review": {
+        "author": "github:@infinitywings",
+        "lifecycle": "candidate",
+        "reviewers": []
+      },
+      "schema_version": "0.1",
+      "sha256": "a86133fe349c2b94f44a56469349e00ce67fdfdd9cf7a4ec8f5936ad8334e367",
+      "source_manifests": [
+        {
+          "id": "zha-yale-d6fcec5",
+          "path": "catalog/sources/zha-yale-d6fcec5.json",
+          "sha256": "dec7079fabb43777be098f10d5e6dda11642bd926f45df9cc030342380a0e4d7"
+        },
+        {
+          "id": "z2m-yale-5750b44",
+          "path": "catalog/sources/z2m-yale-5750b44.json",
+          "sha256": "b1b7c256d3d3d805125684a3c680144d8f05b5f9a4b86067e4730cd5953ffa00"
+        }
+      ],
+      "summary": "Both snapshots account for nonstandard battery reporting, but at different layers. Compare the raw attribute and the final entity value before proposing a numeric binding; do not copy either adjustment twice.",
+      "title": "Same battery intent, different adaptation"
+    },
+    {
+      "device_id": "yale-yrd210-pb-db",
+      "feature_id": "lock-state",
+      "id": "yrd210-lock-exposure",
+      "kind": "catalog-corroboration",
+      "limitations": [
+        "Human-authored candidate observations; no independent EdgeLoom review or physical-device test.",
+        "Sources are pinned snapshots, not a claim about the currently installed integration, coordinator or firmware.",
+        "Relationship labels are curator interpretations, not computed semantic equivalence. Conflicting observations must remain visible.",
+        "No SDF correspondence is added for this Zigbee case; lack of a catalog binding is not a limitation of SDF.",
+        "Commands, observations and partially locked state must not be collapsed into a single binary semantic binding."
+      ],
+      "lineage": [
+        {
+          "depends_on": [],
+          "family": "zha-quirks",
+          "manifest_id": "zha-yale-d6fcec5"
+        },
+        {
+          "depends_on": [],
+          "family": "zigbee-herdsman-converters",
+          "manifest_id": "z2m-yale-5750b44"
+        }
+      ],
+      "observations": [
+        {
+          "claim": "YRD210PBDB220TSLL includes DoorLock in its signature and replacement input clusters. The quirk itself does not define the downstream HA lock entity's states.",
+          "conditions": [
+            "Endpoint and complete cluster signature must match.",
+            "Cluster presence is not whole-platform exposure or hardware success."
+          ],
+          "evidence_kind": "code-declaration",
+          "id": "zha-lock-cluster",
+          "identity_evidence": {
+            "artifact_id": "zha-yale-realliving",
+            "locator": "YRD210PBDB220TSLL.signature.MODELS_INFO",
+            "manifest_id": "zha-yale-d6fcec5"
+          },
+          "identity_match": {
+            "manufacturer": "Yale",
+            "model": "YRD210 PB DB"
+          },
+          "locator_checks": [
+            {
+              "artifact_id": "zha-yale-realliving",
+              "locator": "YRD210PBDB220TSLL.signature and replacement; DoorLock.cluster_id",
+              "manifest_id": "zha-yale-d6fcec5",
+              "status": "manual-review",
+              "url": "https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py"
+            },
+            {
+              "artifact_id": "zha-yale-realliving",
+              "locator": "YRD210PBDB220TSLL.signature.MODELS_INFO",
+              "manifest_id": "zha-yale-d6fcec5",
+              "status": "manual-review",
+              "url": "https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py"
+            }
+          ],
+          "platform": "ZHA quirk",
+          "references": [
+            {
+              "artifact_id": "zha-yale-realliving",
+              "locator": "YRD210PBDB220TSLL.signature and replacement; DoorLock.cluster_id",
+              "manifest_id": "zha-yale-d6fcec5"
+            }
+          ],
+          "relationship": "context",
+          "scope": "device-model"
+        },
+        {
+          "claim": "The shared e.lock() constructor declares state as LOCK/UNLOCK with state/set/get access, and lock_state as not_fully_locked/locked/unlocked with state-only access.",
+          "conditions": [
+            "Model-only matcher; no explicit manufacturer constraint in this definition.",
+            "Exposed metadata is not a firmware capability test or confirmation that all state values occur."
+          ],
+          "evidence_kind": "code-declaration",
+          "id": "z2m-lock-exposes",
+          "identity_evidence": {
+            "artifact_id": "z2m-yale-definitions",
+            "locator": "definitions[zigbeeModel includes YRD210 PB DB]",
+            "manifest_id": "z2m-yale-5750b44"
+          },
+          "identity_match": {
+            "model": "YRD210 PB DB"
+          },
+          "locator_checks": [
+            {
+              "artifact_id": "z2m-yale-definitions",
+              "locator": "YRD210-HA-605; lockExtend; exposes e.lock()",
+              "manifest_id": "z2m-yale-5750b44",
+              "status": "manual-review",
+              "url": "https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts"
+            },
+            {
+              "artifact_id": "z2m-exposes",
+              "locator": "presets.lock; Lock.withState; Lock.withLockState; access",
+              "manifest_id": "z2m-yale-5750b44",
+              "status": "manual-review",
+              "url": "https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/lib/exposes.ts"
+            },
+            {
+              "artifact_id": "z2m-yale-definitions",
+              "locator": "definitions[zigbeeModel includes YRD210 PB DB]",
+              "manifest_id": "z2m-yale-5750b44",
+              "status": "manual-review",
+              "url": "https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts"
+            }
+          ],
+          "platform": "Zigbee2MQTT exposes",
+          "references": [
+            {
+              "artifact_id": "z2m-yale-definitions",
+              "locator": "YRD210-HA-605; lockExtend; exposes e.lock()",
+              "manifest_id": "z2m-yale-5750b44"
+            },
+            {
+              "artifact_id": "z2m-exposes",
+              "locator": "presets.lock; Lock.withState; Lock.withLockState; access",
+              "manifest_id": "z2m-yale-5750b44"
+            }
+          ],
+          "relationship": "context",
+          "scope": "device-model"
+        }
+      ],
+      "path": "catalog/corroboration/yrd210-lock-exposure.json",
+      "review": {
+        "author": "github:@infinitywings",
+        "lifecycle": "candidate",
+        "reviewers": []
+      },
+      "schema_version": "0.1",
+      "sha256": "95b83ea52d7cb4fb289c50ea20f69c20c301a4ac224bef78d452b26d04e5e3db",
+      "source_manifests": [
+        {
+          "id": "zha-yale-d6fcec5",
+          "path": "catalog/sources/zha-yale-d6fcec5.json",
+          "sha256": "dec7079fabb43777be098f10d5e6dda11642bd926f45df9cc030342380a0e4d7"
+        },
+        {
+          "id": "z2m-yale-5750b44",
+          "path": "catalog/sources/z2m-yale-5750b44.json",
+          "sha256": "b1b7c256d3d3d805125684a3c680144d8f05b5f9a4b86067e4730cd5953ffa00"
+        }
+      ],
+      "summary": "The matching ZHA quirk retains a DoorLock cluster. Zigbee2MQTT declares separate command/state and actual-state fields. These artifacts alone do not establish equal UI behavior or a complete cross-platform mapping.",
+      "title": "Cluster declaration versus exposed state"
+    }
+  ],
   "counts": {
     "assertions": 6,
-    "devices": 1,
-    "mapping_sets": 3
+    "corroboration_records": 4,
+    "devices": 2,
+    "mapping_sets": 3,
+    "source_observations": 9
   },
   "devices": [
     {
       "features": [
         {
+          "corroboration_ids": [
+            "yrd156-ha-configuration-path"
+          ],
           "id": "auto-relock",
           "mapping_ids": [
             "smartthings-yrd156-auto-relock-gap"
@@ -29,6 +641,9 @@
           "title": "Auto-relock duration"
         },
         {
+          "corroboration_ids": [
+            "yrd156-ha-unknown-state"
+          ],
           "id": "lock-state",
           "mapping_ids": [
             "smartthings-yrd156-lock-state"
@@ -70,7 +685,7 @@
       },
       "kind": "catalog-device",
       "limitations": [
-        "One device model is indexed; the three feature records are not three supported devices.",
+        "The three original mapping records describe this one device, not three supported devices.",
         "All associated mappings are founder-authored candidates without independent review.",
         "No physical YRD156 or SmartThings hub has been tested for these records.",
         "Published source artifacts do not prove behavior of your installed driver or firmware.",
@@ -82,23 +697,82 @@
       "path": "catalog/devices/yale-yrd156.yaml",
       "protocol": "zwave",
       "schema_version": "0.1",
-      "sha256": "3c73f31de382fd99460265bf249369ca591a98ec0f7e03ae4e2f73c337f67f0b"
+      "sha256": "66a4059d9313680bba8739df3aaac08f958e1671a2ba99dd6e6ef6cfea93a49d"
+    },
+    {
+      "features": [
+        {
+          "corroboration_ids": [
+            "yrd210-battery-normalization"
+          ],
+          "id": "battery",
+          "mapping_ids": [],
+          "next_steps": [
+            "Compare the exact manufacturer/model and full endpoint/cluster signature.",
+            "Report a sanitized raw battery attribute and final entity value, including firmware and platform versions.",
+            "Do not apply either adjustment twice or treat this report as a patch recommendation."
+          ],
+          "summary": "Two upstream adaptations for the same model string, at different layers. Raw cluster values and final entity percentages are not interchangeable.",
+          "title": "Battery normalization"
+        },
+        {
+          "corroboration_ids": [
+            "yrd210-lock-exposure"
+          ],
+          "id": "lock-state",
+          "mapping_ids": [],
+          "next_steps": [
+            "Distinguish a requested lock command from the reported actual lock state.",
+            "Retain partially locked and unknown values when investigating a correspondence.",
+            "Contribute a source correction or sanitized observation; never include real PINs or user identifiers."
+          ],
+          "summary": "A cluster declaration and a richer exposes declaration are different evidence scopes. No complete cross-platform or SDF mapping has been established.",
+          "title": "Lock control and observed state"
+        }
+      ],
+      "firmware": "Unknown; exact endpoint/cluster signature and installed platform versions unconfirmed",
+      "hardware_evidence": [],
+      "id": "yale-yrd210-pb-db",
+      "identifiers": {
+        "manufacturer": "Yale",
+        "model": "YRD210 PB DB"
+      },
+      "identity_evidence": {
+        "artifact_id": "zha-yale-realliving",
+        "locator": "YRD210PBDB220TSLL.signature.MODELS_INFO",
+        "manifest_id": "zha-yale-d6fcec5"
+      },
+      "kind": "catalog-device",
+      "limitations": [
+        "Founder-authored candidate corroboration only; no independent review or hardware testing.",
+        "Not the YRD156 Z-Wave case; protocol variants and nearby marketing models are not interchangeable.",
+        "ZHA requires the full device signature; Zigbee2MQTT's selected entry uses a weaker model-only matcher.",
+        "No SDF binding, safe installation recipe or automatic repair is provided for this case.",
+        "Source lineage is declared and incomplete; no independent-source or adoption score is inferred."
+      ],
+      "manufacturer": "Yale",
+      "model": "YRD210 PB DB (Zigbee)",
+      "path": "catalog/devices/yale-yrd210-pb-db.json",
+      "protocol": "zigbee",
+      "schema_version": "0.1",
+      "sha256": "52e249d90c1594ec2fc52e68dcdaff89bf0d8d016c9a551cca02ce2114814ea2"
     }
   ],
   "generator": {
-    "declared_core_revision": "624a68a03b07b1b5aee029109f479e2b6e966e93",
-    "implementation_digest": "c289ae34c44b751b0abc970a2aaaf454e70517fb24831b8af2eb929d4c4380ce",
+    "declared_core_revision": "4f321798aa7352c65c080aa4b8a6ff0d1e3a45c6",
+    "implementation_digest": "2a56cda3068f3238f23558f48aeb85af830c8a68119c594c0e55c221d135c4e8",
     "package_version_label": "0.2.0",
     "policy": "catalog/v0.1",
     "version_label_is_not_release_attestation": true
   },
-  "input_digest": "3b8ce4d6d019462230dd70781bf1de1919da83ffa7ce32e9dfa3ae7333e502a9",
+  "input_digest": "acc594d4fa969e56779ef8fa717bf9ac1880711db81ae5ce3ca04b660e6cbba1",
   "limitations": [
     "Device associations, classifications, license labels, and review states are catalog-author declarations, not independently authenticated by this build.",
     "Resolved locators establish field existence only, not the interpretation, completeness, runtime behavior, SDF conformance, or interoperability of an artifact.",
     "Selectors, JSON5 and Lua locators need manual review. No upstream Lua is executed.",
     "Profile absence is not whole-driver or UI absence. A missing property in a particular SDF model is not a limitation of SDF itself.",
-    "Hardware-evidence links are reported observations, not tests performed by this tool. No patch availability is inferred."
+    "Hardware-evidence links are reported observations, not tests performed by this tool. No patch availability is inferred.",
+    "Cross-source observations and lineage are curator declarations. Shared backends are not independent evidence; upstream test fixtures are not physical-device tests or independent EdgeLoom review. No source count promotes a candidate."
   ],
   "mapping_sets": [
     {
@@ -893,6 +1567,85 @@
     {
       "artifacts": [
         {
+          "artifact_role": "evidence",
+          "byte_check": "matched",
+          "description": "Lock entity and generic configuration implementation.",
+          "id": "ha-zwave-lock",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE.md",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/x-python",
+          "path": "homeassistant/components/zwave_js/lock.py",
+          "sha256": "0ab02d31057ee1f1620318375138131835e1a637c23934f44e02772f4d80c505",
+          "source_maturity": "official",
+          "url": "https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/lock.py"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "matched",
+          "description": "Service field declarations, including configuration parameter writes.",
+          "id": "ha-zwave-services",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE.md",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "application/yaml",
+          "path": "homeassistant/components/zwave_js/services.yaml",
+          "sha256": "1f36ce2ac6a80e9042015a0f670456425e41fcb7aff0383544fab6713b8667d0",
+          "source_maturity": "official",
+          "url": "https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/services.yaml"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "matched",
+          "description": "Upstream simulated lock tests; not executed here or associated with YRD156 hardware.",
+          "id": "ha-zwave-test-lock",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE.md",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/x-python",
+          "path": "tests/components/zwave_js/test_lock.py",
+          "sha256": "7ced0e7439967e73a096801d65a3bf702bf186c04c6c06d5fc8e42d24bd944c6",
+          "source_maturity": "official",
+          "url": "https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/tests/components/zwave_js/test_lock.py"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "matched",
+          "description": "Pinned upstream license text.",
+          "id": "ha-license",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE.md",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/plain",
+          "path": "LICENSE.md",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "source_maturity": "official",
+          "url": "https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/LICENSE.md"
+        }
+      ],
+      "description": "Generic Home Assistant Z-Wave JS exposure paths and simulated tests. No YRD156-specific hardware validation; the underlying device metadata comes from the Z-Wave JS stack.",
+      "ecosystem": "home-assistant",
+      "id": "ha-zwave-lock-067f882",
+      "kind": "source-manifest",
+      "path": "catalog/sources/ha-zwave-lock-067f882.json",
+      "repository": {
+        "commit": "067f88281665776424fbb4826697c46d5e7a6837",
+        "url": "https://github.com/home-assistant/core"
+      },
+      "schema_version": "0.1",
+      "sha256": "1caaa16559465dee408eb216185ea6ed590dc1f7938729a4e68d405e023a8c25"
+    },
+    {
+      "artifacts": [
+        {
           "artifact_role": "sdf-model",
           "byte_check": "matched",
           "description": "OCF-derived two-value lockState model with Locked and Unlocked values.",
@@ -1063,6 +1816,148 @@
       },
       "schema_version": "0.1",
       "sha256": "3bc27fe065666a0a56022c97b1b9453779f783d8bed81fd400ab4c63b5e749b0"
+    },
+    {
+      "artifacts": [
+        {
+          "artifact_role": "evidence",
+          "byte_check": "matched",
+          "description": "Model-only matching, battery metadata and shared lock exposure declarations.",
+          "id": "z2m-yale-definitions",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE",
+            "expression": "MIT"
+          },
+          "media_type": "text/typescript",
+          "path": "src/devices/yale.ts",
+          "sha256": "ba8a4e8d896c09c40fc4268d5d0106617f10d897fcf97d8c010f682072d5c8c6",
+          "source_maturity": "community",
+          "url": "https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "matched",
+          "description": "Battery conversion with dontDividePercentage condition and invalid-value guard.",
+          "id": "z2m-battery-converter",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE",
+            "expression": "MIT"
+          },
+          "media_type": "text/typescript",
+          "path": "src/converters/fromZigbee.ts",
+          "sha256": "a04ba5f429f4e04808b05327248f867b88b98229af7ac37a10ff589e507a9dc2",
+          "source_maturity": "community",
+          "url": "https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/converters/fromZigbee.ts"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "matched",
+          "description": "Lock state, access and numeric exposure constructors.",
+          "id": "z2m-exposes",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE",
+            "expression": "MIT"
+          },
+          "media_type": "text/typescript",
+          "path": "src/lib/exposes.ts",
+          "sha256": "498bc040fe1badcd8f8cd9acccb722589f9faaf407405a0e0818570c27a04067",
+          "source_maturity": "community",
+          "url": "https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/lib/exposes.ts"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "matched",
+          "description": "Pinned upstream license text.",
+          "id": "z2m-license",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE",
+            "expression": "MIT"
+          },
+          "media_type": "text/plain",
+          "path": "LICENSE",
+          "sha256": "b5ffb673900b5ec1f84e929f45077d429a0645b43c4b4eda65de815dfd02aef1",
+          "source_maturity": "community",
+          "url": "https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/LICENSE"
+        }
+      ],
+      "description": "Yale converter definitions, exposure constructors and battery converter. Sources are statically inspected, not imported; firmware and coordinator behavior remain untested.",
+      "ecosystem": "zigbee2mqtt",
+      "id": "z2m-yale-5750b44",
+      "kind": "source-manifest",
+      "path": "catalog/sources/z2m-yale-5750b44.json",
+      "repository": {
+        "commit": "5750b44559405203b202e0f5539dc0d6f46f1c8d",
+        "url": "https://github.com/Koenkk/zigbee-herdsman-converters"
+      },
+      "schema_version": "0.1",
+      "sha256": "b1b7c256d3d3d805125684a3c680144d8f05b5f9a4b86067e4730cd5953ffa00"
+    },
+    {
+      "artifacts": [
+        {
+          "artifact_role": "evidence",
+          "byte_check": "matched",
+          "description": "Manufacturer/model and endpoint signature; replacement power-configuration cluster.",
+          "id": "zha-yale-realliving",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE.md",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/x-python",
+          "path": "zhaquirks/yale/realliving.py",
+          "sha256": "c481e5b44fc3f00b6e58e44134ae1bbd5d42a5af074df6fd39a7dafe5765c402",
+          "source_maturity": "community",
+          "url": "https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "matched",
+          "description": "DoublingPowerConfigurationCluster implementation; not a full downstream entity pipeline.",
+          "id": "zha-battery-cluster",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE.md",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/x-python",
+          "path": "zhaquirks/__init__.py",
+          "sha256": "5481da1a0ce5fd6d2a4592f1a95c6ed1e1d4288a83edce817d0995981a42209b",
+          "source_maturity": "community",
+          "url": "https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/__init__.py"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "matched",
+          "description": "Pinned upstream license text.",
+          "id": "zha-license",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE.md",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/plain",
+          "path": "LICENSE.md",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "source_maturity": "community",
+          "url": "https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/LICENSE.md"
+        }
+      ],
+      "description": "Merged Yale Real Living signature and battery quirk declarations. Device selection also depends on endpoint/cluster signatures, not just a marketing name.",
+      "ecosystem": "zha",
+      "id": "zha-yale-d6fcec5",
+      "kind": "source-manifest",
+      "path": "catalog/sources/zha-yale-d6fcec5.json",
+      "repository": {
+        "commit": "d6fcec59eff9f63f154723500be9378be926d927",
+        "url": "https://github.com/zigpy/zha-device-handlers"
+      },
+      "schema_version": "0.1",
+      "sha256": "dec7079fabb43777be098f10d5e6dda11642bd926f45df9cc030342380a0e4d7"
     },
     {
       "artifacts": [
