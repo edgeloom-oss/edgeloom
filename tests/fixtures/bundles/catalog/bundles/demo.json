@@ -1,0 +1,71 @@
+{
+  "kind": "device-evidence-bundle",
+  "schema_version": "0.1",
+  "id": "demo",
+  "version": "0.1.0",
+  "title": "Synthetic lock battery explanation",
+  "subject": {
+    "manufacturer": "Synthetic Test Company",
+    "model": "Synthetic Lock",
+    "protocol": "zigbee",
+    "identifiers": {"model_id": "synthetic-lock"},
+    "firmware": "unknown",
+    "scope_notes": ["Test fixture only; no physical device."]
+  },
+  "author": "fixture-author",
+  "license": "Apache-2.0",
+  "publication_status": "candidate",
+  "records": [
+    {
+      "id": "synthetic-manual",
+      "path": "catalog/documents/synthetic-manual.json",
+      "sha256": "9e76d348f24196dfe553b4367e4a67b5b59bb736c2a3476824d6fe0cb719bcbb"
+    }
+  ],
+  "features": [
+    {
+      "id": "battery",
+      "title": "Battery reporting",
+      "summary": "Synthetic document context with an explicit hardware evidence gap.",
+      "record_ids": ["synthetic-manual"],
+      "implementation_notes": [
+        {
+          "id": "battery-explanation",
+          "decision": "Do not infer raw attribute scaling from a user manual.",
+          "rationale": "User-facing documentation does not establish wire-level behavior.",
+          "references": [
+            {
+              "record_id": "synthetic-manual",
+              "locator": "#/locations/0",
+              "relationship": "context"
+            }
+          ],
+          "conditions": ["No raw device behavior was observed."]
+        }
+      ],
+      "test_plan": [
+        {
+          "id": "collect-hardware-evidence",
+          "question": "What does an actual device report?",
+          "procedure": [
+            "A future contributor should record device identity and input/output."
+          ],
+          "requested_evidence": ["Redacted logs and firmware version."]
+        }
+      ],
+      "gaps": ["No physical-device observations or independent review."]
+    }
+  ],
+  "reviews": [],
+  "credits": [
+    {
+      "identity": "fixture-researcher",
+      "roles": ["source-research"],
+      "record_ids": ["synthetic-manual"]
+    }
+  ],
+  "history": [
+    {"version": "0.1.0", "summary": "Synthetic draft fixture."}
+  ],
+  "limitations": ["This fixture is not device compatibility evidence."]
+}

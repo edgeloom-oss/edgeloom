@@ -253,10 +253,11 @@ def _cmd_audit(args: argparse.Namespace) -> int:
 
 
 def _cmd_catalog(args: argparse.Namespace) -> int:
-    from edgeloom import catalog
+    from edgeloom import bundles, catalog
 
     try:
         dataset = catalog.load_catalog(args.root)
+        bundle_records = bundles.load_all(args.root)
         if args.catalog_action == "fetch":
             count = catalog.fetch_sources(dataset, args.cache)
             print(f"Matched {count} pinned source artifact(s) -> {args.cache}")
@@ -282,11 +283,37 @@ def _cmd_catalog(args: argparse.Namespace) -> int:
             print(
                 f"Catalog checks passed: {len(dataset.sources)} sources, "
                 f"{len(dataset.mappings)} mapping sets, {len(dataset.devices)} devices, "
-                f"{len(dataset.corroborations)} corroboration records. "
+                f"{len(dataset.corroborations)} corroboration records, "
+                f"{len(bundle_records)} evidence bundles. "
                 "Upstream bytes not fetched."
             )
-    except (catalog.CatalogError, schemas.SchemaError, OSError) as exc:
+    except (bundles.BundleError, catalog.CatalogError, schemas.SchemaError, OSError, UnicodeError) as exc:
         LOGGER.error("Catalog %s failed: %s", args.catalog_action, exc)
+        return 1
+    return 0
+
+
+def _cmd_bundle(args: argparse.Namespace) -> int:
+    from edgeloom import bundles, catalog
+
+    try:
+        if args.bundle_action == "verify":
+            result = bundles.verify_package(args.archive)
+            print(catalog.render_json(result), end="")
+        else:
+            bundle = bundles.load_bundle(args.root, args.identifier)
+            label = f"{bundle.manifest['id']} v{bundle.manifest['version']}"
+            if args.bundle_action == "check":
+                print(f"Bundle checks passed: {label}; {len(bundle.records)} locked records.")
+            elif args.bundle_action == "build":
+                count = bundles.build_bundle(bundle, args.output)
+                print(f"Built {count} files for {label} -> {args.output}")
+            else:
+                count = bundles.export_bundle(bundle, args.output)
+                print(f"Exported {label} ({count} bytes) -> {args.output}")
+            print("Offline record checks only; source authenticity and hardware behavior are not verified.")
+    except (bundles.BundleError, catalog.CatalogError, schemas.SchemaError, OSError, UnicodeError) as exc:
+        LOGGER.error("Bundle %s failed: %s", args.bundle_action, exc)
         return 1
     return 0
 
@@ -503,6 +530,21 @@ def build_parser() -> argparse.ArgumentParser:
                 "--cache", type=Path, help="Check already-fetched bytes; never fetch implicitly"
             )
         command.set_defaults(func=_cmd_catalog)
+
+    bundle = subparsers.add_parser(
+        "bundle", parents=[common], help="Check, build, export, or verify offline device evidence bundles"
+    )
+    bundle_actions = bundle.add_subparsers(dest="bundle_action", required=True)
+    for action in ("check", "build", "export", "verify"):
+        command = bundle_actions.add_parser(action)
+        if action == "verify":
+            command.add_argument("archive", type=Path, help="Local evidence bundle ZIP")
+        else:
+            command.add_argument("root", type=Path, help="Local edgeloom-catalog checkout")
+            command.add_argument("identifier", help="Bundle ID (filename without extension)")
+            if action != "check":
+                command.add_argument("--output", type=Path, required=True, help="New output directory or ZIP")
+        command.set_defaults(func=_cmd_bundle)
 
     return parser
 

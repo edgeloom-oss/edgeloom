@@ -25,6 +25,9 @@ SOURCE_MANIFEST = "source-manifest"
 CATALOG_MAPPING_SET = "catalog-mapping-set"
 CATALOG_DEVICE = "catalog-device"
 CATALOG_CORROBORATION = "catalog-corroboration"
+DOCUMENT_SOURCE = "document-source"
+CATALOG_OBSERVATION = "catalog-observation"
+DEVICE_EVIDENCE_BUNDLE = "device-evidence-bundle"
 KINDS = (
     PROFILE,
     CAPABILITY_MAP,
@@ -33,6 +36,9 @@ KINDS = (
     CATALOG_MAPPING_SET,
     CATALOG_DEVICE,
     CATALOG_CORROBORATION,
+    DOCUMENT_SOURCE,
+    CATALOG_OBSERVATION,
+    DEVICE_EVIDENCE_BUNDLE,
 )
 
 _YAML_SUFFIXES = {".yaml", ".yml"}
@@ -169,7 +175,7 @@ def detect_kind(document: Any) -> str | None:
     if not isinstance(document, dict):
         return None
     tagged_kind = document.get("kind")
-    if tagged_kind in {SOURCE_MANIFEST, CATALOG_MAPPING_SET, CATALOG_DEVICE, CATALOG_CORROBORATION}:
+    if tagged_kind in KINDS and tagged_kind not in {PROFILE, CAPABILITY_MAP, EVIDENCE_RECORD}:
         return tagged_kind
     if (
         document.get("record_version") == "0.1"
@@ -183,6 +189,12 @@ def detect_kind(document: Any) -> str | None:
     # generic YAML with a Kubernetes-style ``kind`` remains unrelated.
     if "repository" in document and ("artifacts" in document or "ecosystem" in document):
         return SOURCE_MANIFEST
+    if "publication_status" in document and "records" in document:
+        return DEVICE_EVIDENCE_BUNDLE
+    if "publisher" in document and "capture" in document:
+        return DOCUMENT_SOURCE
+    if "observed" in document and "procedure" in document and "reported_by" in document:
+        return CATALOG_OBSERVATION
     if "device_id" in document and "observations" in document and "lineage" in document:
         return CATALOG_CORROBORATION
     if "source_manifests" in document or ("nodes" in document and "mappings" in document):
@@ -368,6 +380,50 @@ def _valid_repository_hostname(hostname: str) -> bool:
 def _iter_semantic_errors(document: Any, kind: str) -> Iterator[str]:
     """Yield public-contract invariants beyond JSON Schema's vocabulary."""
     if not isinstance(document, dict):
+        return
+
+    if kind in {DOCUMENT_SOURCE, CATALOG_OBSERVATION, DEVICE_EVIDENCE_BUNDLE}:
+        # Only metadata links are accepted; these checks never fetch a URL.
+        def urls(value: Any) -> Iterator[str]:
+            if isinstance(value, dict):
+                for key, child in value.items():
+                    if key == "url" and isinstance(child, str):
+                        try:
+                            parts = urlsplit(child)
+                            _ = parts.port  # Reject malformed ports even though links are never fetched.
+                            if (
+                                parts.scheme != "https"
+                                or not parts.hostname
+                                or parts.username is not None
+                                or parts.password is not None
+                                or "\\" in child
+                                or any(ord(char) < 33 or ord(char) == 127 for char in child)
+                            ):
+                                yield "url: expected HTTPS reference without credentials or controls"
+                        except ValueError:
+                            yield "url: malformed HTTPS reference"
+                    yield from urls(child)
+            elif isinstance(value, list):
+                for child in value:
+                    yield from urls(child)
+
+        yield from urls(document)
+        if kind == DOCUMENT_SOURCE:
+            yield from _duplicate_id_errors(document.get("locations"), "locations")
+        if kind == DEVICE_EVIDENCE_BUNDLE:
+            for key in ("records", "features"):
+                yield from _duplicate_id_errors(document.get(key), key)
+            paths = []
+            for record in _catalog_items(document.get("records")):
+                if isinstance(record, dict):
+                    yield from _posix_contract_path_errors(record.get("path"), "records/path")
+                    paths.append(record.get("path"))
+            if len(paths) != len(set(path for path in paths if isinstance(path, str))):
+                yield "records: duplicate or invalid record path"
+            for feature in _catalog_items(document.get("features")):
+                if isinstance(feature, dict):
+                    for key in ("implementation_notes", "test_plan"):
+                        yield from _duplicate_id_errors(feature.get(key), f"features/{key}")
         return
 
     if kind == SOURCE_MANIFEST:

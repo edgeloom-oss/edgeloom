@@ -71,6 +71,9 @@ def test_all_schemas_are_shipped_and_valid_draft_2020_12() -> None:
         schemas.CATALOG_MAPPING_SET,
         schemas.CATALOG_DEVICE,
         schemas.CATALOG_CORROBORATION,
+        schemas.DOCUMENT_SOURCE,
+        schemas.CATALOG_OBSERVATION,
+        schemas.DEVICE_EVIDENCE_BUNDLE,
     )
     for kind in schemas.KINDS:
         schema = schemas.load_schema(kind)
@@ -399,6 +402,8 @@ def test_repo_document_census_recognizes_only_schema_artifacts(repo_root: Path) 
         Path("tests/fixtures/catalog/smartthings-source.yaml"),
         Path("tests/fixtures/catalog/onedm-source.yaml"),
         Path("tests/fixtures/catalog/lock-mapping-set.yaml"),
+        Path("tests/fixtures/bundles/catalog/documents/synthetic-manual.json"),
+        Path("tests/fixtures/bundles/catalog/bundles/demo.json"),
     }
     recognized = {
         result.path.relative_to(repo_root)
