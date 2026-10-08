@@ -217,7 +217,7 @@ def _corroboration_html(record: dict, records: dict) -> str:
             label = reference["artifact_id"] + " · " + reference["locator"]
             references.append(_link(_artifact_link(source, artifact), label) if artifact else _e(label))
         rows.append(
-            f'<article class="comparison"><h4>{_e(item["platform"])}</h4>'
+            f'<article class="comparison"><h3>{_e(item["platform"])}</h3>'
             f'<p class="meta">{_e(item["evidence_kind"])} · {_e(item["relationship"])}</p>'
             f"<p>{_e(item['claim'])}</p>"
             + _list(item["conditions"])

@@ -26,6 +26,35 @@ class Page(HTMLParser):
             self.links.append(values.get("href", ""))
 
 
+def test_source_comparisons_preserve_heading_hierarchy(report):
+    report["records"]["comparison"] = {
+        "kind": "catalog-corroboration",
+        "id": "comparison",
+        "summary": "Synthetic comparison.",
+        "observations": [
+            {
+                "platform": "Fixture platform",
+                "evidence_kind": "source-code",
+                "relationship": "context",
+                "claim": "Synthetic source context.",
+                "conditions": [],
+                "references": [],
+            }
+        ],
+        "limitations": ["Not a device result."],
+    }
+    report["bundle"]["records"].append(
+        {
+            "id": "comparison",
+            "path": "catalog/corroboration/example.json",
+            "sha256": "c" * 64,
+        }
+    )
+    page = Page(generated_files(report)["index.html"])
+    levels = [int(tag[1]) for tag in page.tags if tag in {"h1", "h2", "h3", "h4", "h5", "h6"}]
+    assert all(current <= previous + 1 for previous, current in zip(levels, levels[1:]))
+
+
 @pytest.fixture
 def report():
     subject = {
