@@ -1,0 +1,64 @@
+{
+  "kind": "document-source",
+  "schema_version": "0.1",
+  "id": "yale-yrd210-manual-rev-g",
+  "title": "Yale Real Living Push Button Deadbolt (YRD210): Installation and Programming Instructions",
+  "publisher": "Yale Locks & Hardware / Yale Security Inc.",
+  "url": "https://cdn.shopify.com/s/files/1/0097/2433/0084/files/Installation_Manual_YRD210.pdf?227461",
+  "document_version": "P/N AYRD-210-INST-FUL Rev G; 24-page PDF including Z-Wave and Zigbee module supplements",
+  "accessed_at": "2026-10-08",
+  "source_maturity": "official",
+  "applicability": {
+    "manufacturer": "Yale",
+    "model": "YRD210 product family",
+    "scope": "family-context",
+    "notes": [
+      "Yale's official support directory links this PDF as the YRD210 keypad deadbolt manual: https://support.shopyalehome.com/where-do-i-find-installation-manuals-for-yrl-previous-generation--SJKr09bBH . The directory and linked PDF were inspected on the access date.",
+      "The main manual names YRD210, and the PDF includes separate Z-Wave and Zigbee module sheets. This does not identify the exact YRD210 PB DB firmware or full ZHA endpoint/cluster signature.",
+      "Use the manual for family-level battery and local indicator context, not as proof of a Zigbee raw-value scale or a correspondence between platform outputs."
+    ]
+  },
+  "locations": [
+    {
+      "id": "model-and-revision",
+      "locator": "PDF page 1, title and footer",
+      "description": "Names the YRD210 push-button deadbolt and the Rev G document identifier."
+    },
+    {
+      "id": "low-battery-indicator",
+      "locator": "PDF/printed pages 11 and 16, Programming Instructions and Low Battery definition",
+      "description": "Describes the local red low-battery indicator; no numeric Zigbee attribute encoding is supplied."
+    },
+    {
+      "id": "battery-replacement",
+      "locator": "PDF/printed page 18, Programming Troubleshooting, intermittent red flashes row",
+      "description": "Connects the local warning to replacement of four AA alkaline batteries."
+    },
+    {
+      "id": "zigbee-module-supplement",
+      "locator": "PDF page 23, Yale Real Living ZigBee Module supplement, P/N AYR200-ZB-INSTAL-FUL Rev F",
+      "description": "Includes a separate Zigbee module installation and enrollment sheet; it does not specify battery normalization."
+    },
+    {
+      "id": "copyright-notice",
+      "locator": "PDF/printed page 20, publisher and copyright footer",
+      "description": "Identifies Yale Security Inc., copyright 2017, and requires express written permission for reproduction."
+    }
+  ],
+  "capture": {
+    "mode": "digest-recorded",
+    "sha256": "189029b598d750309251129d99018c9b0e50d349f80da01f7727c9f2caff8446",
+    "media_type": "application/pdf",
+    "byte_size": 3378722
+  },
+  "rights": {
+    "redistribution": "not-granted",
+    "notice": "The cited publisher notice reserves reproduction rights. No redistribution permission was obtained. Only catalog-authored metadata, paraphrases, the upstream link and the inspected file digest are included; the PDF and page images are not distributed."
+  },
+  "contributed_by": "github:@infinitywings",
+  "limitations": [
+    "The official directory establishes the publisher link; the CDN URL itself is mutable. The recorded digest identifies the inspected bytes but does not guarantee future availability or archive them.",
+    "No exact firmware applicability, raw battery attribute scale, downstream platform percentage, independent review or hardware observation is established.",
+    "Catalog metadata was prepared with Codex assistance under the contributor's direction; source inspection is not an independent review."
+  ]
+}

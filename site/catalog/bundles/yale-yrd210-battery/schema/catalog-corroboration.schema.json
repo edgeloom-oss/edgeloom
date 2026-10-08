@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/edgeloom-oss/edgeloom/schema/v0.1/catalog-corroboration.schema.json",
+  "title": "EdgeLoom catalog corroboration (draft v0.1)",
+  "description": "Human-authored, candidate-only cross-source observations. Source declarations, simulated tests, lineage and conflicts are not independent EdgeLoom review or physical-device validation.",
+  "type": "object", "additionalProperties": false,
+  "required": ["kind", "schema_version", "id", "device_id", "feature_id", "title", "summary", "source_manifests", "lineage", "observations", "review", "limitations"],
+  "properties": {
+    "kind": {"const": "catalog-corroboration"},
+    "schema_version": {"const": "0.1"},
+    "id": {"$ref": "#/$defs/id"},
+    "device_id": {"$ref": "#/$defs/id"},
+    "feature_id": {"$ref": "#/$defs/id"},
+    "title": {"$ref": "#/$defs/text"},
+    "summary": {"$ref": "#/$defs/text"},
+    "source_manifests": {
+      "type": "array", "minItems": 1, "maxItems": 100,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "path", "sha256"],
+        "properties": {
+          "id": {"$ref": "#/$defs/recordId"},
+          "path": {"type": "string", "pattern": "^catalog/sources/[a-z0-9._/-]+\\.(yaml|yml|json)$", "maxLength": 1000},
+          "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        }
+      }
+    },
+    "lineage": {
+      "type": "array", "minItems": 1, "maxItems": 100,
+      "description": "Record-scoped author declarations, not an exhaustive dependency graph or independence score.",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["manifest_id", "family", "depends_on"],
+        "properties": {
+          "manifest_id": {"$ref": "#/$defs/recordId"},
+          "family": {"$ref": "#/$defs/recordId"},
+          "depends_on": {"type": "array", "maxItems": 100, "uniqueItems": true, "items": {"$ref": "#/$defs/recordId"}}
+        }
+      }
+    },
+    "observations": {
+      "type": "array", "minItems": 1, "maxItems": 100,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["id", "platform", "scope", "evidence_kind", "relationship", "claim", "references", "conditions"],
+        "properties": {
+          "id": {"$ref": "#/$defs/id"},
+          "platform": {"$ref": "#/$defs/text"},
+          "scope": {"enum": ["device-model", "platform-generic"]},
+          "evidence_kind": {"enum": ["code-declaration", "test-fixture"]},
+          "relationship": {"enum": ["supports", "conflicts", "context", "unresolved"]},
+          "claim": {"$ref": "#/$defs/text"},
+          "identity_match": {
+            "type": "object", "minProperties": 1, "maxProperties": 3,
+            "propertyNames": {"enum": ["manufacturer", "model", "manufacturer_id", "product_type", "product_id"]},
+            "additionalProperties": {"$ref": "#/$defs/text"},
+            "description": "Only identifiers explicitly matched by this upstream declaration. Model-only is weaker than manufacturer/model or a full protocol tuple."
+          },
+          "identity_evidence": {"$ref": "#/$defs/reference"},
+          "references": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"$ref": "#/$defs/reference"}},
+          "conditions": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"$ref": "#/$defs/text"}}
+        },
+        "allOf": [{
+          "if": {"properties": {"scope": {"const": "device-model"}}},
+          "then": {"required": ["identity_match", "identity_evidence"]},
+          "else": {"not": {"anyOf": [{"required": ["identity_match"]}, {"required": ["identity_evidence"]}]}}
+        }]
+      }
+    },
+    "review": {
+      "type": "object", "additionalProperties": false,
+      "required": ["lifecycle", "author", "reviewers"],
+      "properties": {
+        "lifecycle": {"const": "candidate"},
+        "author": {"$ref": "#/$defs/text"},
+        "reviewers": {"type": "array", "maxItems": 0}
+      }
+    },
+    "limitations": {"type": "array", "minItems": 1, "maxItems": 50, "items": {"$ref": "#/$defs/text"}}
+  },
+  "$defs": {
+    "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,119}$"},
+    "recordId": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"},
+    "text": {"type": "string", "minLength": 1, "maxLength": 2000},
+    "reference": {
+      "type": "object", "additionalProperties": false,
+      "required": ["manifest_id", "artifact_id", "locator"],
+      "properties": {
+        "manifest_id": {"$ref": "#/$defs/recordId"},
+        "artifact_id": {"$ref": "#/$defs/recordId"},
+        "locator": {"$ref": "#/$defs/text"}
+      }
+    }
+  }
+}

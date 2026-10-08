@@ -1,0 +1,69 @@
+{
+  "kind": "source-manifest",
+  "schema_version": "0.1",
+  "id": "z2m-yale-5750b44",
+  "ecosystem": "zigbee2mqtt",
+  "description": "Yale converter definitions, exposure constructors and battery converter. Sources are statically inspected, not imported; firmware and coordinator behavior remain untested.",
+  "repository": {
+    "url": "https://github.com/Koenkk/zigbee-herdsman-converters",
+    "commit": "5750b44559405203b202e0f5539dc0d6f46f1c8d"
+  },
+  "artifacts": [
+    {
+      "id": "z2m-yale-definitions",
+      "path": "src/devices/yale.ts",
+      "sha256": "ba8a4e8d896c09c40fc4268d5d0106617f10d897fcf97d8c010f682072d5c8c6",
+      "media_type": "text/typescript",
+      "description": "Model-only matching, battery metadata and shared lock exposure declarations.",
+      "layer": "platform-exposure",
+      "artifact_role": "evidence",
+      "source_maturity": "community",
+      "license": {
+        "expression": "MIT",
+        "evidence_path": "LICENSE"
+      }
+    },
+    {
+      "id": "z2m-battery-converter",
+      "path": "src/converters/fromZigbee.ts",
+      "sha256": "a04ba5f429f4e04808b05327248f867b88b98229af7ac37a10ff589e507a9dc2",
+      "media_type": "text/typescript",
+      "description": "Battery conversion with dontDividePercentage condition and invalid-value guard.",
+      "layer": "platform-exposure",
+      "artifact_role": "evidence",
+      "source_maturity": "community",
+      "license": {
+        "expression": "MIT",
+        "evidence_path": "LICENSE"
+      }
+    },
+    {
+      "id": "z2m-exposes",
+      "path": "src/lib/exposes.ts",
+      "sha256": "498bc040fe1badcd8f8cd9acccb722589f9faaf407405a0e0818570c27a04067",
+      "media_type": "text/typescript",
+      "description": "Lock state, access and numeric exposure constructors.",
+      "layer": "platform-exposure",
+      "artifact_role": "evidence",
+      "source_maturity": "community",
+      "license": {
+        "expression": "MIT",
+        "evidence_path": "LICENSE"
+      }
+    },
+    {
+      "id": "z2m-license",
+      "path": "LICENSE",
+      "sha256": "b5ffb673900b5ec1f84e929f45077d429a0645b43c4b4eda65de815dfd02aef1",
+      "media_type": "text/plain",
+      "description": "Pinned upstream license text.",
+      "layer": "platform-exposure",
+      "artifact_role": "evidence",
+      "source_maturity": "community",
+      "license": {
+        "expression": "MIT",
+        "evidence_path": "LICENSE"
+      }
+    }
+  ]
+}

@@ -1,0 +1,228 @@
+{
+  "kind": "device-evidence-bundle",
+  "schema_version": "0.1",
+  "id": "yale-yrd210-battery",
+  "version": "0.1.0",
+  "title": "Yale YRD210 PB DB: explaining battery normalization",
+  "subject": {
+    "manufacturer": "Yale",
+    "model": "YRD210 PB DB (Zigbee)",
+    "protocol": "zigbee",
+    "identifiers": {
+      "manufacturer": "Yale",
+      "model": "YRD210 PB DB"
+    },
+    "firmware": "unknown",
+    "scope_notes": [
+      "The selected ZHA signature requires manufacturer, model and the full endpoint/cluster signature; the selected Zigbee2MQTT definition matches only the model string.",
+      "No physical device was inspected; firmware remains unknown.",
+      "The official YRD210 manual is family context. It does not establish exact firmware/signature applicability or the raw Zigbee battery scale.",
+      "This case is distinct from the YRD156 Z-Wave device. The associated lock-state comparison is included to preserve the complete referenced device record; battery normalization is the first investigation."
+    ]
+  },
+  "device_record_id": "yale-yrd210-pb-db",
+  "author": "github:@infinitywings",
+  "license": "Apache-2.0",
+  "publication_status": "candidate",
+  "records": [
+    {
+      "id": "yale-yrd210-pb-db",
+      "path": "catalog/devices/yale-yrd210-pb-db.json",
+      "sha256": "52e249d90c1594ec2fc52e68dcdaff89bf0d8d016c9a551cca02ce2114814ea2"
+    },
+    {
+      "id": "yrd210-battery-normalization",
+      "path": "catalog/corroboration/yrd210-battery-normalization.json",
+      "sha256": "a86133fe349c2b94f44a56469349e00ce67fdfdd9cf7a4ec8f5936ad8334e367"
+    },
+    {
+      "id": "yrd210-lock-exposure",
+      "path": "catalog/corroboration/yrd210-lock-exposure.json",
+      "sha256": "95b83ea52d7cb4fb289c50ea20f69c20c301a4ac224bef78d452b26d04e5e3db"
+    },
+    {
+      "id": "zha-yale-d6fcec5",
+      "path": "catalog/sources/zha-yale-d6fcec5.json",
+      "sha256": "dec7079fabb43777be098f10d5e6dda11642bd926f45df9cc030342380a0e4d7"
+    },
+    {
+      "id": "z2m-yale-5750b44",
+      "path": "catalog/sources/z2m-yale-5750b44.json",
+      "sha256": "b1b7c256d3d3d805125684a3c680144d8f05b5f9a4b86067e4730cd5953ffa00"
+    },
+    {
+      "id": "yale-yrd210-manual-rev-g",
+      "path": "catalog/documents/yale-yrd210-manual-rev-g.json",
+      "sha256": "1350f7ebe9e323c0e713b7912193e43fbdf55fe2e6a30f3fb6c239b047306361"
+    }
+  ],
+  "features": [
+    {
+      "id": "battery",
+      "title": "Battery normalization",
+      "summary": "The manual describes a local low-battery warning. Two upstream implementations adapt a battery value at different layers. Raw reports and final platform values are still needed to explain whether those paths agree for a particular firmware and signature.",
+      "record_ids": [
+        "yale-yrd210-pb-db",
+        "yrd210-battery-normalization",
+        "zha-yale-d6fcec5",
+        "z2m-yale-5750b44",
+        "yale-yrd210-manual-rev-g"
+      ],
+      "implementation_notes": [
+        {
+          "id": "manual-is-local-context",
+          "decision": "Keep the manual's local battery warning separate from a numeric platform percentage.",
+          "rationale": "The inspected manual explains the warning indicator and replacement batteries, but supplies no value scale for the Zigbee battery attribute. It provides context rather than a numeric binding.",
+          "references": [
+            {
+              "record_id": "yale-yrd210-manual-rev-g",
+              "locator": "#/locations/1",
+              "relationship": "context"
+            },
+            {
+              "record_id": "yale-yrd210-manual-rev-g",
+              "locator": "#/locations/2",
+              "relationship": "context"
+            }
+          ],
+          "conditions": [
+            "Family applicability only; no exact firmware, full signature or raw-scale claim follows from the manual.",
+            "The upstream PDF is referenced by URL and an inspected digest; it is not included in this package."
+          ]
+        },
+        {
+          "id": "zha-cluster-adjustment",
+          "decision": "Document ZHA's doubling at the cluster attribute stage.",
+          "rationale": "The pinned quirk selects DoublingPowerConfigurationCluster, whose battery_percentage_remaining update multiplies attribute 0x0021 by two. This describes an intermediate value; the final Home Assistant entity pipeline has not been traced in this record.",
+          "references": [
+            {
+              "record_id": "yrd210-battery-normalization",
+              "locator": "#/observations/0",
+              "relationship": "supports"
+            },
+            {
+              "record_id": "zha-yale-d6fcec5",
+              "locator": "#/artifacts/1",
+              "relationship": "context"
+            }
+          ],
+          "conditions": [
+            "The exact manufacturer/model and full endpoint/cluster signature must select this quirk.",
+            "Do not infer that the displayed entity percentage is doubled or copy this adjustment into another layer without tracing that layer."
+          ]
+        },
+        {
+          "id": "z2m-percentage-adjustment",
+          "decision": "Document Zigbee2MQTT's skipped default halving at the converter stage.",
+          "rationale": "The pinned model entry sets dontDividePercentage to true. The selected converter branch retains the reported percentage instead of applying its default divide-by-two step. This does not contradict a cluster-level adjustment followed by different downstream processing.",
+          "references": [
+            {
+              "record_id": "yrd210-battery-normalization",
+              "locator": "#/observations/1",
+              "relationship": "supports"
+            },
+            {
+              "record_id": "z2m-yale-5750b44",
+              "locator": "#/artifacts/1",
+              "relationship": "context"
+            }
+          ],
+          "conditions": [
+            "The selected definition uses a model-string matcher; manufacturer equality is not an enforced constraint there.",
+            "The percentage must exist and be below 255, and voltageToPercentage must be absent for the cited branch.",
+            "Source inspection did not execute the converter, test a physical lock or establish cross-platform equivalence."
+          ]
+        }
+      ],
+      "test_plan": [
+        {
+          "id": "trace-battery-report",
+          "question": "For an identified device and firmware, how does an observed raw battery attribute become the platform's displayed percentage?",
+          "procedure": [
+            "On an already configured device you control, record public manufacturer/model identifiers, firmware if available, protocol, full endpoint/cluster signature and installed platform/driver versions.",
+            "During ordinary reporting, capture a sanitized battery attribute value and its attribute identifier, the relevant intermediate conversion if visible, and the final displayed value for the same report/time.",
+            "Identify which implementation path the installed version selected, distinguish measured values from deductions, and repeat only as needed to describe normal reporting. No driver patch or device re-pairing is requested.",
+            "Submit expected and actual values, time, repetition count and limitations. Keep differences between separate devices or platforms explicit rather than treating them as the same controlled execution."
+          ],
+          "requested_evidence": [
+            "Public model/signature, firmware or explicit unknown, and exact integration/converter revisions.",
+            "Sanitized raw and displayed values with enough timing context to associate them; no household/network identifiers or credentials.",
+            "Any unobservable intermediate stage and whether the result supports, contradicts or leaves the proposed explanation unresolved."
+          ]
+        }
+      ],
+      "gaps": [
+        "No physical-device observations or executed simulations have been submitted.",
+        "No manufacturer definition of the raw battery attribute scale for the exact Zigbee module/firmware has been found.",
+        "The complete ZHA to Home Assistant entity normalization path is not yet documented.",
+        "Cross-platform numerical equivalence, low-battery thresholds, error/sentinel propagation and applicability across firmware remain unresolved."
+      ]
+    },
+    {
+      "id": "lock-state",
+      "title": "Lock-state context",
+      "summary": "The referenced device also carries a bounded comparison of ZHA's cluster declaration and Zigbee2MQTT's command/state exposure. It is retained as context, with no complete semantic mapping or hardware result.",
+      "record_ids": [
+        "yale-yrd210-pb-db",
+        "yrd210-lock-exposure",
+        "zha-yale-d6fcec5",
+        "z2m-yale-5750b44"
+      ],
+      "implementation_notes": [
+        {
+          "id": "separate-command-and-state",
+          "decision": "Preserve command exposure and reported lock state as different declarations.",
+          "rationale": "The pinned ZHA quirk declares a DoorLock cluster. Zigbee2MQTT separately exposes a command-capable state field and a reported lock_state field with a not_fully_locked value. These declarations alone cannot establish identical runtime behavior.",
+          "references": [
+            {
+              "record_id": "yrd210-lock-exposure",
+              "locator": "#/observations/0",
+              "relationship": "context"
+            },
+            {
+              "record_id": "yrd210-lock-exposure",
+              "locator": "#/observations/1",
+              "relationship": "context"
+            }
+          ],
+          "conditions": [
+            "Do not collapse partially locked or unknown states into a successful requested command.",
+            "The downstream Home Assistant lock entity is not traced here; no SDF binding or lock-operation experiment is proposed by this bundle."
+          ]
+        }
+      ],
+      "test_plan": [],
+      "gaps": [
+        "The source comparison remains candidate, without an independent review, full downstream state trace or physical-device observation."
+      ]
+    }
+  ],
+  "reviews": [],
+  "credits": [
+    {
+      "identity": "github:@infinitywings",
+      "roles": ["author", "source-research", "maintenance"],
+      "record_ids": [
+        "yale-yrd210-pb-db",
+        "yrd210-battery-normalization",
+        "yrd210-lock-exposure",
+        "zha-yale-d6fcec5",
+        "z2m-yale-5750b44",
+        "yale-yrd210-manual-rev-g"
+      ]
+    }
+  ],
+  "history": [
+    {
+      "version": "0.1.0",
+      "summary": "First candidate bundle: preserve the existing device/source/corroboration records, add official manual context, explain battery adaptation layers, and invite a scoped observation. No experiment or independent review has been added."
+    }
+  ],
+  "limitations": [
+    "Candidate draft format and content prepared for public review under https://github.com/edgeloom-oss/edgeloom/issues/63 . Canonical identifies the maintained catalog snapshot, not a manufacturer certification or exclusive account of device behavior.",
+    "Firmware, physical behavior and exact platform applicability remain unconfirmed. No SDF binding or new driver implementation is included.",
+    "The package includes catalog-authored metadata and explanations, not the manual, upstream source code, executed upstream fixtures or telemetry.",
+    "New bundle text and document metadata were prepared with Codex assistance under github:@infinitywings's direction. This is founder-contributed source research and curation, not independent review or an actual hardware report.",
+    "Referenced legacy records are included unchanged; their source maturity and candidate lifecycle are not promoted by package validation or publication."
+  ]
+}

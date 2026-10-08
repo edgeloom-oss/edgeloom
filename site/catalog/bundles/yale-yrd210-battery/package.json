@@ -1,0 +1,22 @@
+{
+  "bundle_path": "catalog/bundles/yale-yrd210-battery.json",
+  "files": {
+    "bundle.css": "5af9aa8d6848431216be3a6e132c8b2365a4bb49440d53298df3451c50e51b30",
+    "catalog/bundles/yale-yrd210-battery.json": "f90b3a3e8690293bc498fea8a4ab86d90c4c83fed177d1286ae693be7f109769",
+    "catalog/corroboration/yrd210-battery-normalization.json": "a86133fe349c2b94f44a56469349e00ce67fdfdd9cf7a4ec8f5936ad8334e367",
+    "catalog/corroboration/yrd210-lock-exposure.json": "95b83ea52d7cb4fb289c50ea20f69c20c301a4ac224bef78d452b26d04e5e3db",
+    "catalog/devices/yale-yrd210-pb-db.json": "52e249d90c1594ec2fc52e68dcdaff89bf0d8d016c9a551cca02ce2114814ea2",
+    "catalog/documents/yale-yrd210-manual-rev-g.json": "1350f7ebe9e323c0e713b7912193e43fbdf55fe2e6a30f3fb6c239b047306361",
+    "catalog/sources/z2m-yale-5750b44.json": "b1b7c256d3d3d805125684a3c680144d8f05b5f9a4b86067e4730cd5953ffa00",
+    "catalog/sources/zha-yale-d6fcec5.json": "dec7079fabb43777be098f10d5e6dda11642bd926f45df9cc030342380a0e4d7",
+    "index.html": "f27180cf9da94d6a413b3d9d5f907b82c3bfb8903c2b2028df67701307caca08",
+    "report.json": "0d368e435e3c9512b79ff286762c78683a2bfb9a0f04313fb3a937515accd159",
+    "report.md": "9e94e7414c951bc21da6bf2e992ec95db4930c3cc11824cc23138f3300fee35b",
+    "schema/catalog-corroboration.schema.json": "9b98a67d8767ce09b86ef08f7e29fca614389a98e7ea20ed47fa044f86fb9b97",
+    "schema/catalog-device.schema.json": "89f1cc1940c57256b65dada869df1504d8d2b91f7335262bde77ba39cf181655",
+    "schema/device-evidence-bundle.schema.json": "74b2a87007a8161d875b53c93989d2e8fb1165ebc44e3e7e8de4f3b7adc73818",
+    "schema/document-source.schema.json": "dc04b5ebb90c9fd4954c211abe7bdfc4c584db320c58db91cbde3216d075b63b",
+    "schema/source-manifest.schema.json": "d4338bce4717461f571df076d17154303e2bc824b9127f4d6e81d0ac2870831c"
+  },
+  "format": "device-evidence-bundle/0.1"
+}

@@ -405,6 +405,19 @@ def test_repo_document_census_recognizes_only_schema_artifacts(repo_root: Path) 
         Path("tests/fixtures/bundles/catalog/documents/synthetic-manual.json"),
         Path("tests/fixtures/bundles/catalog/bundles/demo.json"),
     }
+    # The portable website bundle intentionally contains exact canonical records.
+    expected |= {
+        Path("site/catalog/bundles/yale-yrd210-battery/catalog") / relative
+        for relative in (
+            "bundles/yale-yrd210-battery.json",
+            "devices/yale-yrd210-pb-db.json",
+            "corroboration/yrd210-battery-normalization.json",
+            "corroboration/yrd210-lock-exposure.json",
+            "sources/zha-yale-d6fcec5.json",
+            "sources/z2m-yale-5750b44.json",
+            "documents/yale-yrd210-manual-rev-g.json",
+        )
+    }
     recognized = {
         result.path.relative_to(repo_root)
         for result in (schemas.validate_document(path) for path in schemas.iter_documents([repo_root]))

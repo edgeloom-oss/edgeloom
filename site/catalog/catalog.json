@@ -1,6 +1,16 @@
 {
+  "bundles": [
+    {
+      "device_record_id": "yale-yrd210-pb-db",
+      "id": "yale-yrd210-battery",
+      "input_digest": "336f46112dfba3dc9254363e6516f982e67fcf7825a75b5f0a6932bf5193b1c3",
+      "publication_status": "candidate",
+      "title": "Yale YRD210 PB DB: explaining battery normalization",
+      "version": "0.1.0"
+    }
+  ],
   "catalog_repository": "https://github.com/edgeloom-oss/edgeloom-catalog",
-  "catalog_revision": "f52d6eebf2092b323c71069dee84c3aa12d51f3e",
+  "catalog_revision": "52589528d53abbbb5265a13339c14cc96c4e8741",
   "checks": {
     "contracts": "passed",
     "cross_record_references": "passed",
@@ -759,13 +769,13 @@
     }
   ],
   "generator": {
-    "declared_core_revision": "4f321798aa7352c65c080aa4b8a6ff0d1e3a45c6",
-    "implementation_digest": "2a56cda3068f3238f23558f48aeb85af830c8a68119c594c0e55c221d135c4e8",
+    "declared_core_revision": "0c86fea045972458dc1e60eb435ced95036f04fe",
+    "implementation_digest": "edf5e424e4d0460d1cc429eaed93c511630241ebb8797bc0dd38a7e830bd4bb4",
     "package_version_label": "0.2.0",
     "policy": "catalog/v0.1",
     "version_label_is_not_release_attestation": true
   },
-  "input_digest": "acc594d4fa969e56779ef8fa717bf9ac1880711db81ae5ce3ca04b660e6cbba1",
+  "input_digest": "1dd1bf258fd3920d8f740c33bf07bce8629643bdb12eeb07bc96e319b670bec3",
   "limitations": [
     "Device associations, classifications, license labels, and review states are catalog-author declarations, not independently authenticated by this build.",
     "Resolved locators establish field existence only, not the interpretation, completeness, runtime behavior, SDF conformance, or interoperability of an artifact.",

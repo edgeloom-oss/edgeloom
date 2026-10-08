@@ -1,0 +1,107 @@
+{
+  "kind": "catalog-corroboration",
+  "schema_version": "0.1",
+  "id": "yrd210-lock-exposure",
+  "device_id": "yale-yrd210-pb-db",
+  "feature_id": "lock-state",
+  "title": "Cluster declaration versus exposed state",
+  "summary": "The matching ZHA quirk retains a DoorLock cluster. Zigbee2MQTT declares separate command/state and actual-state fields. These artifacts alone do not establish equal UI behavior or a complete cross-platform mapping.",
+  "source_manifests": [
+    {
+      "id": "zha-yale-d6fcec5",
+      "path": "catalog/sources/zha-yale-d6fcec5.json",
+      "sha256": "dec7079fabb43777be098f10d5e6dda11642bd926f45df9cc030342380a0e4d7"
+    },
+    {
+      "id": "z2m-yale-5750b44",
+      "path": "catalog/sources/z2m-yale-5750b44.json",
+      "sha256": "b1b7c256d3d3d805125684a3c680144d8f05b5f9a4b86067e4730cd5953ffa00"
+    }
+  ],
+  "lineage": [
+    {
+      "manifest_id": "zha-yale-d6fcec5",
+      "family": "zha-quirks",
+      "depends_on": []
+    },
+    {
+      "manifest_id": "z2m-yale-5750b44",
+      "family": "zigbee-herdsman-converters",
+      "depends_on": []
+    }
+  ],
+  "observations": [
+    {
+      "id": "zha-lock-cluster",
+      "platform": "ZHA quirk",
+      "scope": "device-model",
+      "evidence_kind": "code-declaration",
+      "relationship": "context",
+      "claim": "YRD210PBDB220TSLL includes DoorLock in its signature and replacement input clusters. The quirk itself does not define the downstream HA lock entity's states.",
+      "identity_match": {
+        "manufacturer": "Yale",
+        "model": "YRD210 PB DB"
+      },
+      "identity_evidence": {
+        "manifest_id": "zha-yale-d6fcec5",
+        "artifact_id": "zha-yale-realliving",
+        "locator": "YRD210PBDB220TSLL.signature.MODELS_INFO"
+      },
+      "references": [
+        {
+          "manifest_id": "zha-yale-d6fcec5",
+          "artifact_id": "zha-yale-realliving",
+          "locator": "YRD210PBDB220TSLL.signature and replacement; DoorLock.cluster_id"
+        }
+      ],
+      "conditions": [
+        "Endpoint and complete cluster signature must match.",
+        "Cluster presence is not whole-platform exposure or hardware success."
+      ]
+    },
+    {
+      "id": "z2m-lock-exposes",
+      "platform": "Zigbee2MQTT exposes",
+      "scope": "device-model",
+      "evidence_kind": "code-declaration",
+      "relationship": "context",
+      "claim": "The shared e.lock() constructor declares state as LOCK/UNLOCK with state/set/get access, and lock_state as not_fully_locked/locked/unlocked with state-only access.",
+      "identity_match": {
+        "model": "YRD210 PB DB"
+      },
+      "identity_evidence": {
+        "manifest_id": "z2m-yale-5750b44",
+        "artifact_id": "z2m-yale-definitions",
+        "locator": "definitions[zigbeeModel includes YRD210 PB DB]"
+      },
+      "references": [
+        {
+          "manifest_id": "z2m-yale-5750b44",
+          "artifact_id": "z2m-yale-definitions",
+          "locator": "YRD210-HA-605; lockExtend; exposes e.lock()"
+        },
+        {
+          "manifest_id": "z2m-yale-5750b44",
+          "artifact_id": "z2m-exposes",
+          "locator": "presets.lock; Lock.withState; Lock.withLockState; access"
+        }
+      ],
+      "conditions": [
+        "Model-only matcher; no explicit manufacturer constraint in this definition.",
+        "Exposed metadata is not a firmware capability test or confirmation that all state values occur."
+      ]
+    }
+  ],
+  "review": {
+    "lifecycle": "candidate",
+    "author": "github:@infinitywings",
+    "reviewers": []
+  },
+  "limitations": [
+    "Human-authored candidate observations; no independent EdgeLoom review or physical-device test.",
+    "Sources are pinned snapshots, not a claim about the currently installed integration, coordinator or firmware.",
+    "Relationship labels are curator interpretations, not computed semantic equivalence. Conflicting observations must remain visible.",
+    "No SDF correspondence is added for this Zigbee case; lack of a catalog binding is not a limitation of SDF.",
+    "Commands, observations and partially locked state must not be collapsed into a single binary semantic binding."
+  ]
+}

@@ -5,8 +5,8 @@ Source-level evidence, not a compatibility or installation recommendation.
 - Protocol: zigbee
 - Identifiers: \{   "manufacturer": "Yale",   "model": "YRD210 PB DB" \}
 - Firmware: Unknown; exact endpoint/cluster signature and installed platform versions unconfirmed
-- Catalog revision: f52d6eebf2092b323c71069dee84c3aa12d51f3e
-- Input digest: acc594d4fa969e56779ef8fa717bf9ac1880711db81ae5ce3ca04b660e6cbba1
+- Catalog revision: 52589528d53abbbb5265a13339c14cc96c4e8741
+- Input digest: 1dd1bf258fd3920d8f740c33bf07bce8629643bdb12eeb07bc96e319b670bec3
 - Source byte check: matched
 - Hardware evidence: none recorded
 
