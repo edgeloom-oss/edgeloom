@@ -70,6 +70,15 @@ code { font-family: "SFMono-Regular", Consolas, monospace; font-size: .78rem; ov
 .feature-summary { color: var(--soft); }
 .finding { margin-top: 1rem; padding: 1.1rem; background: white; border: 1px solid var(--line); border-radius: .5rem; }
 .state { display: block; color: var(--soft); font-size: .75rem; margin-top: .4rem; }
+.comparison { margin: 1.5rem 0; }
+.comparison > h3 { font-size: 1.05rem; margin: .6rem 0; }
+.comparison > p:not(.eyebrow) { font-size: .9rem; }
+.comparison-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; }
+.observation { padding: 1rem; border: 1px solid var(--line); border-radius: .5rem; background: white; overflow-wrap: anywhere; }
+.observation h3 { margin: 0; font-size: 1rem; }
+.observation p { font-size: .85rem; }
+.observation .identity-match { color: var(--soft); font-size: .75rem; }
+.comparison details { font-size: .85rem; overflow-wrap: anywhere; }
 ul { padding-left: 1.2rem; }
 .finding ul, aside ul, .next ul { font-size: .85rem; }
 li + li { margin-top: .5rem; }
@@ -93,6 +102,7 @@ aside p { font-size: .85rem; }
   aside { margin: 0 0 2rem; }
 }
 @media (max-width: 540px) {
+  .comparison-grid { grid-template-columns: 1fr; }
   header { flex-wrap: wrap; padding: .7rem 1.25rem; gap: .5rem; }
   header nav { gap: 1rem; font-size: .85rem; }
   .brand { font-size: .9rem; }

@@ -9,6 +9,12 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- Draft candidate-only `catalog-corroboration` sidecars: pinned source joins,
+  declared lineage cycle checks, explicit partial device-identity matches,
+  generic versus model-scoped observations, and visible conflicts. Static
+  comparison cards and Markdown/JSON preserve source code versus simulated
+  fixture distinctions without inheriting upstream review or hardware validity.
+
 - Development-only `catalog check/fetch/build` commands join source manifests,
   mapping sets and explicitly identified device entries, check cross-record
   references and manifest digests, explicitly fetch bounded commit-pinned

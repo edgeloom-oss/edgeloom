@@ -51,6 +51,7 @@ def _layout(title: str, description: str, content: str, index: dict, prefix="./"
 def index_html(index: dict) -> str:
     cards = []
     mappings = {item["id"]: item for item in index["mapping_sets"]}
+    corroborations = {item["id"]: item for item in index["corroborations"]}
     for device in index["devices"]:
         name = f"{device['manufacturer']} {device['model']}"
         statuses = sorted(
@@ -58,6 +59,11 @@ def index_html(index: dict) -> str:
                 mappings[mid]["review"]["lifecycle"]
                 for feature in device["features"]
                 for mid in feature["mapping_ids"]
+            }
+            | {
+                corroborations[cid]["review"]["lifecycle"]
+                for feature in device["features"]
+                for cid in feature.get("corroboration_ids", [])
             }
         )
         keywords = " ".join(
@@ -67,6 +73,12 @@ def index_html(index: dict) -> str:
                 "Z-Wave" if device["protocol"] == "zwave" else "Zigbee",
                 *device["identifiers"].values(),
                 *[feature["title"] + " " + feature["summary"] for feature in device["features"]],
+                *[
+                    observation["platform"] + " " + observation["claim"]
+                    for feature in device["features"]
+                    for cid in feature.get("corroboration_ids", [])
+                    for observation in corroborations[cid]["observations"]
+                ],
             ]
         )
         features = "".join(
@@ -101,6 +113,7 @@ data-protocol="{device["protocol"]}" data-status="{" ".join(statuses)}">
 def device_html(index: dict, device: dict) -> str:
     name = f"{device['manufacturer']} {device['model']}"
     mappings = {item["id"]: item for item in index["mapping_sets"]}
+    corroborations = {item["id"]: item for item in index["corroborations"]}
     identity = device["identity_evidence"]
     source = next(item for item in index["sources"] if item["id"] == identity["manifest_id"])
     artifact = next(item for item in source["artifacts"] if item["id"] == identity["artifact_id"])
@@ -146,12 +159,64 @@ def device_html(index: dict, device: dict) -> str:
 SHA-256: <code>{mapping["sha256"]}</code></p>{_list(mapping.get("limitations", []))}
 {"".join(assertion_details)}
 <ul class="evidence-list">{"".join(evidence)}</ul></div>''')
+        comparisons = []
+        for cid in feature.get("corroboration_ids", []):
+            record = corroborations[cid]
+            observations, evidence = [], []
+            for observation in record["observations"]:
+                match = (
+                    "; ".join(
+                        f"{key}: {value}" for key, value in observation.get("identity_match", {}).items()
+                    )
+                    or "Generic platform path; not a model-specific result"
+                )
+                observations.append(f"""<article class="observation">
+<h3>{_e(observation["platform"])}</h3>
+<p class="state">{_e(observation["relationship"])} · {_e(observation["evidence_kind"])}</p>
+<p>{_e(observation["claim"])}</p>
+<p class="identity-match">Declared match: {_e(match)}</p></article>""")
+                links = "".join(
+                    f'<li><a href="{_e(check["url"])}">Pinned source ↗</a> '
+                    f"<code>{_e(check['locator'])}</code> "
+                    f'<span class="locator-state">Locator: {_e(check["status"])}</span></li>'
+                    for check in observation["locator_checks"]
+                )
+                evidence.append(
+                    f"<h4>{_e(observation['platform'])}</h4>"
+                    f"{_list(observation['conditions'])}<ul>{links}</ul>"
+                )
+            lineage = _list(
+                [
+                    f"{row['manifest_id']} · family: {row['family']} · depends on: "
+                    + (", ".join(row["depends_on"]) or "none declared in this record")
+                    for row in record["lineage"]
+                ]
+            )
+            ref = index["catalog_revision"]
+            ref = ref if ref != "working-tree" else "main"
+            url = f"{index['catalog_repository']}/blob/{ref}/{quote(record['path'], safe='/')}"
+            comparisons.append(f'''<div class="comparison">
+<p class="eyebrow">External corroboration · candidate</p><h3>{_e(record["title"])}</h3>
+<p>{_e(record["summary"])}</p>
+<div class="comparison-grid">{"".join(observations)}</div>
+<details><summary>Pinned sources, conditions &amp; declared lineage</summary>
+<p>Curator: {_e(record["review"]["author"])}. No independent EdgeLoom reviewer recorded.
+<a href="{_e(url)}">Canonical record ↗</a></p>
+{"".join(evidence)}<h4>Source lineage — not an independence score</h4>{lineage}
+{_list(record["limitations"])}</details></div>''')
+        mapping_panel = (
+            "<details><summary>Mapping evidence, source links &amp; scope boundaries</summary>"
+            + "".join(details)
+            + "</details>"
+            if details
+            else ""
+        )
         sections.append(f'''<section id="{feature["id"]}" class="feature">
 <p class="eyebrow">Feature evidence</p><h2>{_e(feature["title"])}</h2>
 <p class="feature-summary">{_e(feature["summary"])}</p>{"".join(conclusions)}
+{"".join(comparisons)}
 <div class="next"><h3>What you can do next</h3>{_list(feature["next_steps"])}</div>
-<details><summary>Evidence, source links &amp; scope boundaries</summary>
-{"".join(details)}</details></section>''')
+{mapping_panel}</section>''')
     navigation = "".join(
         f'<a href="#{feature["id"]}">{_e(feature["title"])}</a>' for feature in device["features"]
     )

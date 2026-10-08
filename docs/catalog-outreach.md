@@ -38,3 +38,22 @@ outreach, first obtain real external feedback, expand the distinct-device
 inventory and publish/install-test the new tooling. Stars or page views are
 not adoption evidence. Standards outreach should use the bounded model gap
 and evidence report, not a claim that RFC 9880/SDF is defective.
+
+## Narrow HA / Zigbee developer discussion — after publication
+
+**Same battery intent, different adaptation layers: can you check this case?**
+
+Our candidate report compares pinned ZHA and Zigbee2MQTT declarations for
+`Yale / YRD210 PB DB`. The ZHA quirk doubles a raw cluster attribute; the Z2M
+converter skips its default halving. We are not claiming contradictory final
+percentages, hardware validation, or a ready-to-install patch.
+
+We would value a correction to the source interpretation, the downstream ZHA
+entity path, or a sanitized raw/final-value observation with firmware and
+platform versions. Multiple repos are not independent review of our claim.
+
+Planned report link (verify publicly before posting):
+https://edgeloom-oss.github.io/edgeloom/catalog/devices/yale-yrd210-pb-db/#battery
+
+This draft has not been posted. Check community rules and disclose the project
+founder/maintainer relationship. Do not request raw private logs or lock codes.

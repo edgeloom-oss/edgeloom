@@ -80,6 +80,7 @@ class Catalog:
     sources: dict[str, dict]
     mappings: dict[str, dict]
     devices: dict[str, dict]
+    corroborations: dict[str, dict]
     records: dict[str, dict]
 
     def artifact(self, reference: dict) -> tuple[dict, dict]:
@@ -95,19 +96,41 @@ class Catalog:
         return source, artifact
 
 
+def _check_lineage(record: dict, declared: set[str]) -> None:
+    graph = {row["manifest_id"]: row["depends_on"] for row in record["lineage"]}
+    if set(graph) != declared or any(set(deps) - declared for deps in graph.values()):
+        raise CatalogError(f"{record['id']}: lineage must cover exactly the declared sources")
+    visited, pending = set(), set()
+
+    def visit(identifier: str) -> None:
+        if identifier in pending:
+            raise CatalogError(f"{record['id']}: cyclic source lineage")
+        if identifier in visited:
+            return
+        pending.add(identifier)
+        for dependency in graph[identifier]:
+            visit(dependency)
+        pending.remove(identifier)
+        visited.add(identifier)
+
+    for identifier in graph:
+        visit(identifier)
+
+
 def load_catalog(root: Path) -> Catalog:
     root = root.resolve()
-    catalog = Catalog(root, {}, {}, {}, {})
+    catalog = Catalog(root, {}, {}, {}, {}, {})
     documents: dict[str, tuple[dict, bytes]] = {}
     total_bytes = 0
     for folder, kind, target in (
         ("sources", schemas.SOURCE_MANIFEST, catalog.sources),
         ("mappings", schemas.CATALOG_MAPPING_SET, catalog.mappings),
         ("devices", schemas.CATALOG_DEVICE, catalog.devices),
+        ("corroboration", schemas.CATALOG_CORROBORATION, catalog.corroborations),
     ):
         directory = _child(root, f"catalog/{folder}")
         if not directory.is_dir():
-            if folder == "devices":
+            if folder in {"devices", "corroboration"}:
                 continue
             raise CatalogError(f"Missing catalog/{folder} directory")
         for path in sorted(directory.rglob("*")):
@@ -152,7 +175,13 @@ def load_catalog(root: Path) -> Catalog:
                 raise CatalogError(f"{mapping['id']}/{item['id']}: artifact layer mismatch")
     for device in catalog.devices.values():
         catalog.artifact(device["identity_evidence"])
-        if sum(len(feature["mapping_ids"]) for feature in device["features"]) > 100:
+        if (
+            sum(
+                len(feature["mapping_ids"]) + len(feature.get("corroboration_ids", []))
+                for feature in device["features"]
+            )
+            > 100
+        ):
             raise CatalogError(f"{device['id']}: too many feature associations")
         for feature in device["features"]:
             for identifier in feature["mapping_ids"]:
@@ -161,6 +190,54 @@ def load_catalog(root: Path) -> Catalog:
                     raise CatalogError(f"{device['id']}: unknown mapping set: {identifier}")
                 if device["protocol"] not in mapping["scope"]["protocols"]:
                     raise CatalogError(f"{device['id']}: protocol does not match {identifier}")
+            for identifier in feature.get("corroboration_ids", []):
+                record = catalog.corroborations.get(identifier)
+                if record is None:
+                    raise CatalogError(f"{device['id']}: unknown corroboration: {identifier}")
+                if record["device_id"] != device["id"] or record["feature_id"] != feature["id"]:
+                    raise CatalogError(f"{identifier}: device/feature association mismatch")
+    associated = {
+        identifier
+        for device in catalog.devices.values()
+        for feature in device["features"]
+        for identifier in feature.get("corroboration_ids", [])
+    }
+    for record in catalog.corroborations.values():
+        if record["id"] not in associated:
+            raise CatalogError(f"{record['id']}: orphan corroboration record")
+        declared = {reference["id"] for reference in record["source_manifests"]}
+        for reference in record["source_manifests"]:
+            relative = reference["path"]
+            if relative not in documents:
+                raise CatalogError(f"{record['id']}: source path not indexed: {relative}")
+            source, payload = documents[relative]
+            if source.get("kind") != schemas.SOURCE_MANIFEST or source["id"] != reference["id"]:
+                raise CatalogError(f"{record['id']}: source identity mismatch: {relative}")
+            if digest(payload) != reference["sha256"]:
+                raise CatalogError(f"{record['id']}: source manifest digest mismatch: {relative}")
+        _check_lineage(record, declared)
+        device = catalog.devices[record["device_id"]]
+        for observation in record["observations"]:
+            references = observation["references"] + (
+                [observation["identity_evidence"]] if "identity_evidence" in observation else []
+            )
+            for reference in references:
+                if reference["manifest_id"] not in declared:
+                    raise CatalogError(f"{record['id']}: undeclared source reference")
+                catalog.artifact(reference)
+            # This checks the curator's declared match, not the source interpretation.
+            for key, value in observation.get("identity_match", {}).items():
+                expected = device["identifiers"].get(key)
+                if key in {"manufacturer_id", "product_type", "product_id"}:
+                    matches = (
+                        expected is not None
+                        and re.fullmatch(r"0x[0-9a-fA-F]{4}", value)
+                        and int(value, 16) == int(expected, 16)
+                    )
+                else:
+                    matches = value == expected
+                if not matches:
+                    raise CatalogError(f"{record['id']}: declared identity match differs from device")
     return catalog
 
 
@@ -339,7 +416,12 @@ def build_index(catalog: Catalog, cache: Path | None = None) -> dict:
     }
     for name in ("page.html", "index.html", "device.html", "styles.css", "script.js"):
         policy_files[f"catalog_assets/{name}"] = digest(read_bytes(implementation / "catalog_assets", name))
-    for kind in (schemas.SOURCE_MANIFEST, schemas.CATALOG_MAPPING_SET, schemas.CATALOG_DEVICE):
+    for kind in (
+        schemas.SOURCE_MANIFEST,
+        schemas.CATALOG_MAPPING_SET,
+        schemas.CATALOG_DEVICE,
+        schemas.CATALOG_CORROBORATION,
+    ):
         policy_files[f"schema/{kind}"] = digest(schemas.schema_path(kind).read_bytes())
     sources = []
     for source in sorted(catalog.sources.values(), key=lambda item: item["id"]):
@@ -374,6 +456,26 @@ def build_index(catalog: Catalog, cache: Path | None = None) -> dict:
         {**device, **records[device["id"]]}
         for device in sorted(catalog.devices.values(), key=lambda item: item["id"])
     ]
+    corroborations = []
+    for record in sorted(catalog.corroborations.values(), key=lambda item: item["id"]):
+        observations = []
+        for observation in record["observations"]:
+            checks = []
+            for reference in observation["references"] + (
+                [observation["identity_evidence"]] if "identity_evidence" in observation else []
+            ):
+                source, artifact = catalog.artifact(reference)
+                checks.append(
+                    {
+                        **reference,
+                        "url": artifact_url(source, artifact),
+                        "status": _locator_status(
+                            _cached(cache, artifact) if cache else None, artifact, reference["locator"]
+                        ),
+                    }
+                )
+            observations.append({**observation, "locator_checks": checks})
+        corroborations.append({**record, **records[record["id"]], "observations": observations})
     return {
         "report_version": "0.1",
         "catalog_repository": CATALOG_REPOSITORY,
@@ -398,10 +500,13 @@ def build_index(catalog: Catalog, cache: Path | None = None) -> dict:
             "devices": len(devices),
             "mapping_sets": len(mapping_sets),
             "assertions": sum(len(item["mappings"]) for item in mapping_sets),
+            "corroboration_records": len(corroborations),
+            "source_observations": sum(len(item["observations"]) for item in corroborations),
         },
         "devices": devices,
         "mapping_sets": mapping_sets,
         "sources": sources,
+        "corroborations": corroborations,
         "limitations": [
             "Device associations, classifications, license labels, and review states are "
             "catalog-author declarations, not independently authenticated by this build.",
@@ -412,6 +517,9 @@ def build_index(catalog: Catalog, cache: Path | None = None) -> dict:
             "SDF model is not a limitation of SDF itself.",
             "Hardware-evidence links are reported observations, not tests performed by this tool. "
             "No patch availability is inferred.",
+            "Cross-source observations and lineage are curator declarations. Shared backends are "
+            "not independent evidence; upstream test fixtures are not physical-device tests or "
+            "independent EdgeLoom review. No source count promotes a candidate.",
         ],
     }
 
@@ -422,6 +530,7 @@ def device_markdown(index: dict, device: dict) -> str:
         return re.sub(r"([\\`*_{}\[\]()<>#+.!|~-])", r"\\\1", text.replace("\n", " "))
 
     mappings = {item["id"]: item for item in index["mapping_sets"]}
+    corroborations = {item["id"]: item for item in index["corroborations"]}
     hardware = "reported links; not authenticated" if device["hardware_evidence"] else "none recorded"
     lines = [
         f"# {plain(device['manufacturer'])} {plain(device['model'])}",
@@ -462,6 +571,36 @@ def device_markdown(index: dict, device: dict) -> str:
                     f"locator: {plain(locator['locator'])}; check: {locator['status']}",
                 ]
             lines += [""]
+        for identifier in feature.get("corroboration_ids", []):
+            record = corroborations[identifier]
+            lines += [
+                f"### {plain(record['title'])}",
+                "",
+                plain(record["summary"]),
+                "",
+                "Candidate external corroboration; not independent EdgeLoom review.",
+                "",
+            ]
+            for observation in record["observations"]:
+                lines += [
+                    f"- {plain(observation['platform'])}: {observation['relationship']} / "
+                    f"{observation['scope']} / {observation['evidence_kind']}",
+                    f"  - {plain(observation['claim'])}",
+                    "  - Declared identity match: "
+                    + plain(render_json(observation.get("identity_match", {})).strip()),
+                ]
+                lines += [f"  - Condition: {plain(value)}" for value in observation["conditions"]]
+                for check in observation["locator_checks"]:
+                    lines += [
+                        f"  - [Pinned source]({check['url']}): {plain(check['locator'])}; {check['status']}"
+                    ]
+            lines += ["", "Declared lineage (not an independence score):", ""]
+            lines += [
+                f"- {plain(row['manifest_id'])}: family {plain(row['family'])}; "
+                f"depends on {plain(', '.join(row['depends_on']) or 'none declared in this record')}"
+                for row in record["lineage"]
+            ]
+            lines += [""] + [f"- Limit: {plain(value)}" for value in record["limitations"]] + [""]
         lines += ["Next steps:", ""] + [f"- {plain(step)}" for step in feature["next_steps"]] + [""]
     lines += ["## Boundaries", ""] + [
         f"- {plain(limit)}" for limit in device["limitations"] + index["limitations"]

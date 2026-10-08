@@ -272,7 +272,8 @@ def _cmd_catalog(args: argparse.Namespace) -> int:
             count = catalog.write_site(dataset, index, args.output)
             print(
                 f"Built {count} files: {len(dataset.devices)} device(s), "
-                f"{len(dataset.mappings)} mapping sets -> {args.output}"
+                f"{len(dataset.mappings)} mapping sets, "
+                f"{len(dataset.corroborations)} corroboration records -> {args.output}"
             )
             print(
                 f"Source bytes: {index['checks']['source_bytes']}; review and hardware evidence are separate."
@@ -280,7 +281,8 @@ def _cmd_catalog(args: argparse.Namespace) -> int:
         else:
             print(
                 f"Catalog checks passed: {len(dataset.sources)} sources, "
-                f"{len(dataset.mappings)} mapping sets, {len(dataset.devices)} devices. "
+                f"{len(dataset.mappings)} mapping sets, {len(dataset.devices)} devices, "
+                f"{len(dataset.corroborations)} corroboration records. "
                 "Upstream bytes not fetched."
             )
     except (catalog.CatalogError, schemas.SchemaError, OSError) as exc:

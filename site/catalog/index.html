@@ -35,7 +35,7 @@
   <p class="eyebrow">An open, source-linked evidence catalog</p>
   <h1>What does your<br>driver <em>expose?</em></h1>
   <p class="lede">Find a device. Inspect a feature. Follow the evidence.</p>
-  <p class="scope-note">Early pilot: 1 device model(s) · 3 mapping sets · 6 assertions.
+  <p class="scope-note">Early pilot: 2 device model(s) · 3 mapping sets · 6 mapping assertions · 4 corroboration records.
     Counts are evidence inventory, not supported-device or adoption metrics.</p>
 </section>
 <section class="browser" aria-label="Device browser">
@@ -52,7 +52,7 @@
       </select>
     </div>
     <div>
-      <label for="review">Mapping review</label>
+      <label for="review">Record review</label>
       <select id="review">
         <option value="">All declared states</option><option value="candidate">Candidate</option>
         <option value="reviewed">Reviewed</option><option value="verified">Verified</option>
@@ -61,8 +61,8 @@
     </div>
     <button type="reset" class="reset">Reset</button>
   </form>
-  <p id="result-count" role="status" aria-live="polite">1 device model(s) indexed</p>
-  <div class="device-grid"><article class="device-card" data-device data-search="yale yrd156 zwave z-wave 0x0129 0x803a 0x0508 auto-relock duration the pinned community configuration describes a duration parameter. it is absent from the examined base-lock capability list and the selected lock-status sdf object. this does not establish that the whole driver or smartthings ui lacks a setting, or that sdf cannot express one. lock-state events a strict locked/unlocked subset has a candidate correspondence with the selected sdf property. unknown state and method/user metadata are not preserved. the examined handler path requires a true migration flag; that state has not been established for a real yrd156. access identity and lock codes the examined migrated path carries user and credential metadata absent from the selected lock-code sdf object. a pin write payload and the reported identity records do not establish a reversible value mapping."
+  <p id="result-count" role="status" aria-live="polite">2 device model(s) indexed</p>
+  <div class="device-grid"><article class="device-card" data-device data-search="yale yrd156 zwave z-wave 0x0129 0x803a 0x0508 auto-relock duration the pinned community configuration describes a duration parameter. it is absent from the examined base-lock capability list and the selected lock-status sdf object. this does not establish that the whole driver or smartthings ui lacks a setting, or that sdf cannot express one. lock-state events a strict locked/unlocked subset has a candidate correspondence with the selected sdf property. unknown state and method/user metadata are not preserved. the examined handler path requires a true migration flag; that state has not been established for a real yrd156. access identity and lock codes the examined migrated path carries user and credential metadata absent from the selected lock-code sdf object. a pin write payload and the reported identity records do not establish a reversible value mapping. z-wave js configuration the yrd156 configuration imports parameter 3&#x27;s auto-relock duration definition: seconds, 0–180, default 30. parameter 2 separately enables auto-relock. home assistant · z-wave js set_config_parameter declares parameter, value, endpoint and optional value_size fields. this is a generic entry point for configuration parameters, not a yrd156-specific successful write. home assistant · door lock cc async_set_lock_configuration passes auto_relock_time to doorlockccconfigurationsetoptions. this protocol-level option is not proof of equivalence to yale&#x27;s configuration parameter 3. home assistant · z-wave js zwavelock.is_locked returns none for a missing primary value or doorlockmode.unknown, instead of treating it as unlocked. home assistant · simulated test test_door_lock_no_value replaces a schlage be469 fixture&#x27;s mode value with none and asserts state_unknown."
 data-protocol="zwave" data-status="candidate">
 <div class="card-top"><span class="eyebrow">zwave · device evidence</span>
 <span class="badge">candidate</span></div>
@@ -70,7 +70,16 @@ data-protocol="zwave" data-status="candidate">
 <p>Inspect what the published artifacts describe, expose, and leave unresolved.</p>
 <ul class="feature-links"><li><a href="devices/yale-yrd156/#auto-relock">Auto-relock duration <span aria-hidden="true">↗</span></a></li><li><a href="devices/yale-yrd156/#lock-state">Lock-state events <span aria-hidden="true">↗</span></a></li><li><a href="devices/yale-yrd156/#access-identities">Access identity and lock codes <span aria-hidden="true">↗</span></a></li></ul>
 <div class="card-bottom"><span>No hardware evidence recorded</span>
-<a href="devices/yale-yrd156/">Open report <span aria-hidden="true">→</span></a></div></article></div>
+<a href="devices/yale-yrd156/">Open report <span aria-hidden="true">→</span></a></div></article>
+<article class="device-card" data-device data-search="yale yrd210 pb db (zigbee) zigbee zigbee yale yrd210 pb db battery normalization two upstream adaptations for the same model string, at different layers. raw cluster values and final entity percentages are not interchangeable. lock control and observed state a cluster declaration and a richer exposes declaration are different evidence scopes. no complete cross-platform or sdf mapping has been established. zha quirk the yale yrd210 pb db signature selects a replacement doublingpowerconfigurationcluster. that cluster multiplies battery_percentage_remaining (0x0021) by two. zigbee2mqtt converter the yrd210 pb db entry uses dontdividepercentage: true. the battery converter therefore skips its default divide-by-two step, when the reported percentage exists and is below 255. zha quirk yrd210pbdb220tsll includes doorlock in its signature and replacement input clusters. the quirk itself does not define the downstream ha lock entity&#x27;s states. zigbee2mqtt exposes the shared e.lock() constructor declares state as lock/unlock with state/set/get access, and lock_state as not_fully_locked/locked/unlocked with state-only access."
+data-protocol="zigbee" data-status="candidate">
+<div class="card-top"><span class="eyebrow">zigbee · device evidence</span>
+<span class="badge">candidate</span></div>
+<h2><a href="devices/yale-yrd210-pb-db/">Yale YRD210 PB DB (Zigbee)</a></h2>
+<p>Inspect what the published artifacts describe, expose, and leave unresolved.</p>
+<ul class="feature-links"><li><a href="devices/yale-yrd210-pb-db/#battery">Battery normalization <span aria-hidden="true">↗</span></a></li><li><a href="devices/yale-yrd210-pb-db/#lock-state">Lock control and observed state <span aria-hidden="true">↗</span></a></li></ul>
+<div class="card-bottom"><span>No hardware evidence recorded</span>
+<a href="devices/yale-yrd210-pb-db/">Open report <span aria-hidden="true">→</span></a></div></article></div>
   <div id="empty" class="empty" hidden>
     <h2>Not indexed — not necessarily unsupported.</h2>
     <p>This is a small pilot, not a complete device directory. Try another term or
@@ -92,15 +101,15 @@ data-protocol="zwave" data-status="candidate">
 </main>
   <footer>
     <p>Open evidence. Not a certification, driver installer, or compatibility guarantee.</p>
-    <p>Catalog revision: <a href="https://github.com/edgeloom-oss/edgeloom-catalog/tree/140d146f81913c213574702810098ae7a4f5f4cc">140d146f8191</a> · <a href="./catalog.json">Machine-readable index</a></p>
+    <p>Catalog revision: <a href="https://github.com/edgeloom-oss/edgeloom-catalog/tree/f52d6eebf2092b323c71069dee84c3aa12d51f3e">f52d6eebf209</a> · <a href="./catalog.json">Machine-readable index</a></p>
     <details>
       <summary>Build provenance &amp; boundaries</summary>
-      <p>Input SHA-256: <code>3b8ce4d6d019462230dd70781bf1de1919da83ffa7ce32e9dfa3ae7333e502a9</code></p>
-      <p>Generator policy: catalog/v0.1. Implementation SHA-256: <code>c289ae34c44b751b0abc970a2aaaf454e70517fb24831b8af2eb929d4c4380ce</code>.</p>
-      <p>Declared core revision: <code>624a68a03b07b1b5aee029109f479e2b6e966e93</code> (see the catalog's CORE_REVISION).</p>
+      <p>Input SHA-256: <code>acc594d4fa969e56779ef8fa717bf9ac1880711db81ae5ce3ca04b660e6cbba1</code></p>
+      <p>Generator policy: catalog/v0.1. Implementation SHA-256: <code>2a56cda3068f3238f23558f48aeb85af830c8a68119c594c0e55c221d135c4e8</code>.</p>
+      <p>Declared core revision: <code>4f321798aa7352c65c080aa4b8a6ff0d1e3a45c6</code> (see the catalog's CORE_REVISION).</p>
       <p>Contracts and cross-record references passed. Manifest file digests matched.
         Upstream source bytes: matched.</p>
-      <ul><li>Device associations, classifications, license labels, and review states are catalog-author declarations, not independently authenticated by this build.</li><li>Resolved locators establish field existence only, not the interpretation, completeness, runtime behavior, SDF conformance, or interoperability of an artifact.</li><li>Selectors, JSON5 and Lua locators need manual review. No upstream Lua is executed.</li><li>Profile absence is not whole-driver or UI absence. A missing property in a particular SDF model is not a limitation of SDF itself.</li><li>Hardware-evidence links are reported observations, not tests performed by this tool. No patch availability is inferred.</li></ul>
+      <ul><li>Device associations, classifications, license labels, and review states are catalog-author declarations, not independently authenticated by this build.</li><li>Resolved locators establish field existence only, not the interpretation, completeness, runtime behavior, SDF conformance, or interoperability of an artifact.</li><li>Selectors, JSON5 and Lua locators need manual review. No upstream Lua is executed.</li><li>Profile absence is not whole-driver or UI absence. A missing property in a particular SDF model is not a limitation of SDF itself.</li><li>Hardware-evidence links are reported observations, not tests performed by this tool. No patch availability is inferred.</li><li>Cross-source observations and lineage are curator declarations. Shared backends are not independent evidence; upstream test fixtures are not physical-device tests or independent EdgeLoom review. No source count promotes a candidate.</li></ul>
     </details>
   </footer>
 </body>
