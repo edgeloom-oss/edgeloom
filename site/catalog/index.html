@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Device evidence — EdgeLoom Catalog</title>
+  <meta name="description" content="Inspect source-linked smart-home driver features, mapping gaps, and evidence limits. An early candidate catalog, not a compatibility guarantee.">
+  <meta name="theme-color" content="#f5f7f1">
+  <link rel="canonical" href="https://edgeloom-oss.github.io/edgeloom/catalog/">
+  <link rel="icon" href="https://edgeloom-oss.github.io/edgeloom/assets/favicon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Device evidence — EdgeLoom Catalog">
+  <meta property="og:description" content="Inspect source-linked smart-home driver features, mapping gaps, and evidence limits. An early candidate catalog, not a compatibility guarantee.">
+  <meta property="og:url" content="https://edgeloom-oss.github.io/edgeloom/catalog/">
+  <meta property="og:image" content="https://edgeloom-oss.github.io/edgeloom/assets/og-card.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Device evidence — EdgeLoom Catalog">
+  <meta name="twitter:description" content="Inspect source-linked smart-home driver features, mapping gaps, and evidence limits. An early candidate catalog, not a compatibility guarantee.">
+  <meta name="twitter:image" content="https://edgeloom-oss.github.io/edgeloom/assets/og-card.png">
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./script.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header>
+    <a class="brand" href="https://edgeloom-oss.github.io/edgeloom/">
+      <span class="mark" aria-hidden="true">≋</span> EdgeLoom <span class="brand-label">/ catalog</span>
+    </a>
+    <nav aria-label="Catalog navigation">
+      <a href="./">Browse</a>
+      <a href="https://github.com/edgeloom-oss/edgeloom-catalog">Contribute <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+  <main id="main" tabindex="-1"><section class="intro">
+  <p class="eyebrow">An open, source-linked evidence catalog</p>
+  <h1>What does your<br>driver <em>expose?</em></h1>
+  <p class="lede">Find a device. Inspect a feature. Follow the evidence.</p>
+  <p class="scope-note">Early pilot: 1 device model(s) · 3 mapping sets · 6 assertions.
+    Counts are evidence inventory, not supported-device or adoption metrics.</p>
+</section>
+<section class="browser" aria-label="Device browser">
+  <form id="filters" role="search">
+    <div class="search-field">
+      <label for="query">Device, feature, or protocol identifier</label>
+      <input id="query" type="search" placeholder="Try YRD156, auto relock, or 0x0508" autocomplete="off">
+    </div>
+    <div>
+      <label for="protocol">Protocol</label>
+      <select id="protocol">
+        <option value="">All protocols</option><option value="zwave">Z-Wave</option>
+        <option value="zigbee">Zigbee</option>
+      </select>
+    </div>
+    <div>
+      <label for="review">Mapping review</label>
+      <select id="review">
+        <option value="">All declared states</option><option value="candidate">Candidate</option>
+        <option value="reviewed">Reviewed</option><option value="verified">Verified</option>
+        <option value="deprecated">Deprecated</option>
+      </select>
+    </div>
+    <button type="reset" class="reset">Reset</button>
+  </form>
+  <p id="result-count" role="status" aria-live="polite">1 device model(s) indexed</p>
+  <div class="device-grid"><article class="device-card" data-device data-search="yale yrd156 zwave z-wave 0x0129 0x803a 0x0508 auto-relock duration the pinned community configuration describes a duration parameter. it is absent from the examined base-lock capability list and the selected lock-status sdf object. this does not establish that the whole driver or smartthings ui lacks a setting, or that sdf cannot express one. lock-state events a strict locked/unlocked subset has a candidate correspondence with the selected sdf property. unknown state and method/user metadata are not preserved. the examined handler path requires a true migration flag; that state has not been established for a real yrd156. access identity and lock codes the examined migrated path carries user and credential metadata absent from the selected lock-code sdf object. a pin write payload and the reported identity records do not establish a reversible value mapping."
+data-protocol="zwave" data-status="candidate">
+<div class="card-top"><span class="eyebrow">zwave · device evidence</span>
+<span class="badge">candidate</span></div>
+<h2><a href="devices/yale-yrd156/">Yale YRD156</a></h2>
+<p>Inspect what the published artifacts describe, expose, and leave unresolved.</p>
+<ul class="feature-links"><li><a href="devices/yale-yrd156/#auto-relock">Auto-relock duration <span aria-hidden="true">↗</span></a></li><li><a href="devices/yale-yrd156/#lock-state">Lock-state events <span aria-hidden="true">↗</span></a></li><li><a href="devices/yale-yrd156/#access-identities">Access identity and lock codes <span aria-hidden="true">↗</span></a></li></ul>
+<div class="card-bottom"><span>No hardware evidence recorded</span>
+<a href="devices/yale-yrd156/">Open report <span aria-hidden="true">→</span></a></div></article></div>
+  <div id="empty" class="empty" hidden>
+    <h2>Not indexed — not necessarily unsupported.</h2>
+    <p>This is a small pilot, not a complete device directory. Try another term or
+      <a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=device-observation.yml">
+        suggest a device or report an observation</a>.</p>
+  </div>
+  <noscript><p>Search needs JavaScript; all device reports above remain available without it.</p></noscript>
+</section>
+<section class="how">
+  <div><span class="eyebrow">Read this catalog in three layers</span><h2>A gap is a question,<br>not a verdict.</h2></div>
+  <ol>
+    <li><strong>Device / protocol</strong><span>What do published configurations describe?</span></li>
+    <li><strong>Platform exposure</strong><span>What do the examined profiles and handlers expose?</span></li>
+    <li><strong>Neutral model</strong><span>What can this particular SDF model represent?</span></li>
+  </ol>
+  <p>Source-level findings need review and device feedback. Profile absence does not establish whole-driver
+    or UI absence; a missing model property does not establish a limitation of SDF.</p>
+</section>
+</main>
+  <footer>
+    <p>Open evidence. Not a certification, driver installer, or compatibility guarantee.</p>
+    <p>Catalog revision: <a href="https://github.com/edgeloom-oss/edgeloom-catalog/tree/140d146f81913c213574702810098ae7a4f5f4cc">140d146f8191</a> · <a href="./catalog.json">Machine-readable index</a></p>
+    <details>
+      <summary>Build provenance &amp; boundaries</summary>
+      <p>Input SHA-256: <code>3b8ce4d6d019462230dd70781bf1de1919da83ffa7ce32e9dfa3ae7333e502a9</code></p>
+      <p>Generator policy: catalog/v0.1. Implementation SHA-256: <code>c289ae34c44b751b0abc970a2aaaf454e70517fb24831b8af2eb929d4c4380ce</code>.</p>
+      <p>Declared core revision: <code>624a68a03b07b1b5aee029109f479e2b6e966e93</code> (see the catalog's CORE_REVISION).</p>
+      <p>Contracts and cross-record references passed. Manifest file digests matched.
+        Upstream source bytes: matched.</p>
+      <ul><li>Device associations, classifications, license labels, and review states are catalog-author declarations, not independently authenticated by this build.</li><li>Resolved locators establish field existence only, not the interpretation, completeness, runtime behavior, SDF conformance, or interoperability of an artifact.</li><li>Selectors, JSON5 and Lua locators need manual review. No upstream Lua is executed.</li><li>Profile absence is not whole-driver or UI absence. A missing property in a particular SDF model is not a limitation of SDF itself.</li><li>Hardware-evidence links are reported observations, not tests performed by this tool. No patch availability is inferred.</li></ul>
+    </details>
+  </footer>
+</body>
+</html>

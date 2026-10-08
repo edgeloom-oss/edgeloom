@@ -252,6 +252,43 @@ def _cmd_audit(args: argparse.Namespace) -> int:
 # ------------------------------------------------------------------------ validate
 
 
+def _cmd_catalog(args: argparse.Namespace) -> int:
+    from edgeloom import catalog
+
+    try:
+        dataset = catalog.load_catalog(args.root)
+        if args.catalog_action == "fetch":
+            count = catalog.fetch_sources(dataset, args.cache)
+            print(f"Matched {count} pinned source artifact(s) -> {args.cache}")
+        elif args.catalog_action == "build":
+            if not dataset.devices:
+                raise catalog.CatalogError("No catalog/devices entries; device identity is never inferred")
+            if args.cache is not None and (
+                args.cache.resolve().is_relative_to(args.output.resolve())
+                or args.output.resolve().is_relative_to(args.cache.resolve())
+            ):
+                raise catalog.CatalogError("Cache and output directories must not overlap")
+            index = catalog.build_index(dataset, args.cache)
+            count = catalog.write_site(dataset, index, args.output)
+            print(
+                f"Built {count} files: {len(dataset.devices)} device(s), "
+                f"{len(dataset.mappings)} mapping sets -> {args.output}"
+            )
+            print(
+                f"Source bytes: {index['checks']['source_bytes']}; review and hardware evidence are separate."
+            )
+        else:
+            print(
+                f"Catalog checks passed: {len(dataset.sources)} sources, "
+                f"{len(dataset.mappings)} mapping sets, {len(dataset.devices)} devices. "
+                "Upstream bytes not fetched."
+            )
+    except (catalog.CatalogError, schemas.SchemaError, OSError) as exc:
+        LOGGER.error("Catalog %s failed: %s", args.catalog_action, exc)
+        return 1
+    return 0
+
+
 def _cmd_validate(args: argparse.Namespace) -> int:
     try:
         documents = schemas.iter_documents(args.paths)
@@ -370,7 +407,9 @@ def build_parser() -> argparse.ArgumentParser:
     translate.set_defaults(func=_cmd_translate)
 
     discover = subparsers.add_parser(
-        "discover", parents=[common], help="Enumerate Edge drivers and their Zigbee fingerprints"
+        "discover",
+        parents=[common],
+        help="Enumerate Edge drivers and Zigbee/Z-Wave manufacturer fingerprints",
     )
     discover.add_argument("--source", choices=["github", "local"], default="github")
     discover.add_argument("--repo", default="SmartThingsCommunity/SmartThingsEdgeDrivers")
@@ -442,6 +481,26 @@ def build_parser() -> argparse.ArgumentParser:
         help="Force a schema instead of inferring it from each document",
     )
     validate.set_defaults(func=_cmd_validate)
+
+    catalog = subparsers.add_parser(
+        "catalog", parents=[common], help="Check, explicitly fetch, or build device evidence catalogs"
+    )
+    actions = catalog.add_subparsers(dest="catalog_action", required=True)
+    for action in ("check", "fetch", "build"):
+        command = actions.add_parser(action)
+        command.add_argument("root", type=Path, help="Local edgeloom-catalog checkout")
+        if action == "fetch":
+            command.add_argument(
+                "--cache", type=Path, required=True, help="Dedicated local source-byte cache"
+            )
+        if action == "build":
+            command.add_argument(
+                "--output", type=Path, required=True, help="Dedicated generated view directory"
+            )
+            command.add_argument(
+                "--cache", type=Path, help="Check already-fetched bytes; never fetch implicitly"
+            )
+        command.set_defaults(func=_cmd_catalog)
 
     return parser
 

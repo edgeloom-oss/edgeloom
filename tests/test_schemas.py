@@ -69,6 +69,7 @@ def test_all_schemas_are_shipped_and_valid_draft_2020_12() -> None:
         schemas.EVIDENCE_RECORD,
         schemas.SOURCE_MANIFEST,
         schemas.CATALOG_MAPPING_SET,
+        schemas.CATALOG_DEVICE,
     )
     for kind in schemas.KINDS:
         schema = schemas.load_schema(kind)

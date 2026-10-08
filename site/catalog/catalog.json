@@ -1,0 +1,1131 @@
+{
+  "catalog_repository": "https://github.com/edgeloom-oss/edgeloom-catalog",
+  "catalog_revision": "140d146f81913c213574702810098ae7a4f5f4cc",
+  "checks": {
+    "contracts": "passed",
+    "cross_record_references": "passed",
+    "manifest_digests": "matched",
+    "source_bytes": "matched"
+  },
+  "counts": {
+    "assertions": 6,
+    "devices": 1,
+    "mapping_sets": 3
+  },
+  "devices": [
+    {
+      "features": [
+        {
+          "id": "auto-relock",
+          "mapping_ids": [
+            "smartthings-yrd156-auto-relock-gap"
+          ],
+          "next_steps": [
+            "Compare your exact driver version and assigned profile with these pinned files.",
+            "Inspect preferences, handlers and subdrivers before concluding the setting is unavailable.",
+            "Report a difference without including private device identifiers or access codes."
+          ],
+          "summary": "The pinned community configuration describes a duration parameter. It is absent from the examined base-lock capability list and the selected lock-status SDF object. This does not establish that the whole driver or SmartThings UI lacks a setting, or that SDF cannot express one.",
+          "title": "Auto-relock duration"
+        },
+        {
+          "id": "lock-state",
+          "mapping_ids": [
+            "smartthings-yrd156-lock-state"
+          ],
+          "next_steps": [
+            "Establish the active handler path and migration condition before applying this finding.",
+            "Keep unknown state and event metadata explicit rather than reducing them to a binary value.",
+            "Request review of this bounded correspondence; no complete translator is provided here."
+          ],
+          "summary": "A strict locked/unlocked subset has a candidate correspondence with the selected SDF property. Unknown state and method/user metadata are not preserved. The examined handler path requires a true migration flag; that state has not been established for a real YRD156.",
+          "title": "Lock-state events"
+        },
+        {
+          "id": "access-identities",
+          "mapping_ids": [
+            "smartthings-yrd156-access-identities"
+          ],
+          "next_steps": [
+            "Review identity, authorization and privacy requirements before proposing a mapping.",
+            "Treat write payloads and read/event metadata as different interfaces.",
+            "Never submit real PINs, lock codes, credential values or household identifiers."
+          ],
+          "summary": "The examined migrated path carries user and credential metadata absent from the selected lock-code SDF object. A PIN write payload and the reported identity records do not establish a reversible value mapping.",
+          "title": "Access identity and lock codes"
+        }
+      ],
+      "firmware": "Unknown; no real-unit firmware or SLGA_MIGRATED state recorded",
+      "hardware_evidence": [],
+      "id": "yale-yrd156",
+      "identifiers": {
+        "manufacturer_id": "0x0129",
+        "product_id": "0x0508",
+        "product_type": "0x803A"
+      },
+      "identity_evidence": {
+        "artifact_id": "smartthings-zwave-lock-fingerprints",
+        "locator": "zwaveManufacturer[id=Yale/YRD156]",
+        "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+      },
+      "kind": "catalog-device",
+      "limitations": [
+        "One device model is indexed; the three feature records are not three supported devices.",
+        "All associated mappings are founder-authored candidates without independent review.",
+        "No physical YRD156 or SmartThings hub has been tested for these records.",
+        "Published source artifacts do not prove behavior of your installed driver or firmware.",
+        "No installation instruction or automated Z-Wave patch is offered for this case.",
+        "Community configuration is not manufacturer authority; hosted SDF models are not adoption evidence."
+      ],
+      "manufacturer": "Yale",
+      "model": "YRD156",
+      "path": "catalog/devices/yale-yrd156.yaml",
+      "protocol": "zwave",
+      "schema_version": "0.1",
+      "sha256": "3c73f31de382fd99460265bf249369ca591a98ec0f7e03ae4e2f73c337f67f0b"
+    }
+  ],
+  "generator": {
+    "declared_core_revision": "624a68a03b07b1b5aee029109f479e2b6e966e93",
+    "implementation_digest": "c289ae34c44b751b0abc970a2aaaf454e70517fb24831b8af2eb929d4c4380ce",
+    "package_version_label": "0.2.0",
+    "policy": "catalog/v0.1",
+    "version_label_is_not_release_attestation": true
+  },
+  "input_digest": "3b8ce4d6d019462230dd70781bf1de1919da83ffa7ce32e9dfa3ae7333e502a9",
+  "limitations": [
+    "Device associations, classifications, license labels, and review states are catalog-author declarations, not independently authenticated by this build.",
+    "Resolved locators establish field existence only, not the interpretation, completeness, runtime behavior, SDF conformance, or interoperability of an artifact.",
+    "Selectors, JSON5 and Lua locators need manual review. No upstream Lua is executed.",
+    "Profile absence is not whole-driver or UI absence. A missing property in a particular SDF model is not a limitation of SDF itself.",
+    "Hardware-evidence links are reported observations, not tests performed by this tool. No patch availability is inferred."
+  ],
+  "mapping_sets": [
+    {
+      "evidence": [
+        {
+          "artifact": {
+            "artifact_id": "smartthings-zwave-lock-fingerprints",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "evidence.yrd156-profile-assignment",
+          "locator": "zwaveManufacturer[id=Yale/YRD156]",
+          "summary": "The pinned fingerprint identifies product tuple 0x0129/0x803A/0x0508 and assigns the YRD156 to the base-lock profile used by this record."
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-zwave-responses",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "evidence.smartthings-user-credential-records",
+          "locator": "lua:function ZwaveHandlers.user_code_report",
+          "summary": "On the current handler path, the function derives userIndex, userName, userType, credentialIndex, credentialType, and credentialName records from Z-Wave user-code reports."
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-base-lock-profile",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "evidence.smartthings-access-profile",
+          "locator": "/components/0/capabilities",
+          "summary": "The base-lock profile separately exposes lockCodes, lockCredentials, and lockUsers capabilities."
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-zwave-capability-handlers",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "evidence.smartthings-pin-write-path",
+          "locator": "lua:function CapabilityHandlers.add_credential|update_credential",
+          "summary": "Credential data is accepted as a write-time UserCode payload. The pinned response path records slot occupancy and identity metadata rather than returning or caching the PIN value."
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-zwave-lock-driver-entry",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "evidence.smartthings-current-handler-registration",
+          "locator": "lua:driver_template.capability_handlers|driver_template.zwave_handlers",
+          "summary": "The main driver template registers the current lockUsers, lockCredentials, and user-code report handlers; migrated marker state is emitted only when the persisted migration flag is true."
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-legacy-dispatch-gate",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "evidence.smartthings-legacy-dispatch-gate",
+          "locator": "lua:return function(opts, driver, device, ...)",
+          "summary": "When SLGA_MIGRATED is unset or false, the pinned can-handle function routes the device to the legacy subdriver."
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-legacy-migration-handler",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "evidence.smartthings-migration-transition",
+          "locator": "lua:function migrate",
+          "summary": "The explicit legacy migration command emits lockUsers and lockCredentials state and then persists SLGA_MIGRATED as true."
+        },
+        {
+          "artifact": {
+            "artifact_id": "onedm-ocf-lock-code",
+            "manifest_id": "onedm-ocf-lock-models-c97d095"
+          },
+          "id": "evidence.ocf-lock-code-list",
+          "locator": "/sdfObject/lock.code/sdfProperty/lockCodeList",
+          "summary": "The SDF model defines an array of string lock-code values but no user or credential identity, type, lifecycle, authorization, or privacy metadata."
+        }
+      ],
+      "id": "smartthings-yrd156-access-identities",
+      "kind": "catalog-mapping-set",
+      "limitations": [
+        "No real PIN, lock code, user identifier, or device credential is stored here.",
+        "The analysis is based on pinned source artifacts, not device or account tests.",
+        "No pinned record establishes the SLGA_MIGRATED state of a real YRD156. Devices without a true migration flag use legacy/default handlers whose user-code behavior is outside this mapping set.",
+        "The SDF object is a neutral data model, not an authorization or credential management specification.",
+        "Contract version 0.1 lacks a driver-source artifact role; the pinned Lua source is transparently recorded under the generic evidence role."
+      ],
+      "locator_checks": [
+        {
+          "id": "device.yrd156",
+          "locator": "zwaveManufacturer[id=Yale/YRD156]",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml"
+        },
+        {
+          "id": "device.zwave-user-code-reports",
+          "locator": "lua:function ZwaveHandlers.user_code_report",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/zwave_responses.lua"
+        },
+        {
+          "id": "platform.smartthings-access-identities",
+          "locator": "/components/0/capabilities[id=lockCredentials|lockUsers]",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml"
+        },
+        {
+          "id": "platform.smartthings-credential-payload",
+          "locator": "/components/0/capabilities[id=lockCredentials]",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml"
+        },
+        {
+          "id": "neutral.ocf-lock-code-list",
+          "locator": "/sdfObject/lock.code/sdfProperty/lockCodeList",
+          "status": "resolved",
+          "url": "https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_code.sdf.json"
+        },
+        {
+          "id": "evidence.yrd156-profile-assignment",
+          "locator": "zwaveManufacturer[id=Yale/YRD156]",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml"
+        },
+        {
+          "id": "evidence.smartthings-user-credential-records",
+          "locator": "lua:function ZwaveHandlers.user_code_report",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/zwave_responses.lua"
+        },
+        {
+          "id": "evidence.smartthings-access-profile",
+          "locator": "/components/0/capabilities",
+          "status": "resolved",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml"
+        },
+        {
+          "id": "evidence.smartthings-pin-write-path",
+          "locator": "lua:function CapabilityHandlers.add_credential|update_credential",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/capabilities.lua"
+        },
+        {
+          "id": "evidence.smartthings-current-handler-registration",
+          "locator": "lua:driver_template.capability_handlers|driver_template.zwave_handlers",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/init.lua"
+        },
+        {
+          "id": "evidence.smartthings-legacy-dispatch-gate",
+          "locator": "lua:return function(opts, driver, device, ...)",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/legacy-handlers/can_handle.lua"
+        },
+        {
+          "id": "evidence.smartthings-migration-transition",
+          "locator": "lua:function migrate",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/legacy-handlers/init.lua"
+        },
+        {
+          "id": "evidence.ocf-lock-code-list",
+          "locator": "/sdfObject/lock.code/sdfProperty/lockCodeList",
+          "status": "resolved",
+          "url": "https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_code.sdf.json"
+        }
+      ],
+      "mappings": [
+        {
+          "classification": "unbound",
+          "directions": [
+            "read",
+            "write",
+            "event"
+          ],
+          "evidence_refs": [
+            "evidence.yrd156-profile-assignment",
+            "evidence.smartthings-user-credential-records",
+            "evidence.smartthings-access-profile",
+            "evidence.smartthings-pin-write-path",
+            "evidence.smartthings-current-handler-registration",
+            "evidence.smartthings-legacy-dispatch-gate",
+            "evidence.smartthings-migration-transition",
+            "evidence.ocf-lock-code-list"
+          ],
+          "from": "platform.smartthings-access-identities",
+          "id": "map.smartthings-access-identities-to-sdf",
+          "limitations": [
+            "The conclusion is bounded to the pinned lock-code SDF object; other SDF objects or future extensions might represent identity metadata."
+          ],
+          "unbound_reason": "neutral-model-missing"
+        },
+        {
+          "classification": "ambiguous",
+          "directions": [
+            "write"
+          ],
+          "evidence_refs": [
+            "evidence.yrd156-profile-assignment",
+            "evidence.smartthings-user-credential-records",
+            "evidence.smartthings-access-profile",
+            "evidence.smartthings-pin-write-path",
+            "evidence.smartthings-current-handler-registration",
+            "evidence.smartthings-legacy-dispatch-gate",
+            "evidence.smartthings-migration-transition",
+            "evidence.ocf-lock-code-list"
+          ],
+          "from": "platform.smartthings-credential-payload",
+          "id": "map.smartthings-credential-payload-to-sdf-list",
+          "limitations": [
+            "The write path accepts credentialData as a PIN payload, while the report path represents slot occupancy and identity metadata; the files do not establish one reversible value-level representation.",
+            "No transformation is proposed for security-sensitive credential values."
+          ],
+          "to": "neutral.ocf-lock-code-list"
+        }
+      ],
+      "nodes": [
+        {
+          "artifact": {
+            "artifact_id": "smartthings-zwave-lock-fingerprints",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "device.yrd156",
+          "label": "SmartThings YRD156 Z-Wave fingerprint and base-lock assignment",
+          "layer": "device-protocol-support",
+          "locator": "zwaveManufacturer[id=Yale/YRD156]"
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-zwave-responses",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "device.zwave-user-code-reports",
+          "label": "Z-Wave user-code reports on the post-migration handler path",
+          "layer": "device-protocol-support",
+          "locator": "lua:function ZwaveHandlers.user_code_report"
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-base-lock-profile",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "platform.smartthings-access-identities",
+          "label": "Post-migration SmartThings credential and user identity capabilities",
+          "layer": "platform-exposure",
+          "locator": "/components/0/capabilities[id=lockCredentials|lockUsers]"
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-base-lock-profile",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "platform.smartthings-credential-payload",
+          "label": "Post-migration SmartThings credential write payload",
+          "layer": "platform-exposure",
+          "locator": "/components/0/capabilities[id=lockCredentials]"
+        },
+        {
+          "artifact": {
+            "artifact_id": "onedm-ocf-lock-code",
+            "manifest_id": "onedm-ocf-lock-models-c97d095"
+          },
+          "id": "neutral.ocf-lock-code-list",
+          "label": "OCF-derived array of lock-code strings",
+          "layer": "neutral-sdf-representation",
+          "locator": "/sdfObject/lock.code/sdfProperty/lockCodeList"
+        }
+      ],
+      "path": "catalog/mappings/smartthings-yrd156-access-identities.yaml",
+      "review": {
+        "author": "github:@infinitywings",
+        "lifecycle": "candidate",
+        "notes": "Founder-authored candidate for the migrated handler path; not independently reviewed or verified.",
+        "reviewers": []
+      },
+      "schema_version": "0.1",
+      "scope": {
+        "domain": "door-lock",
+        "platform": "smartthings",
+        "protocols": [
+          "zwave"
+        ]
+      },
+      "sha256": "91af6fbea3eec1f63f49782b5d54ddfc67b4663a6a3860f521cb92f0bcdd8fe7",
+      "source_manifests": [
+        {
+          "id": "smartthings-zwave-lock-6b8a9cf",
+          "path": "catalog/sources/smartthings-zwave-lock-6b8a9cf.yaml",
+          "sha256": "3bc27fe065666a0a56022c97b1b9453779f783d8bed81fd400ab4c63b5e749b0"
+        },
+        {
+          "id": "onedm-ocf-lock-models-c97d095",
+          "path": "catalog/sources/onedm-ocf-lock-models-c97d095.yaml",
+          "sha256": "e2b0ae69e3b025b43469e9a536898c33583e5beede3ad49b6c49d8d39c83315e"
+        }
+      ],
+      "title": "Yale YRD156 migrated-path access identity and lock-code candidate"
+    },
+    {
+      "evidence": [
+        {
+          "artifact": {
+            "artifact_id": "zwave-js-yrd156-config",
+            "manifest_id": "zwave-js-yrd156-c4c599e"
+          },
+          "id": "evidence.yrd156-community-identity",
+          "locator": "/manufacturerId|/devices/0/productType|/devices/0/productId",
+          "summary": "The community configuration identifies the YRD156 with product tuple 0x0129/0x803A/0x0508."
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-zwave-lock-fingerprints",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "evidence.yrd156-smartthings-profile-assignment",
+          "locator": "zwaveManufacturer[id=Yale/YRD156]",
+          "summary": "The SmartThings fingerprint uses the same product tuple and assigns it to the base-lock profile examined for the platform-exposure gap."
+        },
+        {
+          "artifact": {
+            "artifact_id": "zwave-js-yrd156-config",
+            "manifest_id": "zwave-js-yrd156-c4c599e"
+          },
+          "id": "evidence.yrd156-auto-relock-import",
+          "locator": "/paramInformation/[#=3]",
+          "summary": "The pinned community YRD156 config imports auto_relock_time_180 for configuration parameter 3."
+        },
+        {
+          "artifact": {
+            "artifact_id": "zwave-js-yale-template",
+            "manifest_id": "zwave-js-yrd156-c4c599e"
+          },
+          "id": "evidence.auto-relock-template",
+          "locator": "/auto_relock_time_180",
+          "summary": "The imported template describes Auto Relock Time in seconds with a default value of 30 and imports the named base_0-180_nounit definition."
+        },
+        {
+          "artifact": {
+            "artifact_id": "zwave-js-master-template",
+            "manifest_id": "zwave-js-yrd156-c4c599e"
+          },
+          "id": "evidence.auto-relock-range",
+          "locator": "/base_0-180_nounit",
+          "summary": "The pinned shared base definition supplies an unsigned minimum of 0 and maximum of 180 for the imported duration field."
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-base-lock-profile",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "evidence.base-lock-capability-enumeration",
+          "locator": "/components/0/capabilities",
+          "summary": "The complete pinned base-lock capability list has lock, lockCodes, lockCredentials, lockUsers, battery, and refresh, but no auto-relock field."
+        },
+        {
+          "artifact": {
+            "artifact_id": "onedm-ocf-lock-status",
+            "manifest_id": "onedm-ocf-lock-models-c97d095"
+          },
+          "id": "evidence.ocf-lock-status-property-enumeration",
+          "locator": "/sdfObject/lock.status/sdfProperty",
+          "summary": "The complete pinned lock-status property set contains lockState only and does not contain an auto-relock enable or duration property."
+        }
+      ],
+      "id": "smartthings-yrd156-auto-relock-gap",
+      "kind": "catalog-mapping-set",
+      "limitations": [
+        "The zwave-js configuration is community evidence, not Yale authority.",
+        "No physical YRD156 or SmartThings hub was tested for this candidate.",
+        "The current schema requires a neutral-layer context node even when the mapping conclusion is neutral-model-missing; that context is the bounded lock-status property set examined for this record."
+      ],
+      "locator_checks": [
+        {
+          "id": "device.yrd156-auto-relock-time",
+          "locator": "/auto_relock_time_180",
+          "status": "manual-review",
+          "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/templates/yale_template.json"
+        },
+        {
+          "id": "platform.smartthings-base-lock-capabilities",
+          "locator": "/components/0/capabilities",
+          "status": "resolved",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml"
+        },
+        {
+          "id": "neutral.ocf-lock-status-properties",
+          "locator": "/sdfObject/lock.status/sdfProperty",
+          "status": "resolved",
+          "url": "https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_status.sdf.json"
+        },
+        {
+          "id": "evidence.yrd156-community-identity",
+          "locator": "/manufacturerId|/devices/0/productType|/devices/0/productId",
+          "status": "manual-review",
+          "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json"
+        },
+        {
+          "id": "evidence.yrd156-smartthings-profile-assignment",
+          "locator": "zwaveManufacturer[id=Yale/YRD156]",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml"
+        },
+        {
+          "id": "evidence.yrd156-auto-relock-import",
+          "locator": "/paramInformation/[#=3]",
+          "status": "manual-review",
+          "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json"
+        },
+        {
+          "id": "evidence.auto-relock-template",
+          "locator": "/auto_relock_time_180",
+          "status": "manual-review",
+          "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/templates/yale_template.json"
+        },
+        {
+          "id": "evidence.auto-relock-range",
+          "locator": "/base_0-180_nounit",
+          "status": "manual-review",
+          "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/templates/master_template.json"
+        },
+        {
+          "id": "evidence.base-lock-capability-enumeration",
+          "locator": "/components/0/capabilities",
+          "status": "resolved",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml"
+        },
+        {
+          "id": "evidence.ocf-lock-status-property-enumeration",
+          "locator": "/sdfObject/lock.status/sdfProperty",
+          "status": "resolved",
+          "url": "https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_status.sdf.json"
+        }
+      ],
+      "mappings": [
+        {
+          "classification": "unbound",
+          "directions": [
+            "read",
+            "write"
+          ],
+          "evidence_refs": [
+            "evidence.yrd156-community-identity",
+            "evidence.yrd156-smartthings-profile-assignment",
+            "evidence.yrd156-auto-relock-import",
+            "evidence.auto-relock-template",
+            "evidence.auto-relock-range",
+            "evidence.base-lock-capability-enumeration"
+          ],
+          "from": "device.yrd156-auto-relock-time",
+          "id": "map.yrd156-auto-relock-to-smartthings",
+          "limitations": [
+            "Absence is established only for the pinned base-lock profile; another profile, custom capability, or later commit could expose this setting."
+          ],
+          "unbound_reason": "platform-not-exposed"
+        },
+        {
+          "classification": "unbound",
+          "directions": [
+            "read",
+            "write"
+          ],
+          "evidence_refs": [
+            "evidence.yrd156-community-identity",
+            "evidence.yrd156-auto-relock-import",
+            "evidence.auto-relock-template",
+            "evidence.auto-relock-range",
+            "evidence.ocf-lock-status-property-enumeration"
+          ],
+          "from": "device.yrd156-auto-relock-time",
+          "id": "map.yrd156-auto-relock-to-sdf",
+          "limitations": [
+            "The finding is bounded to the pinned OCF-derived lock-status model and does not assert that no other SDF model can describe auto relock."
+          ],
+          "unbound_reason": "neutral-model-missing"
+        }
+      ],
+      "nodes": [
+        {
+          "artifact": {
+            "artifact_id": "zwave-js-yale-template",
+            "manifest_id": "zwave-js-yrd156-c4c599e"
+          },
+          "id": "device.yrd156-auto-relock-time",
+          "label": "Community-described YRD156 auto-relock duration parameter",
+          "layer": "device-protocol-support",
+          "locator": "/auto_relock_time_180"
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-base-lock-profile",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "platform.smartthings-base-lock-capabilities",
+          "label": "SmartThings base-lock capability list",
+          "layer": "platform-exposure",
+          "locator": "/components/0/capabilities"
+        },
+        {
+          "artifact": {
+            "artifact_id": "onedm-ocf-lock-status",
+            "manifest_id": "onedm-ocf-lock-models-c97d095"
+          },
+          "id": "neutral.ocf-lock-status-properties",
+          "label": "Property set in the OCF-derived lock-status SDF object",
+          "layer": "neutral-sdf-representation",
+          "locator": "/sdfObject/lock.status/sdfProperty"
+        }
+      ],
+      "path": "catalog/mappings/smartthings-yrd156-auto-relock-gap.yaml",
+      "review": {
+        "author": "github:@infinitywings",
+        "lifecycle": "candidate",
+        "notes": "Founder-authored candidate; not independently reviewed or verified.",
+        "reviewers": []
+      },
+      "schema_version": "0.1",
+      "scope": {
+        "domain": "door-lock",
+        "platform": "smartthings",
+        "protocols": [
+          "zwave"
+        ]
+      },
+      "sha256": "fc7a93164bcca584a4f7dabc60c2ee322f426f80bc52cb8edbf943ad235fafe8",
+      "source_manifests": [
+        {
+          "id": "smartthings-zwave-lock-6b8a9cf",
+          "path": "catalog/sources/smartthings-zwave-lock-6b8a9cf.yaml",
+          "sha256": "3bc27fe065666a0a56022c97b1b9453779f783d8bed81fd400ab4c63b5e749b0"
+        },
+        {
+          "id": "zwave-js-yrd156-c4c599e",
+          "path": "catalog/sources/zwave-js-yrd156-c4c599e.yaml",
+          "sha256": "72d981b9af12b3d525a45bb0f5dc37941bab918287ac327294e5ac87c97790de"
+        },
+        {
+          "id": "onedm-ocf-lock-models-c97d095",
+          "path": "catalog/sources/onedm-ocf-lock-models-c97d095.yaml",
+          "sha256": "e2b0ae69e3b025b43469e9a536898c33583e5beede3ad49b6c49d8d39c83315e"
+        }
+      ],
+      "title": "Yale YRD156 auto-relock exposure and neutral-model gaps"
+    },
+    {
+      "evidence": [
+        {
+          "artifact": {
+            "artifact_id": "smartthings-zwave-lock-fingerprints",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "evidence.yrd156-profile-assignment",
+          "locator": "zwaveManufacturer[id=Yale/YRD156]",
+          "summary": "The pinned fingerprint identifies product tuple 0x0129/0x803A/0x0508 and assigns the YRD156 to the base-lock profile."
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-zwave-responses",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "evidence.smartthings-lock-event-values",
+          "locator": "lua:function ZwaveHandlers.door_operation_event_handler",
+          "summary": "On the current handler path, the pinned function maps a strict operation subset to locked or unlocked, maps other outcomes to unknown, and can attach method and user data."
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-zwave-lock-driver-entry",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "evidence.smartthings-current-handler-registration",
+          "locator": "lua:driver_template.zwave_handlers",
+          "summary": "The main driver template registers the pinned current Z-Wave response functions for notification and user-code reports."
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-legacy-dispatch-gate",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "evidence.smartthings-legacy-dispatch-gate",
+          "locator": "lua:return function(opts, driver, device, ...)",
+          "summary": "When the persisted SLGA_MIGRATED field is unset or false, the pinned can-handle function selects the legacy subdriver instead of this path."
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-base-lock-profile",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "evidence.smartthings-lock-profile",
+          "locator": "/components/0/capabilities[id=lock]",
+          "summary": "The base-lock profile exposes the native SmartThings lock capability."
+        },
+        {
+          "artifact": {
+            "artifact_id": "onedm-ocf-lock-status",
+            "manifest_id": "onedm-ocf-lock-models-c97d095"
+          },
+          "id": "evidence.ocf-binary-lock-state",
+          "locator": "/sdfObject/lock.status/sdfProperty/lockState",
+          "summary": "The pinned SDF property allows exactly Locked and Unlocked strings."
+        }
+      ],
+      "id": "smartthings-yrd156-lock-state",
+      "kind": "catalog-mapping-set",
+      "limitations": [
+        "The analysis is based on pinned published artifacts, not physical-device tests.",
+        "No pinned record establishes the SLGA_MIGRATED state of a real YRD156. Devices without a true migration flag use legacy/default handlers whose behavior is outside this mapping set.",
+        "The OCF-derived SDF repository location is not evidence of OneDM adoption, endorsement, active maintenance, or interoperability.",
+        "Contract version 0.1 lacks a driver-source artifact role; the pinned Lua source is transparently recorded under the generic evidence role."
+      ],
+      "locator_checks": [
+        {
+          "id": "device.yrd156",
+          "locator": "zwaveManufacturer[id=Yale/YRD156]",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml"
+        },
+        {
+          "id": "device.zwave-access-control-events",
+          "locator": "lua:function ZwaveHandlers.door_operation_event_handler",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/zwave_responses.lua"
+        },
+        {
+          "id": "platform.smartthings-lock-binary-subset",
+          "locator": "/components/0/capabilities[id=lock]",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml"
+        },
+        {
+          "id": "neutral.ocf-lock-state",
+          "locator": "/sdfObject/lock.status/sdfProperty/lockState",
+          "status": "resolved",
+          "url": "https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_status.sdf.json"
+        },
+        {
+          "id": "evidence.yrd156-profile-assignment",
+          "locator": "zwaveManufacturer[id=Yale/YRD156]",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml"
+        },
+        {
+          "id": "evidence.smartthings-lock-event-values",
+          "locator": "lua:function ZwaveHandlers.door_operation_event_handler",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/zwave_responses.lua"
+        },
+        {
+          "id": "evidence.smartthings-current-handler-registration",
+          "locator": "lua:driver_template.zwave_handlers",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/init.lua"
+        },
+        {
+          "id": "evidence.smartthings-legacy-dispatch-gate",
+          "locator": "lua:return function(opts, driver, device, ...)",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/legacy-handlers/can_handle.lua"
+        },
+        {
+          "id": "evidence.smartthings-lock-profile",
+          "locator": "/components/0/capabilities[id=lock]",
+          "status": "manual-review",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml"
+        },
+        {
+          "id": "evidence.ocf-binary-lock-state",
+          "locator": "/sdfObject/lock.status/sdfProperty/lockState",
+          "status": "resolved",
+          "url": "https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_status.sdf.json"
+        }
+      ],
+      "mappings": [
+        {
+          "classification": "one-to-one",
+          "directions": [
+            "event"
+          ],
+          "evidence_refs": [
+            "evidence.yrd156-profile-assignment",
+            "evidence.smartthings-lock-event-values",
+            "evidence.smartthings-current-handler-registration",
+            "evidence.smartthings-legacy-dispatch-gate",
+            "evidence.smartthings-lock-profile",
+            "evidence.ocf-binary-lock-state"
+          ],
+          "from": "platform.smartthings-lock-binary-subset",
+          "id": "map.smartthings-binary-state-to-sdf",
+          "limitations": [
+            "This classification covers only the strict locked/unlocked subset and does not claim a complete SmartThings lock-state translation.",
+            "Enum spelling conversion is not represented by contract version 0.1."
+          ],
+          "to": "neutral.ocf-lock-state"
+        },
+        {
+          "classification": "lossy",
+          "directions": [
+            "event"
+          ],
+          "evidence_refs": [
+            "evidence.yrd156-profile-assignment",
+            "evidence.smartthings-lock-event-values",
+            "evidence.smartthings-current-handler-registration",
+            "evidence.smartthings-legacy-dispatch-gate",
+            "evidence.ocf-binary-lock-state"
+          ],
+          "from": "device.zwave-access-control-events",
+          "id": "map.smartthings-extended-event-to-sdf",
+          "limitations": [
+            "The SDF property has no value corresponding to SmartThings unknown.",
+            "Method, user index, user name, and user type metadata are not preserved."
+          ],
+          "loss_dimensions": [
+            "enumeration",
+            "other"
+          ],
+          "to": "neutral.ocf-lock-state"
+        }
+      ],
+      "nodes": [
+        {
+          "artifact": {
+            "artifact_id": "smartthings-zwave-lock-fingerprints",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "device.yrd156",
+          "label": "SmartThings YRD156 Z-Wave fingerprint and base-lock assignment",
+          "layer": "device-protocol-support",
+          "locator": "zwaveManufacturer[id=Yale/YRD156]"
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-zwave-responses",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "device.zwave-access-control-events",
+          "label": "Z-Wave access-control events on the post-migration handler path",
+          "layer": "device-protocol-support",
+          "locator": "lua:function ZwaveHandlers.door_operation_event_handler"
+        },
+        {
+          "artifact": {
+            "artifact_id": "smartthings-base-lock-profile",
+            "manifest_id": "smartthings-zwave-lock-6b8a9cf"
+          },
+          "id": "platform.smartthings-lock-binary-subset",
+          "label": "Strict locked and unlocked subset of the SmartThings lock capability",
+          "layer": "platform-exposure",
+          "locator": "/components/0/capabilities[id=lock]"
+        },
+        {
+          "artifact": {
+            "artifact_id": "onedm-ocf-lock-status",
+            "manifest_id": "onedm-ocf-lock-models-c97d095"
+          },
+          "id": "neutral.ocf-lock-state",
+          "label": "OCF-derived SDF Locked and Unlocked state property",
+          "layer": "neutral-sdf-representation",
+          "locator": "/sdfObject/lock.status/sdfProperty/lockState"
+        }
+      ],
+      "path": "catalog/mappings/smartthings-yrd156-lock-state.yaml",
+      "review": {
+        "author": "github:@infinitywings",
+        "lifecycle": "candidate",
+        "notes": "Founder-authored candidate for the migrated handler path; not independently reviewed or verified.",
+        "reviewers": []
+      },
+      "schema_version": "0.1",
+      "scope": {
+        "domain": "door-lock",
+        "platform": "smartthings",
+        "protocols": [
+          "zwave"
+        ]
+      },
+      "sha256": "845267251582e4d658983c0716f7150a0ff302f25979d093a766e7d3be9ef5f7",
+      "source_manifests": [
+        {
+          "id": "smartthings-zwave-lock-6b8a9cf",
+          "path": "catalog/sources/smartthings-zwave-lock-6b8a9cf.yaml",
+          "sha256": "3bc27fe065666a0a56022c97b1b9453779f783d8bed81fd400ab4c63b5e749b0"
+        },
+        {
+          "id": "onedm-ocf-lock-models-c97d095",
+          "path": "catalog/sources/onedm-ocf-lock-models-c97d095.yaml",
+          "sha256": "e2b0ae69e3b025b43469e9a536898c33583e5beede3ad49b6c49d8d39c83315e"
+        }
+      ],
+      "title": "Yale YRD156 migrated-path SmartThings lock-state mapping candidate"
+    }
+  ],
+  "report_version": "0.1",
+  "sources": [
+    {
+      "artifacts": [
+        {
+          "artifact_role": "sdf-model",
+          "byte_check": "matched",
+          "description": "OCF-derived two-value lockState model with Locked and Unlocked values.",
+          "id": "onedm-ocf-lock-status",
+          "layer": "neutral-sdf-representation",
+          "license": {
+            "evidence_path": "LICENSE",
+            "expression": "BSD-3-Clause"
+          },
+          "media_type": "application/sdf+json",
+          "path": "sdfObject/sdfobject-lock_status.sdf.json",
+          "sha256": "569e0e7cbb0338a1aba52912c7fd0a69ff5eb36ff69c40c9afe9abb617859590",
+          "source_maturity": "unknown",
+          "url": "https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_status.sdf.json"
+        },
+        {
+          "artifact_role": "sdf-model",
+          "byte_check": "matched",
+          "description": "OCF-derived lockCodeList model containing an array of strings.",
+          "id": "onedm-ocf-lock-code",
+          "layer": "neutral-sdf-representation",
+          "license": {
+            "evidence_path": "LICENSE",
+            "expression": "BSD-3-Clause"
+          },
+          "media_type": "application/sdf+json",
+          "path": "sdfObject/sdfobject-lock_code.sdf.json",
+          "sha256": "0b446f26111f8cf9bf496f9fe63136bf1b5729d9978067e623cf5984979b50f1",
+          "source_maturity": "unknown",
+          "url": "https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_code.sdf.json"
+        }
+      ],
+      "description": "Pinned OCF-derived SDF artifacts hosted by the One Data Model organization. Repository placement does not establish OneDM adoption, active maintenance, endorsement, or compatibility. The files are referenced, not vendored.",
+      "ecosystem": "onedm",
+      "id": "onedm-ocf-lock-models-c97d095",
+      "kind": "source-manifest",
+      "path": "catalog/sources/onedm-ocf-lock-models-c97d095.yaml",
+      "repository": {
+        "commit": "c97d095c239539b8242ceb4f12cf6deaeedb16e2",
+        "url": "https://github.com/one-data-model/ocf-models"
+      },
+      "schema_version": "0.1",
+      "sha256": "e2b0ae69e3b025b43469e9a536898c33583e5beede3ad49b6c49d8d39c83315e"
+    },
+    {
+      "artifacts": [
+        {
+          "artifact_role": "fingerprints",
+          "byte_check": "matched",
+          "description": "Device fingerprints and profile assignments, including the Yale YRD156 assignment to the base-lock profile.",
+          "id": "smartthings-zwave-lock-fingerprints",
+          "layer": "device-protocol-support",
+          "license": {
+            "evidence_path": "LICENSE",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "application/yaml",
+          "path": "drivers/SmartThings/zwave-lock/fingerprints.yml",
+          "sha256": "487db4ecba1052afc06e6da90e9611075f82687ff9a552c96005376a433d32b4",
+          "source_maturity": "official",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml"
+        },
+        {
+          "artifact_role": "platform-profile",
+          "byte_check": "matched",
+          "description": "Native SmartThings profile exposing lock, lockCodes, lockCredentials, lockUsers, battery, and refresh capabilities.",
+          "id": "smartthings-base-lock-profile",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "application/yaml",
+          "path": "drivers/SmartThings/zwave-lock/profiles/base-lock.yml",
+          "sha256": "50ffef1a66f70e80804e92c5cd451129e4e36bc67ab6707a10e10f06579db8f8",
+          "source_maturity": "official",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "matched",
+          "description": "Driver-source evidence for the Z-Wave reports interpreted before they are translated into SmartThings lock, credential, and user events. Contract v0.1 uses its generic evidence role because it has no driver-source role.",
+          "id": "smartthings-zwave-responses",
+          "layer": "device-protocol-support",
+          "license": {
+            "evidence_path": "LICENSE",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/x-lua",
+          "path": "drivers/SmartThings/zwave-lock/src/lock_handlers/zwave_responses.lua",
+          "sha256": "7a5d5a4ec5d93b6309cd3dc05c3eaf1285158648dab63ddf00570b543e724aed",
+          "source_maturity": "official",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/zwave_responses.lua"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "matched",
+          "description": "Driver-source evidence showing that credentialData is used as the write-time Z-Wave UserCode payload. Contract v0.1 records this source under its generic evidence role because it has no driver-source role.",
+          "id": "smartthings-zwave-capability-handlers",
+          "layer": "device-protocol-support",
+          "license": {
+            "evidence_path": "LICENSE",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/x-lua",
+          "path": "drivers/SmartThings/zwave-lock/src/lock_handlers/capabilities.lua",
+          "sha256": "0cc41262f1cfd7952041847441a346996e80ca8fd7f680d9a253d8ad6362df50",
+          "source_maturity": "official",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/capabilities.lua"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "matched",
+          "description": "Driver-source evidence registering the current user, credential, and Z-Wave handlers and restoring migrated capability state. Contract v0.1 records this source under its generic evidence role.",
+          "id": "smartthings-zwave-lock-driver-entry",
+          "layer": "device-protocol-support",
+          "license": {
+            "evidence_path": "LICENSE",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/x-lua",
+          "path": "drivers/SmartThings/zwave-lock/src/init.lua",
+          "sha256": "ea3b16fc7567292ecd844b211c94da9034317b8bbc38743a82b86a20c379df67",
+          "source_maturity": "official",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/init.lua"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "matched",
+          "description": "Driver-source evidence routing devices without a true persisted SLGA_MIGRATED field to the legacy handler path.",
+          "id": "smartthings-legacy-dispatch-gate",
+          "layer": "device-protocol-support",
+          "license": {
+            "evidence_path": "LICENSE",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/x-lua",
+          "path": "drivers/SmartThings/zwave-lock/src/legacy-handlers/can_handle.lua",
+          "sha256": "3feda213e4b61f70b6ae0dc6313af0e603f5de5b3f6cfdf0f2a42d1aba929f51",
+          "source_maturity": "official",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/legacy-handlers/can_handle.lua"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "matched",
+          "description": "Driver-source evidence for the explicit lockCodes migration command, emitted lockUsers and lockCredentials state, and persisted migration flag.",
+          "id": "smartthings-legacy-migration-handler",
+          "layer": "device-protocol-support",
+          "license": {
+            "evidence_path": "LICENSE",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/x-lua",
+          "path": "drivers/SmartThings/zwave-lock/src/legacy-handlers/init.lua",
+          "sha256": "20f3fad7a4b074c86983950efdf07f4ef59cb901bd86acfae967b3d65b7d49cf",
+          "source_maturity": "official",
+          "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/legacy-handlers/init.lua"
+        }
+      ],
+      "description": "Pinned SmartThings Z-Wave lock driver evidence used by the initial EdgeLoom lock pilot. The source is referenced in place and is not vendored.",
+      "ecosystem": "smartthings",
+      "id": "smartthings-zwave-lock-6b8a9cf",
+      "kind": "source-manifest",
+      "path": "catalog/sources/smartthings-zwave-lock-6b8a9cf.yaml",
+      "repository": {
+        "commit": "6b8a9cf69462d314a7c81b7a709037744d7d788d",
+        "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers"
+      },
+      "schema_version": "0.1",
+      "sha256": "3bc27fe065666a0a56022c97b1b9453779f783d8bed81fd400ab4c63b5e749b0"
+    },
+    {
+      "artifacts": [
+        {
+          "artifact_role": "driver-config",
+          "byte_check": "matched",
+          "description": "Community device configuration identifying the YRD156 and its imported Z-Wave configuration parameters.",
+          "id": "zwave-js-yrd156-config",
+          "layer": "device-protocol-support",
+          "license": {
+            "evidence_path": "LICENSE",
+            "expression": "MIT"
+          },
+          "media_type": "application/json",
+          "path": "packages/config/config/devices/0x0129/yrd156.json",
+          "sha256": "16010a6f5f9ca0facee0da1e3312277c66e2699c3a8f7a74d252492e2b98c783",
+          "source_maturity": "community",
+          "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json"
+        },
+        {
+          "artifact_role": "driver-config",
+          "byte_check": "matched",
+          "description": "Shared JSON5 community parameter definitions referenced by the YRD156 config, including auto-relock enable and duration fields.",
+          "id": "zwave-js-yale-template",
+          "layer": "device-protocol-support",
+          "license": {
+            "evidence_path": "LICENSE",
+            "expression": "MIT"
+          },
+          "media_type": "application/json5",
+          "path": "packages/config/config/devices/0x0129/templates/yale_template.json",
+          "sha256": "6f37e437d63e57d81affaa665722e19559f85aef46ebedd8fa091289a46f4a43",
+          "source_maturity": "community",
+          "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/templates/yale_template.json"
+        },
+        {
+          "artifact_role": "driver-config",
+          "byte_check": "matched",
+          "description": "Shared JSON5 base definitions imported by device-family templates, including the 0-to-180 unsigned range used for auto-relock duration.",
+          "id": "zwave-js-master-template",
+          "layer": "device-protocol-support",
+          "license": {
+            "evidence_path": "LICENSE",
+            "expression": "MIT"
+          },
+          "media_type": "application/json5",
+          "path": "packages/config/config/devices/templates/master_template.json",
+          "sha256": "bebb75ac796d62ba116da2fd366b895d8418c83360d26df3252204530df248bf",
+          "source_maturity": "community",
+          "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/templates/master_template.json"
+        }
+      ],
+      "description": "Pinned community configuration evidence for the Yale YRD156. This source is not a statement from Yale or the Z-Wave Alliance and is not vendored here.",
+      "ecosystem": "zwave-js",
+      "id": "zwave-js-yrd156-c4c599e",
+      "kind": "source-manifest",
+      "path": "catalog/sources/zwave-js-yrd156-c4c599e.yaml",
+      "repository": {
+        "commit": "c4c599e1e6a0f6fab1f356f92307b8f94e895e60",
+        "url": "https://github.com/zwave-js/zwave-js"
+      },
+      "schema_version": "0.1",
+      "sha256": "72d981b9af12b3d525a45bb0f5dc37941bab918287ac327294e5ac87c97790de"
+    }
+  ]
+}

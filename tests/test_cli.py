@@ -23,7 +23,9 @@ def test_bare_invocation_prints_help(capsys: pytest.CaptureFixture[str]) -> None
     assert "usage: edgeloom" in capsys.readouterr().out
 
 
-@pytest.mark.parametrize("command", ["patch", "restore", "translate", "discover", "audit", "validate"])
+@pytest.mark.parametrize(
+    "command", ["patch", "restore", "translate", "discover", "audit", "validate", "catalog"]
+)
 def test_every_subcommand_is_registered(command: str, capsys: pytest.CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit) as exc:
         main([command, "--help"])

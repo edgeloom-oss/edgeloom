@@ -23,7 +23,8 @@ CAPABILITY_MAP = "capability-map"
 EVIDENCE_RECORD = "evidence-record"
 SOURCE_MANIFEST = "source-manifest"
 CATALOG_MAPPING_SET = "catalog-mapping-set"
-KINDS = (PROFILE, CAPABILITY_MAP, EVIDENCE_RECORD, SOURCE_MANIFEST, CATALOG_MAPPING_SET)
+CATALOG_DEVICE = "catalog-device"
+KINDS = (PROFILE, CAPABILITY_MAP, EVIDENCE_RECORD, SOURCE_MANIFEST, CATALOG_MAPPING_SET, CATALOG_DEVICE)
 
 _YAML_SUFFIXES = {".yaml", ".yml"}
 _JSON_SUFFIXES = {".json"}
@@ -159,7 +160,7 @@ def detect_kind(document: Any) -> str | None:
     if not isinstance(document, dict):
         return None
     tagged_kind = document.get("kind")
-    if tagged_kind in {SOURCE_MANIFEST, CATALOG_MAPPING_SET}:
+    if tagged_kind in {SOURCE_MANIFEST, CATALOG_MAPPING_SET, CATALOG_DEVICE}:
         return tagged_kind
     if (
         document.get("record_version") == "0.1"
@@ -175,6 +176,8 @@ def detect_kind(document: Any) -> str | None:
         return SOURCE_MANIFEST
     if "source_manifests" in document or ("nodes" in document and "mappings" in document):
         return CATALOG_MAPPING_SET
+    if "identity_evidence" in document and "features" in document:
+        return CATALOG_DEVICE
     if isinstance(document.get("drivers"), dict):
         return CAPABILITY_MAP
     if isinstance(document.get("components"), list):
@@ -377,6 +380,10 @@ def _iter_semantic_errors(document: Any, kind: str) -> Iterator[str]:
 
     if kind == PROFILE:
         yield from _profile_duplicate_id_errors(document)
+        return
+
+    if kind == CATALOG_DEVICE:
+        yield from _duplicate_id_errors(document.get("features"), "features")
         return
 
     if kind != CATALOG_MAPPING_SET:

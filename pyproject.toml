@@ -66,6 +66,7 @@ include = [
     "/README.md", "/LICENSE", "/CHANGELOG.md", "/SECURITY.md", "/CITATION.cff", "/docs",
     "/requirements-release.in", "/requirements-release.txt",
     "/scripts/verify_release_dist.py",
+    "/scripts/no_hub_demo.py",
 ]
 
 [tool.pytest.ini_options]
