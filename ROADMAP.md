@@ -211,8 +211,10 @@ catalog owns versioned records and the contribution workflow.
    pinned code comparisons. Keep manual applicability, upstream byte verification,
    independent review and physical-device observations distinct.
 5. Run regression, clean-wheel, deterministic-package, desktop/mobile and link
-   checks; submit reviewable core/catalog PRs with exact pins. Merge, software
-   release and production snapshot publication remain separate approvals.
+   checks; submit reviewable core/catalog PRs with exact pins. Software release
+   remains a separate approval. A core merge that contains the prepared snapshot
+   also needs Pages publication approval because `main` auto-deploys; follow the
+   [paired review/publication checklist](docs/bundle-release-readiness.md).
 
 Acceptance: a contributor can inspect one explanation, trace its sources,
 download and verify the scoped package, and propose one bounded correction

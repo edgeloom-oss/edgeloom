@@ -141,6 +141,10 @@ reports, then the real catalog sample and contributor workflow. Acceptance of
 this draft does not promote existing candidate mappings. A new software release
 and publication of a website snapshot remain explicit release activities.
 
+The [review and publication checklist](bundle-release-readiness.md) describes
+paired repository pins, review questions, the automatic Pages trigger on core
+`main`, and the separate software-release gates.
+
 ## Validation
 
 - Standalone document/observation and partial bundles need no SDF mapping.
