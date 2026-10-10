@@ -82,6 +82,8 @@ def _pointer(document: object, locator: str) -> object:
 
 
 def _same_subject(subject: dict, other: dict, context: str) -> None:
+    if subject.get("identity_scope", "exact-model") != other.get("identity_scope", "exact-model"):
+        raise BundleError(f"{context}: subject identity scope mismatch")
     for key in ("manufacturer", "model", "protocol"):
         if subject[key] != other[key]:
             raise BundleError(f"{context}: subject {key} mismatch")
@@ -161,7 +163,15 @@ def _check_records(bundle: Bundle) -> None:
         elif kind == schemas.CATALOG_DEVICE:
             _same_subject(manifest["subject"], record, identifier)
             artifact(record["identity_evidence"], identifier)
+            connection_ids = [row["id"] for row in record.get("connections", [])]
+            if len(connection_ids) != len(set(connection_ids)):
+                raise BundleError(f"{identifier}: duplicate connection id")
+            for connection in record.get("connections", []):
+                for reference in connection["references"]:
+                    artifact(reference, identifier)
             for feature in record["features"]:
+                for reference in feature.get("source_references", []):
+                    artifact(reference, identifier)
                 for target in feature["mapping_ids"] + feature.get("corroboration_ids", []):
                     dependency = need(target, identifier)
                     expected = (
@@ -314,13 +324,21 @@ def load_all(root: Path) -> list[Bundle]:
     return loaded
 
 
+def _schema_files(bundle: Bundle) -> dict[str, bytes]:
+    files = {}
+    for record in [bundle.manifest, *bundle.records.values()]:
+        path = schemas.document_schema_path(record)
+        files[f"schema/{path.name}"] = path.read_bytes()
+    return files
+
+
 def build_report(bundle: Bundle) -> dict:
     root = Path(__file__).parent
     generator_files = ["bundles.py", "bundle_site.py", "schemas.py", "boundedyaml.py", "catalog.py"]
     generator_files.append("catalog_assets/bundle.css")
     generator = {name: catalog.digest(catalog.read_bytes(root, name)) for name in generator_files}
-    for kind in {schemas.DEVICE_EVIDENCE_BUNDLE} | {r["kind"] for r in bundle.records.values()}:
-        generator[f"schema/{kind}"] = catalog.digest(schemas.schema_path(kind).read_bytes())
+    for name, payload in _schema_files(bundle).items():
+        generator[name] = catalog.digest(payload)
     input_hashes = {path: catalog.digest(payload) for path, payload in sorted(bundle.payloads.items())}
     core_pin = _core_pin(bundle.root)
     return {
@@ -362,9 +380,7 @@ def package_files(bundle: Bundle) -> dict[str, bytes]:
         if name not in {"index.html", "report.md", "bundle.css"}:
             raise BundleError(f"Unexpected renderer file: {name}")
         files[name] = text.encode()
-    kinds = {schemas.DEVICE_EVIDENCE_BUNDLE} | {record["kind"] for record in bundle.records.values()}
-    for kind in sorted(kinds):
-        files[f"schema/{kind}.schema.json"] = schemas.schema_path(kind).read_bytes()
+    files.update(_schema_files(bundle))
     if sum(map(len, files.values())) > MAX_PACKAGE_BYTES or any(
         len(p) > MAX_MEMBER_BYTES for p in files.values()
     ):
@@ -499,12 +515,12 @@ def verify_package(path: Path) -> dict:
         bundle = _assemble(None, manifest_path, {n: files[n] for n in paths})
         if Path(manifest_path).stem != manifest["id"]:
             raise BundleError("Bundle filename and identifier disagree")
-        kinds = {schemas.DEVICE_EVIDENCE_BUNDLE} | {r["kind"] for r in bundle.records.values()}
-        schema_paths = {f"schema/{kind}.schema.json" for kind in kinds}
+        schema_files = _schema_files(bundle)
+        schema_paths = set(schema_files)
         if set(expected) != paths | schema_paths | {"index.html", "report.md", "report.json", "bundle.css"}:
             raise BundleError("Package inventory does not match its record closure")
-        for kind in kinds:
-            if files[f"schema/{kind}.schema.json"] != schemas.schema_path(kind).read_bytes():
+        for name, payload in schema_files.items():
+            if files[name] != payload:
                 raise BundleError("Schema snapshot differs from this verifier; use the declared core pin")
         report = schemas.parse_document_bytes(files["report.json"], path=Path("report.json"))
         if (

@@ -1,5 +1,8 @@
 # Catalog Contracts
 
+Development extension: [Media/device-family contracts v0.2](media-device-contracts.md).
+The original v0.1 contracts below remain unchanged; v0.2 is not yet released.
+
 EdgeLoom's catalog contracts describe evidence-backed relationships among
 device behavior, native edge-driver artifacts, and protocol-independent SDF
 models. They are assurance records, not an authoritative device registry,

@@ -81,17 +81,31 @@ def schema_dir() -> Path:
     raise SchemaError("EdgeLoom schemas not found; the installation looks incomplete")
 
 
-def schema_path(kind: str) -> Path:
+VERSIONED_KINDS = {CATALOG_DEVICE, DEVICE_EVIDENCE_BUNDLE}
+
+
+def schema_path(kind: str, version: str = SCHEMA_VERSION) -> Path:
     if kind not in KINDS:
         raise SchemaError(f"Unknown schema kind {kind!r}; expected one of {', '.join(KINDS)}")
-    path = schema_dir() / f"{kind}.schema.json"
+    if (
+        not isinstance(version, str)
+        or version not in {"0.1", "0.2"}
+        or (version == "0.2" and kind not in VERSIONED_KINDS)
+    ):
+        raise SchemaError(f"Unsupported schema version for {kind}: {version!r}")
+    suffix = "" if version == "0.1" else ".v0.2"
+    path = schema_dir() / f"{kind}{suffix}.schema.json"
     if not path.is_file():
         raise SchemaError(f"Schema file missing: {path}")
     return path
 
 
-def load_schema(kind: str) -> dict[str, Any]:
-    return json.loads(schema_path(kind).read_text(encoding="utf-8"))
+def load_schema(kind: str, version: str = SCHEMA_VERSION) -> dict[str, Any]:
+    return json.loads(schema_path(kind, version).read_text(encoding="utf-8"))
+
+
+def document_schema_path(document: dict) -> Path:
+    return schema_path(document["kind"], document.get("schema_version", SCHEMA_VERSION))
 
 
 def _require_string_mapping_keys(document: Any, *, path: Path) -> None:
@@ -453,9 +467,14 @@ def _iter_semantic_errors(document: Any, kind: str) -> Iterator[str]:
         yield from _duplicate_id_errors(document.get("features"), "features")
         for feature in _catalog_items(document.get("features")):
             if isinstance(feature, dict) and not (
-                feature.get("mapping_ids") or feature.get("corroboration_ids")
+                feature.get("mapping_ids")
+                or feature.get("corroboration_ids")
+                or (document.get("schema_version") == "0.2" and feature.get("source_references"))
             ):
-                yield "features: each feature needs a mapping or corroboration reference"
+                yield (
+                    "features: each feature needs a mapping or corroboration reference "
+                    "(or v0.2 source reference)"
+                )
         return
 
     if kind == CATALOG_CORROBORATION:
@@ -581,8 +600,13 @@ def validation_errors(document: Any, *, kind: str) -> tuple[str, ...]:
     """Return bounded, stable diagnostics for one in-memory document."""
     import jsonschema
 
+    version = document.get("schema_version", SCHEMA_VERSION) if isinstance(document, dict) else SCHEMA_VERSION
+    try:
+        schema = load_schema(kind, version if kind in VERSIONED_KINDS else SCHEMA_VERSION)
+    except SchemaError as exc:
+        return (f"schema_version: {exc}",)
     validator = jsonschema.Draft202012Validator(
-        load_schema(kind),
+        schema,
         format_checker=jsonschema.FormatChecker(),
     )
     sampled = list(islice(validator.iter_errors(document), MAX_VALIDATION_ERRORS + 1))

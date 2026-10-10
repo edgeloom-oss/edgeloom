@@ -175,15 +175,25 @@ def load_catalog(root: Path) -> Catalog:
                 raise CatalogError(f"{mapping['id']}/{item['id']}: artifact layer mismatch")
     for device in catalog.devices.values():
         catalog.artifact(device["identity_evidence"])
+        connection_ids = [row["id"] for row in device.get("connections", [])]
+        if len(connection_ids) != len(set(connection_ids)):
+            raise CatalogError(f"{device['id']}: duplicate connection id")
+        for connection in device.get("connections", []):
+            for reference in connection["references"]:
+                catalog.artifact(reference)
         if (
             sum(
-                len(feature["mapping_ids"]) + len(feature.get("corroboration_ids", []))
+                len(feature["mapping_ids"])
+                + len(feature.get("corroboration_ids", []))
+                + len(feature.get("source_references", []))
                 for feature in device["features"]
             )
             > 100
         ):
             raise CatalogError(f"{device['id']}: too many feature associations")
         for feature in device["features"]:
+            for reference in feature.get("source_references", []):
+                catalog.artifact(reference)
             for identifier in feature["mapping_ids"]:
                 mapping = catalog.mappings.get(identifier)
                 if mapping is None:
@@ -291,7 +301,7 @@ def write_site(catalog: Catalog, index: dict, output: Path) -> int:
     package_members = (
         r"(?:index\.html|report\.(?:md|json)|bundle\.(?:css|zip)|package\.json|checksums\.txt|"
         r"schema/(?:source-manifest|catalog-mapping-set|catalog-device|catalog-corroboration|"
-        r"document-source|catalog-observation|device-evidence-bundle)\.schema\.json|"
+        r"document-source|catalog-observation|device-evidence-bundle)(?:\.v0\.2)?\.schema\.json|"
         rf"catalog/{record_folders}/[A-Za-z0-9][A-Za-z0-9._/-]*\.(?:json|yaml|yml))"
     )
     allowed = re.compile(
@@ -469,6 +479,9 @@ def build_index(catalog: Catalog, cache: Path | None = None) -> dict:
             schemas.DEVICE_EVIDENCE_BUNDLE,
         ):
             policy_files[f"schema/{kind}"] = digest(schemas.schema_path(kind).read_bytes())
+    for document in [*catalog.devices.values(), *[b.manifest for b in loaded_bundles]]:
+        path = schemas.document_schema_path(document)
+        policy_files[f"schema/{path.name}"] = digest(path.read_bytes())
     sources = []
     for source in sorted(catalog.sources.values(), key=lambda item: item["id"]):
         artifacts = []
@@ -589,6 +602,31 @@ def _bundle_summary(bundle) -> dict:
     }
 
 
+def connection_details(device: dict) -> list[str]:
+    """Shared, plain-text disclosures; renderers must escape these strings."""
+    if "connections" not in device:
+        return []
+    lines = [
+        f"Identity scope: {device['identity_scope']} (source-declared, not proof of physical identity)",
+        f"Category: {device['category']}",
+    ]
+    for row in device["connections"]:
+        lines.extend(
+            [
+                f"{row['platform']} / {row['integration']} · platform version: {row['platform_version']}",
+                f"Transport: {', '.join(row['transports'])} · "
+                f"application protocol/API: {row['application_protocol']}",
+                f"Access: {row['access']} · data updates: {row['data_updates']} · basis: {row['basis']}",
+                *[
+                    f"Evidence: {ref['manifest_id']}/{ref['artifact_id']} @ {ref['locator']}"
+                    for ref in row["references"]
+                ],
+                *row["limitations"],
+            ]
+        )
+    return lines
+
+
 def device_markdown(index: dict, device: dict) -> str:
     def plain(text: str) -> str:
         # Prevent author text from injecting links, HTML, or tables into a generated report.
@@ -611,8 +649,19 @@ def device_markdown(index: dict, device: dict) -> str:
         f"- Hardware evidence: {hardware}",
         "",
     ]
+    if device.get("connections"):
+        lines += [
+            "## Declared integration context",
+            "",
+            *[f"- {plain(row)}" for row in connection_details(device)],
+            "",
+        ]
     for feature in device["features"]:
         lines += [f"## {plain(feature['title'])}", "", plain(feature["summary"]), ""]
+        for reference in feature.get("source_references", []):
+            source = next(s for s in index["sources"] if s["id"] == reference["manifest_id"])
+            artifact = next(a for a in source["artifacts"] if a["id"] == reference["artifact_id"])
+            lines += [f"- Source-only declaration: {artifact['url']} · {plain(reference['locator'])}", ""]
         for identifier in feature["mapping_ids"]:
             mapping = mappings[identifier]
             lines += [
