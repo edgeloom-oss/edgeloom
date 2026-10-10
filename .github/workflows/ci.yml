@@ -96,6 +96,7 @@ jobs:
           cd /tmp
           /tmp/clean/bin/python -c "from edgeloom import schemas; expected=('profile','capability-map','evidence-record','source-manifest','catalog-mapping-set','catalog-device','catalog-corroboration','document-source','catalog-observation','device-evidence-bundle'); assert schemas.KINDS == expected; [print(schemas.schema_path(kind)) for kind in expected]"
           /tmp/clean/bin/edgeloom bundle --help
+          /tmp/clean/bin/python -c "from edgeloom import schemas; import jsonschema; [jsonschema.Draft202012Validator.check_schema(schemas.load_schema(k, '0.2')) for k in schemas.VERSIONED_KINDS]"
           /tmp/clean/bin/edgeloom bundle check "$GITHUB_WORKSPACE/tests/fixtures/bundles" demo
           /tmp/clean/bin/edgeloom bundle build "$GITHUB_WORKSPACE/tests/fixtures/bundles" demo --output /tmp/bundle-preview
           /tmp/clean/bin/edgeloom bundle export "$GITHUB_WORKSPACE/tests/fixtures/bundles" demo --output /tmp/bundle-first.zip

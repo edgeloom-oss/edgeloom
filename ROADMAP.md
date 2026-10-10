@@ -40,6 +40,23 @@ EdgeLoom is **not** planned as:
 
 ## Status vocabulary
 
+### Next bounded increment — media and appliance evidence
+
+Draft implementation on a review branch, **not shipped**: preserve the v0.1
+contracts and add opt-in v0.2 device/bundle records with explicit exact-model
+versus device-family scope. Separate transport, application protocol/API,
+platform adapter/version, local/cloud dependence and update mechanism. Each
+connection declaration must cite a pinned artifact; it is not a hardware result.
+
+Start with a source-only LG webOS integration-family case explaining power,
+availability and screen state. No exact G2 model or physical behavior is claimed.
+Gate: strict version dispatch, reference closure and scope-mismatch rejection,
+deterministic offline packaging, installed-schema checks, and desktop/mobile
+review. Existing Yale records and frozen v0.1 schema bytes stay unchanged.
+Media/appliance observations and further protocol semantics need a later scoped
+increment; no device control, pairing or network scan is added here. Public
+schema adoption remains subject to the governance/design-review process.
+
 - **Shipped** — available on `main` and covered by the normal CI/release path.
 - **Next** — the current implementation gate; work should land before later
   phases depend on it.

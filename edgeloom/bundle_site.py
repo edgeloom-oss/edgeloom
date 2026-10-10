@@ -8,6 +8,8 @@ from html import escape
 from pathlib import Path
 from urllib.parse import quote, urlencode, urlsplit
 
+from edgeloom import catalog
+
 CATALOG_URL = "https://edgeloom-oss.github.io/edgeloom/catalog/"
 ISSUES_URL = "https://github.com/edgeloom-oss/edgeloom-catalog/issues/new"
 INTEGRITY_NOTE = (
@@ -242,6 +244,12 @@ def _record_html(record: dict, records: dict) -> str:
         content = _source_html(record)
     elif kind == "catalog-corroboration":
         content = _corroboration_html(record, records)
+    elif kind == "catalog-device" and record.get("connections"):
+        content = (
+            "<h3>Declared integration context</h3>"
+            + _list(catalog.connection_details(record))
+            + _list(record["limitations"])
+        )
     else:
         content = f"<p>{_e(record.get('summary', ''))}</p>" + _list(record.get("limitations", []))
     return content + _json_details(record)
@@ -373,6 +381,7 @@ def _html(report: dict) -> str:
         {
             "Device": f"{subject['manufacturer']} {subject['model']}",
             "Protocol": subject["protocol"],
+            "Identity scope": subject.get("identity_scope", "exact-model (legacy declaration)"),
             "Firmware": subject["firmware"],
             "Bundle version": bundle["version"],
         }
@@ -401,7 +410,7 @@ content="Versioned candidate evidence, implementation reasoning and open tests."
 <nav aria-label="Primary"><a href="#sources">Sources</a>
 <a href="#participate">Credits &amp; review</a></nav></header>
 <main id="main" tabindex="-1"><section class="intro" aria-labelledby="title">
-<p class="eyebrow">Device Evidence Bundle · draft format 0.1</p>
+<p class="eyebrow">Device Evidence Bundle · draft schema {_e(bundle.get("schema_version", "0.1"))}</p>
 <h1 id="title">{_e(bundle["title"])}</h1>
 <p class="lede">Follow the evidence behind a device capability, and help fill the gaps.</p>
 <p class="badge">Candidate · version {_e(bundle["version"])}</p>{identity}
@@ -433,7 +442,7 @@ upstream documents and driver code remain at their referenced locations.</p>{rec
 <section class="section" aria-labelledby="integrity-title"><h2 id="integrity-title">Package integrity</h2>
 <p>{INTEGRITY_NOTE}</p><details><summary>Build provenance &amp; checks</summary>
 {provenance}</details></section>
-</main><footer>EdgeLoom · Device Evidence Bundle draft v0.1 · {_e(bundle["license"])}
+</main><footer>EdgeLoom · Device Evidence Bundle · {_e(bundle["license"])}
 catalog-authored records.
 Third-party sources retain their own terms. This portable report works without network access;
 upstream and contribution links require a connection.</footer></body></html>
@@ -448,7 +457,8 @@ def _markdown(report: dict) -> str:
         "",
         f"Candidate · version {_md(bundle['version'])}",
         "",
-        f"Bundle: {_md(bundle['id'])} · draft format 0.1",
+        f"Bundle: {_md(bundle['id'])} · schema {_md(bundle.get('schema_version', '0.1'))}"
+        " · archive format 0.1",
         "",
         f"Device: {_md(subject['manufacturer'])} {_md(subject['model'])}",
         f"Protocol: {_md(subject['protocol'])} · Firmware: {_md(subject['firmware'])}",
@@ -458,6 +468,14 @@ def _markdown(report: dict) -> str:
         *[f"- {_md(v)}" for v in subject["scope_notes"]],
         "",
     ]
+    for record in records.values():
+        if record["kind"] == "catalog-device" and record.get("connections"):
+            lines += [
+                "## Declared integration context",
+                "",
+                *[f"- {_md(row)}" for row in catalog.connection_details(record)],
+                "",
+            ]
     for feature in bundle["features"]:
         lines += [f"## {_md(feature['title'])}", "", _md(feature["summary"]), ""]
         for note in feature["implementation_notes"]:

@@ -1,0 +1,499 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/edgeloom-oss/edgeloom/schema/draft/v0.2/device-evidence-bundle.schema.json",
+  "title": "EdgeLoom Device Evidence Bundle (draft v0.2)",
+  "description": "Draft v0.2: source-declared identity scope and network integration evidence. Not compatibility or hardware validation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "schema_version",
+    "id",
+    "version",
+    "title",
+    "subject",
+    "author",
+    "license",
+    "publication_status",
+    "records",
+    "features",
+    "reviews",
+    "credits",
+    "history",
+    "limitations"
+  ],
+  "properties": {
+    "kind": {
+      "const": "device-evidence-bundle"
+    },
+    "schema_version": {
+      "const": "0.2"
+    },
+    "id": {
+      "$ref": "#/$defs/id"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:-[a-z0-9.-]+)?$",
+      "maxLength": 60
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "subject": {
+      "$ref": "#/$defs/subject"
+    },
+    "device_record_id": {
+      "$ref": "#/$defs/id"
+    },
+    "author": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "license": {
+      "const": "Apache-2.0"
+    },
+    "publication_status": {
+      "const": "candidate"
+    },
+    "records": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 200,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "path",
+          "sha256"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "path": {
+            "$ref": "#/$defs/path"
+          },
+          "sha256": {
+            "$ref": "#/$defs/sha256"
+          }
+        }
+      }
+    },
+    "features": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 30,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "summary",
+          "record_ids",
+          "implementation_notes",
+          "test_plan",
+          "gaps"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "record_ids": {
+            "$ref": "#/$defs/ids"
+          },
+          "implementation_notes": {
+            "type": "array",
+            "minItems": 0,
+            "maxItems": 30,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "decision",
+                "rationale",
+                "references",
+                "conditions"
+              ],
+              "properties": {
+                "id": {
+                  "$ref": "#/$defs/id"
+                },
+                "decision": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4000
+                },
+                "rationale": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4000
+                },
+                "references": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 30,
+                  "items": {
+                    "$ref": "#/$defs/record_ref"
+                  }
+                },
+                "conditions": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 20,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4000
+                  }
+                }
+              }
+            }
+          },
+          "test_plan": {
+            "type": "array",
+            "minItems": 0,
+            "maxItems": 20,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "id",
+                "question",
+                "procedure",
+                "requested_evidence"
+              ],
+              "properties": {
+                "id": {
+                  "$ref": "#/$defs/id"
+                },
+                "question": {
+                  "type": "string",
+                  "minLength": 1,
+                  "maxLength": 4000
+                },
+                "procedure": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 30,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4000
+                  }
+                },
+                "requested_evidence": {
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 20,
+                  "items": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 4000
+                  }
+                }
+              }
+            }
+          },
+          "gaps": {
+            "type": "array",
+            "minItems": 0,
+            "maxItems": 30,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 4000
+            }
+          }
+        }
+      }
+    },
+    "reviews": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "reviewer",
+          "reviewed_at",
+          "decision",
+          "scope",
+          "url",
+          "record_refs"
+        ],
+        "properties": {
+          "reviewer": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "reviewed_at": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "decision": {
+            "enum": [
+              "commented",
+              "needs-work",
+              "accepted"
+            ]
+          },
+          "scope": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          },
+          "url": {
+            "$ref": "#/$defs/url"
+          },
+          "record_refs": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 100,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "record_id",
+                "sha256"
+              ],
+              "properties": {
+                "record_id": {
+                  "$ref": "#/$defs/id"
+                },
+                "sha256": {
+                  "$ref": "#/$defs/sha256"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "credits": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "identity",
+          "roles",
+          "record_ids"
+        ],
+        "properties": {
+          "identity": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "roles": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 6,
+            "items": {
+              "enum": [
+                "author",
+                "source-research",
+                "observation",
+                "review",
+                "correction",
+                "maintenance"
+              ]
+            }
+          },
+          "record_ids": {
+            "$ref": "#/$defs/ids"
+          }
+        }
+      }
+    },
+    "history": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "version",
+          "summary"
+        ],
+        "properties": {
+          "version": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          },
+          "summary": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          }
+        }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 30,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://[^\\s]+$",
+      "maxLength": 2000
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manufacturer",
+        "model",
+        "protocol",
+        "identifiers",
+        "firmware",
+        "scope_notes",
+        "identity_scope"
+      ],
+      "properties": {
+        "manufacturer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "protocol": {
+          "enum": [
+            "zwave",
+            "zigbee",
+            "ip",
+            "matter",
+            "other",
+            "unknown"
+          ]
+        },
+        "identifiers": {
+          "type": "object",
+          "maxProperties": 20,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          }
+        },
+        "firmware": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "scope_notes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 20,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          }
+        },
+        "identity_scope": {
+          "enum": [
+            "exact-model",
+            "device-family"
+          ]
+        }
+      }
+    },
+    "ids": {
+      "type": "array",
+      "maxItems": 100,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "pointer": {
+      "type": "string",
+      "pattern": "^#(?:/.*)?$",
+      "maxLength": 1000
+    },
+    "record_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "locator",
+        "relationship"
+      ],
+      "properties": {
+        "record_id": {
+          "$ref": "#/$defs/id"
+        },
+        "locator": {
+          "$ref": "#/$defs/pointer"
+        },
+        "relationship": {
+          "enum": [
+            "supports",
+            "conflicts",
+            "context",
+            "unresolved"
+          ]
+        }
+      }
+    },
+    "path": {
+      "type": "string",
+      "pattern": "^catalog/[a-z-]+/[A-Za-z0-9][A-Za-z0-9._/-]*\\.(json|yaml|yml)$",
+      "maxLength": 1000
+    }
+  }
+}

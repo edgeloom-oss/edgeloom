@@ -7,10 +7,18 @@ from pathlib import Path
 from string import Template
 from urllib.parse import quote
 
-from edgeloom.catalog import device_markdown, read_bytes, render_json
+from edgeloom.catalog import connection_details, device_markdown, read_bytes, render_json
 
 ASSETS = Path(__file__).parent / "catalog_assets"
 CATALOG_URL = "https://edgeloom-oss.github.io/edgeloom/catalog/"
+PROTOCOL_LABELS = {
+    "zwave": "Z-Wave",
+    "zigbee": "Zigbee",
+    "ip": "IP / API",
+    "matter": "Matter",
+    "other": "Other",
+    "unknown": "Unknown",
+}
 
 
 def _e(value: object) -> str:
@@ -83,12 +91,18 @@ def index_html(index: dict) -> str:
                 for feature in device["features"]
                 for cid in feature.get("corroboration_ids", [])
             }
+            | {
+                bundle["publication_status"]
+                for bundle in index.get("bundles", [])
+                if bundle["device_record_id"] == device["id"]
+            }
         )
         keywords = " ".join(
             [
                 name,
                 device["protocol"],
-                "Z-Wave" if device["protocol"] == "zwave" else "Zigbee",
+                PROTOCOL_LABELS[device["protocol"]],
+                *connection_details(device),
                 *device["identifiers"].values(),
                 *[feature["title"] + " " + feature["summary"] for feature in device["features"]],
                 *[
@@ -115,16 +129,28 @@ def index_html(index: dict) -> str:
             if device["hardware_evidence"]
             else "No hardware evidence recorded"
         )
+        scope = (
+            '<p class="state">Device-family scope · exact model not established</p>'
+            if device.get("identity_scope") == "device-family"
+            else ""
+        )
         cards.append(f'''<article class="device-card" data-device data-search="{_e(keywords.casefold())}"
 data-protocol="{device["protocol"]}" data-status="{" ".join(statuses)}">
 <div class="card-top"><span class="eyebrow">{device["protocol"]} · device evidence</span>
-<span class="badge">{_e(", ".join(statuses))}</span></div>
+<span class="badge">{_e(", ".join(statuses) or "Source-declared")}</span></div>
 <h2><a href="devices/{device["id"]}/">{_e(name)}</a></h2>
+{scope}
 <p>Inspect what the published artifacts describe, expose, and leave unresolved.</p>
 <ul class="feature-links">{features}</ul>
 <div class="card-bottom"><span>{hardware}</span>
 <a href="devices/{device["id"]}/">Open report <span aria-hidden="true">→</span></a></div></article>''')
-    content = _template("index.html", **index["counts"], cards="\n".join(cards))
+    protocol_options = "".join(
+        f'<option value="{_e(value)}">{_e(PROTOCOL_LABELS[value])}</option>'
+        for value in sorted({d["protocol"] for d in index["devices"]})
+    )
+    content = _template(
+        "index.html", **index["counts"], cards="\n".join(cards), protocol_options=protocol_options
+    )
     content += _bundle_links(index.get("bundles", []))
     return _layout(
         "Device evidence",
@@ -148,8 +174,24 @@ def device_html(index: dict, device: dict) -> str:
             "../../",
         )
     ]
+    if device.get("connections"):
+        sections.append(
+            '<section class="feature"><h2>Declared integration context</h2>'
+            + _list(connection_details(device))
+            + "</section>"
+        )
     for feature in device["features"]:
         conclusions, details = [], []
+        for reference in feature.get("source_references", []):
+            declared_source = next(s for s in index["sources"] if s["id"] == reference["manifest_id"])
+            declared_artifact = next(
+                a for a in declared_source["artifacts"] if a["id"] == reference["artifact_id"]
+            )
+            details.append(
+                "<p>Source-only declaration · not independent review: "
+                f'<a href="{_e(declared_artifact["url"])}">Pinned source ↗</a> '
+                f"<code>{_e(reference['locator'])}</code></p>"
+            )
         for mid in feature["mapping_ids"]:
             mapping = mappings[mid]
             assertion_details = []
@@ -235,7 +277,7 @@ SHA-256: <code>{mapping["sha256"]}</code></p>{_list(mapping.get("limitations", [
 {"".join(evidence)}<h4>Source lineage — not an independence score</h4>{lineage}
 {_list(record["limitations"])}</details></div>''')
         mapping_panel = (
-            "<details><summary>Mapping evidence, source links &amp; scope boundaries</summary>"
+            "<details><summary>Evidence, source links &amp; scope boundaries</summary>"
             + "".join(details)
             + "</details>"
             if details
@@ -258,7 +300,7 @@ SHA-256: <code>{mapping["sha256"]}</code></p>{_list(mapping.get("limitations", [
     hardware = "Reported links; not authenticated" if device["hardware_evidence"] else "None recorded"
     content = _template(
         "device.html",
-        protocol=device["protocol"],
+        protocol=_e(PROTOCOL_LABELS[device["protocol"]]),
         name=_e(name),
         id=device["id"],
         identifiers=_e(" / ".join(device["identifiers"].values())),
