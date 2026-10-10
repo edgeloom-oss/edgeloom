@@ -1,6 +1,14 @@
 {
   "bundles": [
     {
+      "device_record_id": "lg-webos-tv-family",
+      "id": "lg-webos-state-availability",
+      "input_digest": "c78a77910674a1545f42e3ecc0fe8917b975152e55688c06c758b2f3e4b3176c",
+      "publication_status": "candidate",
+      "title": "LG webOS TV family: power, availability and screen state",
+      "version": "0.1.0"
+    },
+    {
       "device_record_id": "yale-yrd210-pb-db",
       "id": "yale-yrd210-battery",
       "input_digest": "336f46112dfba3dc9254363e6516f982e67fcf7825a75b5f0a6932bf5193b1c3",
@@ -10,12 +18,12 @@
     }
   ],
   "catalog_repository": "https://github.com/edgeloom-oss/edgeloom-catalog",
-  "catalog_revision": "52589528d53abbbb5265a13339c14cc96c4e8741",
+  "catalog_revision": "d4068dabf34f08a2ce35496203b232b8519fcc52",
   "checks": {
     "contracts": "passed",
     "cross_record_references": "passed",
     "manifest_digests": "matched",
-    "source_bytes": "matched"
+    "source_bytes": "not-checked"
   },
   "corroborations": [
     {
@@ -68,28 +76,28 @@
               "artifact_id": "zwave-js-yrd156-config",
               "locator": "/paramInformation",
               "manifest_id": "zwave-js-yrd156-c4c599e",
-              "status": "resolved",
+              "status": "not-checked",
               "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json"
             },
             {
               "artifact_id": "zwave-js-yale-template",
               "locator": "auto_relock_time_180; auto_relock",
               "manifest_id": "zwave-js-yrd156-c4c599e",
-              "status": "manual-review",
+              "status": "not-checked",
               "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/templates/yale_template.json"
             },
             {
               "artifact_id": "zwave-js-master-template",
               "locator": "base_0-180_nounit",
               "manifest_id": "zwave-js-yrd156-c4c599e",
-              "status": "manual-review",
+              "status": "not-checked",
               "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/templates/master_template.json"
             },
             {
               "artifact_id": "zwave-js-yrd156-config",
               "locator": "/devices/0",
               "manifest_id": "zwave-js-yrd156-c4c599e",
-              "status": "resolved",
+              "status": "not-checked",
               "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json"
             }
           ],
@@ -127,7 +135,7 @@
               "artifact_id": "ha-zwave-services",
               "locator": "/set_config_parameter/fields",
               "manifest_id": "ha-zwave-lock-067f882",
-              "status": "resolved",
+              "status": "not-checked",
               "url": "https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/services.yaml"
             }
           ],
@@ -155,14 +163,14 @@
               "artifact_id": "ha-zwave-lock",
               "locator": "ZWaveLock.async_set_lock_configuration; DoorLockCCConfigurationSetOptions",
               "manifest_id": "ha-zwave-lock-067f882",
-              "status": "manual-review",
+              "status": "not-checked",
               "url": "https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/lock.py"
             },
             {
               "artifact_id": "ha-zwave-services",
               "locator": "/set_lock_configuration/fields/auto_relock_time",
               "manifest_id": "ha-zwave-lock-067f882",
-              "status": "resolved",
+              "status": "not-checked",
               "url": "https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/services.yaml"
             }
           ],
@@ -246,7 +254,7 @@
               "artifact_id": "ha-zwave-lock",
               "locator": "ZWaveLock.is_locked",
               "manifest_id": "ha-zwave-lock-067f882",
-              "status": "manual-review",
+              "status": "not-checked",
               "url": "https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/lock.py"
             }
           ],
@@ -274,7 +282,7 @@
               "artifact_id": "ha-zwave-test-lock",
               "locator": "test_door_lock_no_value",
               "manifest_id": "ha-zwave-lock-067f882",
-              "status": "manual-review",
+              "status": "not-checked",
               "url": "https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/tests/components/zwave_js/test_lock.py"
             }
           ],
@@ -361,21 +369,21 @@
               "artifact_id": "zha-yale-realliving",
               "locator": "YRD210PBDB220TSLL.signature and replacement",
               "manifest_id": "zha-yale-d6fcec5",
-              "status": "manual-review",
+              "status": "not-checked",
               "url": "https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py"
             },
             {
               "artifact_id": "zha-battery-cluster",
               "locator": "DoublingPowerConfigurationCluster._update_attribute",
               "manifest_id": "zha-yale-d6fcec5",
-              "status": "manual-review",
+              "status": "not-checked",
               "url": "https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/__init__.py"
             },
             {
               "artifact_id": "zha-yale-realliving",
               "locator": "YRD210PBDB220TSLL.signature.MODELS_INFO",
               "manifest_id": "zha-yale-d6fcec5",
-              "status": "manual-review",
+              "status": "not-checked",
               "url": "https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py"
             }
           ],
@@ -417,21 +425,21 @@
               "artifact_id": "z2m-yale-definitions",
               "locator": "YRD210-HA-605; lockExtend({battery: {dontDividePercentage: true}})",
               "manifest_id": "z2m-yale-5750b44",
-              "status": "manual-review",
+              "status": "not-checked",
               "url": "https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts"
             },
             {
               "artifact_id": "z2m-battery-converter",
               "locator": "battery.convert; batteryPercentageRemaining; dontDividePercentage",
               "manifest_id": "z2m-yale-5750b44",
-              "status": "manual-review",
+              "status": "not-checked",
               "url": "https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/converters/fromZigbee.ts"
             },
             {
               "artifact_id": "z2m-yale-definitions",
               "locator": "definitions[zigbeeModel includes YRD210 PB DB]",
               "manifest_id": "z2m-yale-5750b44",
-              "status": "manual-review",
+              "status": "not-checked",
               "url": "https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts"
             }
           ],
@@ -522,14 +530,14 @@
               "artifact_id": "zha-yale-realliving",
               "locator": "YRD210PBDB220TSLL.signature and replacement; DoorLock.cluster_id",
               "manifest_id": "zha-yale-d6fcec5",
-              "status": "manual-review",
+              "status": "not-checked",
               "url": "https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py"
             },
             {
               "artifact_id": "zha-yale-realliving",
               "locator": "YRD210PBDB220TSLL.signature.MODELS_INFO",
               "manifest_id": "zha-yale-d6fcec5",
-              "status": "manual-review",
+              "status": "not-checked",
               "url": "https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py"
             }
           ],
@@ -565,21 +573,21 @@
               "artifact_id": "z2m-yale-definitions",
               "locator": "YRD210-HA-605; lockExtend; exposes e.lock()",
               "manifest_id": "z2m-yale-5750b44",
-              "status": "manual-review",
+              "status": "not-checked",
               "url": "https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts"
             },
             {
               "artifact_id": "z2m-exposes",
               "locator": "presets.lock; Lock.withState; Lock.withLockState; access",
               "manifest_id": "z2m-yale-5750b44",
-              "status": "manual-review",
+              "status": "not-checked",
               "url": "https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/lib/exposes.ts"
             },
             {
               "artifact_id": "z2m-yale-definitions",
               "locator": "definitions[zigbeeModel includes YRD210 PB DB]",
               "manifest_id": "z2m-yale-5750b44",
-              "status": "manual-review",
+              "status": "not-checked",
               "url": "https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts"
             }
           ],
@@ -627,11 +635,139 @@
   "counts": {
     "assertions": 6,
     "corroboration_records": 4,
-    "devices": 2,
+    "devices": 3,
     "mapping_sets": 3,
     "source_observations": 9
   },
   "devices": [
+    {
+      "category": "media",
+      "connections": [
+        {
+          "access": "local",
+          "application_protocol": "LG webOS API via aiowebostv (wire-level behavior not traced)",
+          "basis": "source-declared",
+          "data_updates": "push",
+          "id": "ha-webostv",
+          "integration": "webostv",
+          "limitations": [
+            "local_push is the integration manifest's classification, not an observation of a household device or a claim that every path is event-driven. The coordinator also schedules connection recovery.",
+            "Transport is unknown for any physical instance. No IP address, account, pairing or network discovery was used.",
+            "The pinned integration depends on aiowebostv 0.10.0; that dependency's state derivation and wire-level protocol remain outside this source trace."
+          ],
+          "platform": "Home Assistant Core",
+          "platform_version": "2026.10.0",
+          "references": [
+            {
+              "artifact_id": "webostv-manifest",
+              "locator": "/iot_class",
+              "manifest_id": "ha-webostv-6a811d3"
+            },
+            {
+              "artifact_id": "webostv-manifest",
+              "locator": "/requirements/0",
+              "manifest_id": "ha-webostv-6a811d3"
+            },
+            {
+              "artifact_id": "webostv-coordinator",
+              "locator": "WebOsTvDataUpdateCoordinator._async_update_data; SCAN_INTERVAL",
+              "manifest_id": "ha-webostv-6a811d3"
+            }
+          ],
+          "transports": [
+            "unknown"
+          ]
+        }
+      ],
+      "features": [
+        {
+          "id": "power-state",
+          "mapping_ids": [],
+          "next_steps": [
+            "Inspect the pinned adapter branches and separate reported state from physical state.",
+            "Supply exact model, webOS and installed HA versions before a model-specific case."
+          ],
+          "source_references": [
+            {
+              "artifact_id": "webostv-media-player",
+              "locator": "LgWebOSMediaPlayerEntity._update_states (lines 115-181)",
+              "manifest_id": "ha-webostv-6a811d3"
+            }
+          ],
+          "summary": "The media-player adapter derives an entity state from client fields; it does not measure electrical power or prove physical screen state.",
+          "title": "Power state is not screen state"
+        },
+        {
+          "id": "availability",
+          "mapping_ids": [],
+          "next_steps": [
+            "Trace the availability chain before treating unavailable as off.",
+            "Review current configuration without adding a turn-on automation or waking the TV."
+          ],
+          "source_references": [
+            {
+              "artifact_id": "webostv-entity",
+              "locator": "WebOsTvEntity(CoordinatorEntity) (lines 15-24)",
+              "manifest_id": "ha-webostv-6a811d3"
+            },
+            {
+              "artifact_id": "webostv-coordinator",
+              "locator": "WebOsTvDataUpdateCoordinator._async_update_data (lines 45-68)",
+              "manifest_id": "ha-webostv-6a811d3"
+            },
+            {
+              "artifact_id": "webostv-coordinator-base",
+              "locator": "CoordinatorEntity.available (lines 724-728)",
+              "manifest_id": "ha-webostv-6a811d3"
+            }
+          ],
+          "summary": "Entity availability follows coordinator success and connection-recovery conditions, separately from the media-player state calculation.",
+          "title": "Unavailable is not a power measurement"
+        },
+        {
+          "id": "screen-state",
+          "mapping_ids": [],
+          "next_steps": [
+            "Check source conditions; do not enable or exercise screen control solely for catalog intake.",
+            "An exact-model manual and bounded read-only observation remain missing."
+          ],
+          "source_references": [
+            {
+              "artifact_id": "webostv-screen",
+              "locator": "LgWebOSScreenSwitchEntity.available/is_on/_async_set_screen_state (lines 28-78)",
+              "manifest_id": "ha-webostv-6a811d3"
+            }
+          ],
+          "summary": "Screen state and availability have separate conditions; a declared switch does not establish support on every model.",
+          "title": "A separate, conditional screen entity"
+        }
+      ],
+      "firmware": "unknown",
+      "hardware_evidence": [],
+      "id": "lg-webos-tv-family",
+      "identifiers": {
+        "family": "webOS TV",
+        "manufacturer": "LG"
+      },
+      "identity_evidence": {
+        "artifact_id": "webostv-manifest",
+        "locator": "/name",
+        "manifest_id": "ha-webostv-6a811d3"
+      },
+      "identity_scope": "device-family",
+      "kind": "catalog-device",
+      "limitations": [
+        "Integration-family source study only; no exact regional model, firmware, G2 compatibility or physical observation established.",
+        "No independent review, SDF mapping, driver installation or control recommendation.",
+        "Founder-directed, AI-assisted curation. Home Assistant contributors retain upstream credit; their authorship is not EdgeLoom review or endorsement."
+      ],
+      "manufacturer": "LG",
+      "model": "webOS TVs (integration family)",
+      "path": "catalog/devices/lg-webos-tv-family.json",
+      "protocol": "ip",
+      "schema_version": "0.2",
+      "sha256": "b79dfce17398eed231336600caacd2fa122436d042d4c764601ced5224116a35"
+    },
     {
       "features": [
         {
@@ -769,13 +905,13 @@
     }
   ],
   "generator": {
-    "declared_core_revision": "0c86fea045972458dc1e60eb435ced95036f04fe",
-    "implementation_digest": "edf5e424e4d0460d1cc429eaed93c511630241ebb8797bc0dd38a7e830bd4bb4",
+    "declared_core_revision": "d7e801d10f02b6effe4d8403ec997913bfd7bb2c",
+    "implementation_digest": "f31f7ef401a2085979ef2d63c687b76a60c2ac5a21b910d46ae0f5f6f3ea5778",
     "package_version_label": "0.2.0",
     "policy": "catalog/v0.1",
     "version_label_is_not_release_attestation": true
   },
-  "input_digest": "1dd1bf258fd3920d8f740c33bf07bce8629643bdb12eeb07bc96e319b670bec3",
+  "input_digest": "26c0d572d3e7e04ec9ba3d7bdabd4439feadca81902c8a5a8381bb7aaa3e4b1e",
   "limitations": [
     "Device associations, classifications, license labels, and review states are catalog-author declarations, not independently authenticated by this build.",
     "Resolved locators establish field existence only, not the interpretation, completeness, runtime behavior, SDF conformance, or interoperability of an artifact.",
@@ -873,79 +1009,79 @@
         {
           "id": "device.yrd156",
           "locator": "zwaveManufacturer[id=Yale/YRD156]",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml"
         },
         {
           "id": "device.zwave-user-code-reports",
           "locator": "lua:function ZwaveHandlers.user_code_report",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/zwave_responses.lua"
         },
         {
           "id": "platform.smartthings-access-identities",
           "locator": "/components/0/capabilities[id=lockCredentials|lockUsers]",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml"
         },
         {
           "id": "platform.smartthings-credential-payload",
           "locator": "/components/0/capabilities[id=lockCredentials]",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml"
         },
         {
           "id": "neutral.ocf-lock-code-list",
           "locator": "/sdfObject/lock.code/sdfProperty/lockCodeList",
-          "status": "resolved",
+          "status": "not-checked",
           "url": "https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_code.sdf.json"
         },
         {
           "id": "evidence.yrd156-profile-assignment",
           "locator": "zwaveManufacturer[id=Yale/YRD156]",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml"
         },
         {
           "id": "evidence.smartthings-user-credential-records",
           "locator": "lua:function ZwaveHandlers.user_code_report",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/zwave_responses.lua"
         },
         {
           "id": "evidence.smartthings-access-profile",
           "locator": "/components/0/capabilities",
-          "status": "resolved",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml"
         },
         {
           "id": "evidence.smartthings-pin-write-path",
           "locator": "lua:function CapabilityHandlers.add_credential|update_credential",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/capabilities.lua"
         },
         {
           "id": "evidence.smartthings-current-handler-registration",
           "locator": "lua:driver_template.capability_handlers|driver_template.zwave_handlers",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/init.lua"
         },
         {
           "id": "evidence.smartthings-legacy-dispatch-gate",
           "locator": "lua:return function(opts, driver, device, ...)",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/legacy-handlers/can_handle.lua"
         },
         {
           "id": "evidence.smartthings-migration-transition",
           "locator": "lua:function migrate",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/legacy-handlers/init.lua"
         },
         {
           "id": "evidence.ocf-lock-code-list",
           "locator": "/sdfObject/lock.code/sdfProperty/lockCodeList",
-          "status": "resolved",
+          "status": "not-checked",
           "url": "https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_code.sdf.json"
         }
       ],
@@ -1157,61 +1293,61 @@
         {
           "id": "device.yrd156-auto-relock-time",
           "locator": "/auto_relock_time_180",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/templates/yale_template.json"
         },
         {
           "id": "platform.smartthings-base-lock-capabilities",
           "locator": "/components/0/capabilities",
-          "status": "resolved",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml"
         },
         {
           "id": "neutral.ocf-lock-status-properties",
           "locator": "/sdfObject/lock.status/sdfProperty",
-          "status": "resolved",
+          "status": "not-checked",
           "url": "https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_status.sdf.json"
         },
         {
           "id": "evidence.yrd156-community-identity",
           "locator": "/manufacturerId|/devices/0/productType|/devices/0/productId",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json"
         },
         {
           "id": "evidence.yrd156-smartthings-profile-assignment",
           "locator": "zwaveManufacturer[id=Yale/YRD156]",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml"
         },
         {
           "id": "evidence.yrd156-auto-relock-import",
           "locator": "/paramInformation/[#=3]",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json"
         },
         {
           "id": "evidence.auto-relock-template",
           "locator": "/auto_relock_time_180",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/templates/yale_template.json"
         },
         {
           "id": "evidence.auto-relock-range",
           "locator": "/base_0-180_nounit",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/templates/master_template.json"
         },
         {
           "id": "evidence.base-lock-capability-enumeration",
           "locator": "/components/0/capabilities",
-          "status": "resolved",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml"
         },
         {
           "id": "evidence.ocf-lock-status-property-enumeration",
           "locator": "/sdfObject/lock.status/sdfProperty",
-          "status": "resolved",
+          "status": "not-checked",
           "url": "https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_status.sdf.json"
         }
       ],
@@ -1394,61 +1530,61 @@
         {
           "id": "device.yrd156",
           "locator": "zwaveManufacturer[id=Yale/YRD156]",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml"
         },
         {
           "id": "device.zwave-access-control-events",
           "locator": "lua:function ZwaveHandlers.door_operation_event_handler",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/zwave_responses.lua"
         },
         {
           "id": "platform.smartthings-lock-binary-subset",
           "locator": "/components/0/capabilities[id=lock]",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml"
         },
         {
           "id": "neutral.ocf-lock-state",
           "locator": "/sdfObject/lock.status/sdfProperty/lockState",
-          "status": "resolved",
+          "status": "not-checked",
           "url": "https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_status.sdf.json"
         },
         {
           "id": "evidence.yrd156-profile-assignment",
           "locator": "zwaveManufacturer[id=Yale/YRD156]",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml"
         },
         {
           "id": "evidence.smartthings-lock-event-values",
           "locator": "lua:function ZwaveHandlers.door_operation_event_handler",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/zwave_responses.lua"
         },
         {
           "id": "evidence.smartthings-current-handler-registration",
           "locator": "lua:driver_template.zwave_handlers",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/init.lua"
         },
         {
           "id": "evidence.smartthings-legacy-dispatch-gate",
           "locator": "lua:return function(opts, driver, device, ...)",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/legacy-handlers/can_handle.lua"
         },
         {
           "id": "evidence.smartthings-lock-profile",
           "locator": "/components/0/capabilities[id=lock]",
-          "status": "manual-review",
+          "status": "not-checked",
           "url": "https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml"
         },
         {
           "id": "evidence.ocf-binary-lock-state",
           "locator": "/sdfObject/lock.status/sdfProperty/lockState",
-          "status": "resolved",
+          "status": "not-checked",
           "url": "https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_status.sdf.json"
         }
       ],
@@ -1578,7 +1714,134 @@
       "artifacts": [
         {
           "artifact_role": "evidence",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
+          "description": "Integration identity, local_push declaration and pinned dependency.",
+          "id": "webostv-manifest",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE.md",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "application/json",
+          "path": "homeassistant/components/webostv/manifest.json",
+          "sha256": "c2f4ea88a3508cc22568a7c6e3b427b4ec8c281653352eebc3f583111d93b78e",
+          "source_maturity": "community",
+          "url": "https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/components/webostv/manifest.json"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "not-checked",
+          "description": "Entity state construction from the client's TV state.",
+          "id": "webostv-media-player",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE.md",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/x-python",
+          "path": "homeassistant/components/webostv/media_player.py",
+          "sha256": "25e4b06e61577dd5c896d163d4d8379c052c01a334e3638309e95a1ebe4edbe1",
+          "source_maturity": "community",
+          "url": "https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/components/webostv/media_player.py"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "not-checked",
+          "description": "CoordinatorEntity inheritance and integration-level manufacturer identity.",
+          "id": "webostv-entity",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE.md",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/x-python",
+          "path": "homeassistant/components/webostv/entity.py",
+          "sha256": "cd3451b66ce5e14f73deca1ddce58d3908b96cd2d2fbf8d5c8582803a2416f27",
+          "source_maturity": "community",
+          "url": "https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/components/webostv/entity.py"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "not-checked",
+          "description": "Connection recovery and UpdateFailed conditions.",
+          "id": "webostv-coordinator",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE.md",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/x-python",
+          "path": "homeassistant/components/webostv/coordinator.py",
+          "sha256": "3788a885cb8dd0c71b877cc4cd5996634d695a834ed9be8bcad3110fa37ab4c6",
+          "source_maturity": "community",
+          "url": "https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/components/webostv/coordinator.py"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "not-checked",
+          "description": "Shared CoordinatorEntity availability property.",
+          "id": "webostv-coordinator-base",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE.md",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/x-python",
+          "path": "homeassistant/helpers/update_coordinator.py",
+          "sha256": "0af39b34a677ad53246333b80cbd0dfd73724af0a03d5cce39032640591b82ec",
+          "source_maturity": "community",
+          "url": "https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/helpers/update_coordinator.py"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "not-checked",
+          "description": "Separate screen switch state and availability conditions.",
+          "id": "webostv-screen",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE.md",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/x-python",
+          "path": "homeassistant/components/webostv/switch.py",
+          "sha256": "2ea11aa9442809ed132eb3c406b8cf6c29e80649ec524671b9e7fd47eef61f80",
+          "source_maturity": "community",
+          "url": "https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/components/webostv/switch.py"
+        },
+        {
+          "artifact_role": "evidence",
+          "byte_check": "not-checked",
+          "description": "Pinned Home Assistant Core license.",
+          "id": "webostv-license",
+          "layer": "platform-exposure",
+          "license": {
+            "evidence_path": "LICENSE.md",
+            "expression": "Apache-2.0"
+          },
+          "media_type": "text/plain",
+          "path": "LICENSE.md",
+          "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+          "source_maturity": "community",
+          "url": "https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/LICENSE.md"
+        }
+      ],
+      "description": "Home Assistant 2026.10.0 webOS integration-family state paths. Not a model-specific driver match or physical result.",
+      "ecosystem": "home-assistant",
+      "id": "ha-webostv-6a811d3",
+      "kind": "source-manifest",
+      "path": "catalog/sources/ha-webostv-6a811d3.json",
+      "repository": {
+        "commit": "6a811d3359c7b2076dc9e1cf900843a129c044af",
+        "url": "https://github.com/home-assistant/core"
+      },
+      "schema_version": "0.1",
+      "sha256": "186e0d645a2e45c318e6a595b23ae0f1db66573226339752927302721ba0961f"
+    },
+    {
+      "artifacts": [
+        {
+          "artifact_role": "evidence",
+          "byte_check": "not-checked",
           "description": "Lock entity and generic configuration implementation.",
           "id": "ha-zwave-lock",
           "layer": "platform-exposure",
@@ -1594,7 +1857,7 @@
         },
         {
           "artifact_role": "evidence",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Service field declarations, including configuration parameter writes.",
           "id": "ha-zwave-services",
           "layer": "platform-exposure",
@@ -1610,7 +1873,7 @@
         },
         {
           "artifact_role": "evidence",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Upstream simulated lock tests; not executed here or associated with YRD156 hardware.",
           "id": "ha-zwave-test-lock",
           "layer": "platform-exposure",
@@ -1626,7 +1889,7 @@
         },
         {
           "artifact_role": "evidence",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Pinned upstream license text.",
           "id": "ha-license",
           "layer": "platform-exposure",
@@ -1657,7 +1920,7 @@
       "artifacts": [
         {
           "artifact_role": "sdf-model",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "OCF-derived two-value lockState model with Locked and Unlocked values.",
           "id": "onedm-ocf-lock-status",
           "layer": "neutral-sdf-representation",
@@ -1673,7 +1936,7 @@
         },
         {
           "artifact_role": "sdf-model",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "OCF-derived lockCodeList model containing an array of strings.",
           "id": "onedm-ocf-lock-code",
           "layer": "neutral-sdf-representation",
@@ -1704,7 +1967,7 @@
       "artifacts": [
         {
           "artifact_role": "fingerprints",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Device fingerprints and profile assignments, including the Yale YRD156 assignment to the base-lock profile.",
           "id": "smartthings-zwave-lock-fingerprints",
           "layer": "device-protocol-support",
@@ -1720,7 +1983,7 @@
         },
         {
           "artifact_role": "platform-profile",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Native SmartThings profile exposing lock, lockCodes, lockCredentials, lockUsers, battery, and refresh capabilities.",
           "id": "smartthings-base-lock-profile",
           "layer": "platform-exposure",
@@ -1736,7 +1999,7 @@
         },
         {
           "artifact_role": "evidence",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Driver-source evidence for the Z-Wave reports interpreted before they are translated into SmartThings lock, credential, and user events. Contract v0.1 uses its generic evidence role because it has no driver-source role.",
           "id": "smartthings-zwave-responses",
           "layer": "device-protocol-support",
@@ -1752,7 +2015,7 @@
         },
         {
           "artifact_role": "evidence",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Driver-source evidence showing that credentialData is used as the write-time Z-Wave UserCode payload. Contract v0.1 records this source under its generic evidence role because it has no driver-source role.",
           "id": "smartthings-zwave-capability-handlers",
           "layer": "device-protocol-support",
@@ -1768,7 +2031,7 @@
         },
         {
           "artifact_role": "evidence",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Driver-source evidence registering the current user, credential, and Z-Wave handlers and restoring migrated capability state. Contract v0.1 records this source under its generic evidence role.",
           "id": "smartthings-zwave-lock-driver-entry",
           "layer": "device-protocol-support",
@@ -1784,7 +2047,7 @@
         },
         {
           "artifact_role": "evidence",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Driver-source evidence routing devices without a true persisted SLGA_MIGRATED field to the legacy handler path.",
           "id": "smartthings-legacy-dispatch-gate",
           "layer": "device-protocol-support",
@@ -1800,7 +2063,7 @@
         },
         {
           "artifact_role": "evidence",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Driver-source evidence for the explicit lockCodes migration command, emitted lockUsers and lockCredentials state, and persisted migration flag.",
           "id": "smartthings-legacy-migration-handler",
           "layer": "device-protocol-support",
@@ -1831,7 +2094,7 @@
       "artifacts": [
         {
           "artifact_role": "evidence",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Model-only matching, battery metadata and shared lock exposure declarations.",
           "id": "z2m-yale-definitions",
           "layer": "platform-exposure",
@@ -1847,7 +2110,7 @@
         },
         {
           "artifact_role": "evidence",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Battery conversion with dontDividePercentage condition and invalid-value guard.",
           "id": "z2m-battery-converter",
           "layer": "platform-exposure",
@@ -1863,7 +2126,7 @@
         },
         {
           "artifact_role": "evidence",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Lock state, access and numeric exposure constructors.",
           "id": "z2m-exposes",
           "layer": "platform-exposure",
@@ -1879,7 +2142,7 @@
         },
         {
           "artifact_role": "evidence",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Pinned upstream license text.",
           "id": "z2m-license",
           "layer": "platform-exposure",
@@ -1910,7 +2173,7 @@
       "artifacts": [
         {
           "artifact_role": "evidence",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Manufacturer/model and endpoint signature; replacement power-configuration cluster.",
           "id": "zha-yale-realliving",
           "layer": "platform-exposure",
@@ -1926,7 +2189,7 @@
         },
         {
           "artifact_role": "evidence",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "DoublingPowerConfigurationCluster implementation; not a full downstream entity pipeline.",
           "id": "zha-battery-cluster",
           "layer": "platform-exposure",
@@ -1942,7 +2205,7 @@
         },
         {
           "artifact_role": "evidence",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Pinned upstream license text.",
           "id": "zha-license",
           "layer": "platform-exposure",
@@ -1973,7 +2236,7 @@
       "artifacts": [
         {
           "artifact_role": "driver-config",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Community device configuration identifying the YRD156 and its imported Z-Wave configuration parameters.",
           "id": "zwave-js-yrd156-config",
           "layer": "device-protocol-support",
@@ -1989,7 +2252,7 @@
         },
         {
           "artifact_role": "driver-config",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Shared JSON5 community parameter definitions referenced by the YRD156 config, including auto-relock enable and duration fields.",
           "id": "zwave-js-yale-template",
           "layer": "device-protocol-support",
@@ -2005,7 +2268,7 @@
         },
         {
           "artifact_role": "driver-config",
-          "byte_check": "matched",
+          "byte_check": "not-checked",
           "description": "Shared JSON5 base definitions imported by device-family templates, including the 0-to-180 unsigned range used for auto-relock duration.",
           "id": "zwave-js-master-template",
           "layer": "device-protocol-support",

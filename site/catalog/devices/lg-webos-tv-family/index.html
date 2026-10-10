@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>LG webOS TVs (integration family) — EdgeLoom Catalog</title>
+  <meta name="description" content="Source-linked feature evidence for LG webOS TVs (integration family). Read findings, limits, and pinned sources; no hardware test or automatic patch is implied.">
+  <meta name="theme-color" content="#f5f7f1">
+  <link rel="canonical" href="https://edgeloom-oss.github.io/edgeloom/catalog/devices/lg-webos-tv-family/">
+  <link rel="icon" href="https://edgeloom-oss.github.io/edgeloom/assets/favicon.png">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="LG webOS TVs (integration family) — EdgeLoom Catalog">
+  <meta property="og:description" content="Source-linked feature evidence for LG webOS TVs (integration family). Read findings, limits, and pinned sources; no hardware test or automatic patch is implied.">
+  <meta property="og:url" content="https://edgeloom-oss.github.io/edgeloom/catalog/devices/lg-webos-tv-family/">
+  <meta property="og:image" content="https://edgeloom-oss.github.io/edgeloom/assets/og-card.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="LG webOS TVs (integration family) — EdgeLoom Catalog">
+  <meta name="twitter:description" content="Source-linked feature evidence for LG webOS TVs (integration family). Read findings, limits, and pinned sources; no hardware test or automatic patch is implied.">
+  <meta name="twitter:image" content="https://edgeloom-oss.github.io/edgeloom/assets/og-card.png">
+  <link rel="stylesheet" href="../../styles.css">
+  <script src="../../script.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <header>
+    <a class="brand" href="https://edgeloom-oss.github.io/edgeloom/">
+      <span class="mark" aria-hidden="true">≋</span> EdgeLoom <span class="brand-label">/ catalog</span>
+    </a>
+    <nav aria-label="Catalog navigation">
+      <a href="../../">Browse</a>
+      <a href="https://github.com/edgeloom-oss/edgeloom-catalog">Contribute <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+  <main id="main" tabindex="-1"><a class="back" href="../../">← All device evidence</a>
+<section class="device-intro">
+  <p class="eyebrow">IP / API · source-level report</p>
+  <h1>LG webOS TVs (integration family)</h1>
+  <p class="lede">Inspect what the published artifacts preserve, expose, or leave unresolved.</p>
+  <nav class="feature-nav" aria-label="Feature navigation"><a href="#power-state">Power state is not screen state</a><a href="#availability">Unavailable is not a power measurement</a><a href="#screen-state">A separate, conditional screen entity</a></nav>
+  <div class="facts">
+    <div><span>Identity</span><strong>LG / webOS TV</strong><a href="https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/components/webostv/manifest.json">Pinned identity source ↗</a></div>
+    <div><span>Firmware / conditions</span><strong>unknown</strong></div>
+    <div><span>Hardware evidence</span><strong>None recorded</strong></div>
+    <div><span>Source bytes</span><strong>not-checked</strong><small>Not semantic verification</small></div>
+  </div>
+  <p class="notice">Source-level evidence, not an installation or patch recommendation.
+    See each record's declared review state below.</p>
+  <div class="report-actions">
+    <a class="button" href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=device-observation.yml&amp;title=%5BDevice%20observation%5D%20LG%20webOS%20TVs%20%28integration%20family%29">Report a mismatch ↗</a>
+    <a href="../../reports/lg-webos-tv-family.md" download>Download Markdown</a><a href="../../catalog.json">JSON index</a>
+  </div>
+</section>
+<div class="report-layout">
+  <div><section class="feature" aria-label="Device evidence bundles"><p class="eyebrow">Versioned evidence packages</p><h2>Follow the implementation decisions</h2><p>Read document citations, implementation explanations, reported observations and open questions. A candidate package records available evidence and its limits.</p><ul class="feature-links"><li><a href="../../bundles/lg-webos-state-availability/">LG webOS TV family: power, availability and screen state</a> <span class="state">v0.1.0 · candidate</span> <a href="../../bundles/lg-webos-state-availability/bundle.zip" download>Download package</a></li></ul></section>
+<section class="feature"><h2>Declared integration context</h2><ul><li>Identity scope: device-family (source-declared, not proof of physical identity)</li><li>Category: media</li><li>Home Assistant Core / webostv · platform version: 2026.10.0</li><li>Transport: unknown · application protocol/API: LG webOS API via aiowebostv (wire-level behavior not traced)</li><li>Access: local · data updates: push · basis: source-declared</li><li>Evidence: ha-webostv-6a811d3/webostv-manifest @ /iot_class</li><li>Evidence: ha-webostv-6a811d3/webostv-manifest @ /requirements/0</li><li>Evidence: ha-webostv-6a811d3/webostv-coordinator @ WebOsTvDataUpdateCoordinator._async_update_data; SCAN_INTERVAL</li><li>local_push is the integration manifest&#x27;s classification, not an observation of a household device or a claim that every path is event-driven. The coordinator also schedules connection recovery.</li><li>Transport is unknown for any physical instance. No IP address, account, pairing or network discovery was used.</li><li>The pinned integration depends on aiowebostv 0.10.0; that dependency&#x27;s state derivation and wire-level protocol remain outside this source trace.</li></ul></section>
+<section id="power-state" class="feature">
+<p class="eyebrow">Feature evidence</p><h2>Power state is not screen state</h2>
+<p class="feature-summary">The media-player adapter derives an entity state from client fields; it does not measure electrical power or prove physical screen state.</p>
+
+<div class="next"><h3>What you can do next</h3><ul><li>Inspect the pinned adapter branches and separate reported state from physical state.</li><li>Supply exact model, webOS and installed HA versions before a model-specific case.</li></ul></div>
+<details><summary>Evidence, source links &amp; scope boundaries</summary><p>Source-only declaration · not independent review: <a href="https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/components/webostv/media_player.py">Pinned source ↗</a> <code>LgWebOSMediaPlayerEntity._update_states (lines 115-181)</code></p></details></section>
+<section id="availability" class="feature">
+<p class="eyebrow">Feature evidence</p><h2>Unavailable is not a power measurement</h2>
+<p class="feature-summary">Entity availability follows coordinator success and connection-recovery conditions, separately from the media-player state calculation.</p>
+
+<div class="next"><h3>What you can do next</h3><ul><li>Trace the availability chain before treating unavailable as off.</li><li>Review current configuration without adding a turn-on automation or waking the TV.</li></ul></div>
+<details><summary>Evidence, source links &amp; scope boundaries</summary><p>Source-only declaration · not independent review: <a href="https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/components/webostv/entity.py">Pinned source ↗</a> <code>WebOsTvEntity(CoordinatorEntity) (lines 15-24)</code></p><p>Source-only declaration · not independent review: <a href="https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/components/webostv/coordinator.py">Pinned source ↗</a> <code>WebOsTvDataUpdateCoordinator._async_update_data (lines 45-68)</code></p><p>Source-only declaration · not independent review: <a href="https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/helpers/update_coordinator.py">Pinned source ↗</a> <code>CoordinatorEntity.available (lines 724-728)</code></p></details></section>
+<section id="screen-state" class="feature">
+<p class="eyebrow">Feature evidence</p><h2>A separate, conditional screen entity</h2>
+<p class="feature-summary">Screen state and availability have separate conditions; a declared switch does not establish support on every model.</p>
+
+<div class="next"><h3>What you can do next</h3><ul><li>Check source conditions; do not enable or exercise screen control solely for catalog intake.</li><li>An exact-model manual and bounded read-only observation remain missing.</li></ul></div>
+<details><summary>Evidence, source links &amp; scope boundaries</summary><p>Source-only declaration · not independent review: <a href="https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/components/webostv/switch.py">Pinned source ↗</a> <code>LgWebOSScreenSwitchEntity.available/is_on/_async_set_screen_state (lines 28-78)</code></p></details></section></div>
+  <aside>
+    <p class="eyebrow">Keep the scope visible</p><h2>Before acting</h2>
+    <ul><li>Integration-family source study only; no exact regional model, firmware, G2 compatibility or physical observation established.</li><li>No independent review, SDF mapping, driver installation or control recommendation.</li><li>Founder-directed, AI-assisted curation. Home Assistant contributors retain upstream credit; their authorship is not EdgeLoom review or endorsement.</li></ul>
+    <p>No automatic repair is offered for this case.</p>
+    <p>Feedback should identify the driver version and observation. Never post PINs, access codes, tokens,
+      household IDs, or private telemetry.</p>
+    <ul></ul>
+  </aside>
+</div>
+</main>
+  <footer>
+    <p>Open evidence. Not a certification, driver installer, or compatibility guarantee.</p>
+    <p>Catalog revision: <a href="https://github.com/edgeloom-oss/edgeloom-catalog/tree/d4068dabf34f08a2ce35496203b232b8519fcc52">d4068dabf34f</a> · <a href="../../catalog.json">Machine-readable index</a></p>
+    <details>
+      <summary>Build provenance &amp; boundaries</summary>
+      <p>Input SHA-256: <code>26c0d572d3e7e04ec9ba3d7bdabd4439feadca81902c8a5a8381bb7aaa3e4b1e</code></p>
+      <p>Generator policy: catalog/v0.1. Implementation SHA-256: <code>f31f7ef401a2085979ef2d63c687b76a60c2ac5a21b910d46ae0f5f6f3ea5778</code>.</p>
+      <p>Declared core revision: <code>d7e801d10f02b6effe4d8403ec997913bfd7bb2c</code> (see the catalog's CORE_REVISION).</p>
+      <p>Contracts and cross-record references passed. Manifest file digests matched.
+        Upstream source bytes: not-checked.</p>
+      <ul><li>Device associations, classifications, license labels, and review states are catalog-author declarations, not independently authenticated by this build.</li><li>Resolved locators establish field existence only, not the interpretation, completeness, runtime behavior, SDF conformance, or interoperability of an artifact.</li><li>Selectors, JSON5 and Lua locators need manual review. No upstream Lua is executed.</li><li>Profile absence is not whole-driver or UI absence. A missing property in a particular SDF model is not a limitation of SDF itself.</li><li>Hardware-evidence links are reported observations, not tests performed by this tool. No patch availability is inferred.</li><li>Cross-source observations and lineage are curator declarations. Shared backends are not independent evidence; upstream test fixtures are not physical-device tests or independent EdgeLoom review. No source count promotes a candidate.</li></ul>
+    </details>
+  </footer>
+</body>
+</html>

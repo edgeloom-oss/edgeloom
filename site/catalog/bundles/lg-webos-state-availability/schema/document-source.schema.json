@@ -1,0 +1,340 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/edgeloom-oss/edgeloom/schema/draft/v0.1/document-source.schema.json",
+  "title": "EdgeLoom Document source (draft v0.1)",
+  "description": "Draft v0.1. Candidate declarations; structural checks do not authenticate evidence or review.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "schema_version",
+    "id",
+    "title",
+    "publisher",
+    "url",
+    "document_version",
+    "accessed_at",
+    "source_maturity",
+    "applicability",
+    "locations",
+    "capture",
+    "rights",
+    "contributed_by",
+    "limitations"
+  ],
+  "properties": {
+    "kind": {
+      "const": "document-source"
+    },
+    "schema_version": {
+      "const": "0.1"
+    },
+    "id": {
+      "$ref": "#/$defs/id"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "publisher": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "url": {
+      "$ref": "#/$defs/url"
+    },
+    "document_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "accessed_at": {
+      "$ref": "#/$defs/date"
+    },
+    "source_maturity": {
+      "enum": [
+        "official",
+        "community",
+        "experimental",
+        "draft",
+        "deprecated",
+        "unknown"
+      ]
+    },
+    "applicability": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manufacturer",
+        "model",
+        "scope",
+        "notes"
+      ],
+      "properties": {
+        "manufacturer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "scope": {
+          "enum": [
+            "exact-model",
+            "family-context",
+            "unresolved"
+          ]
+        },
+        "notes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 20,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          }
+        }
+      }
+    },
+    "locations": {
+      "type": "array",
+      "minItems": 0,
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "locator",
+          "description"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "locator": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          }
+        }
+      }
+    },
+    "capture": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode"
+          ],
+          "properties": {
+            "mode": {
+              "const": "link-only"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "mode",
+            "sha256",
+            "media_type",
+            "byte_size"
+          ],
+          "properties": {
+            "mode": {
+              "const": "digest-recorded"
+            },
+            "sha256": {
+              "$ref": "#/$defs/sha256"
+            },
+            "media_type": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 100
+            },
+            "byte_size": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1073741824
+            }
+          }
+        }
+      ]
+    },
+    "rights": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "redistribution",
+        "notice"
+      ],
+      "properties": {
+        "redistribution": {
+          "enum": [
+            "unknown",
+            "not-granted",
+            "permitted"
+          ]
+        },
+        "notice": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 4000
+        }
+      }
+    },
+    "contributed_by": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 300
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 20,
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 4000
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4000
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https://[^\\s]+$",
+      "maxLength": 2000
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manufacturer",
+        "model",
+        "protocol",
+        "identifiers",
+        "firmware",
+        "scope_notes"
+      ],
+      "properties": {
+        "manufacturer": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "protocol": {
+          "enum": [
+            "zwave",
+            "zigbee",
+            "other",
+            "unknown"
+          ]
+        },
+        "identifiers": {
+          "type": "object",
+          "maxProperties": 20,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          }
+        },
+        "firmware": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 300
+        },
+        "scope_notes": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 20,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 4000
+          }
+        }
+      }
+    },
+    "ids": {
+      "type": "array",
+      "maxItems": 100,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/id"
+      }
+    },
+    "pointer": {
+      "type": "string",
+      "pattern": "^#(?:/.*)?$",
+      "maxLength": 1000
+    },
+    "record_ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "record_id",
+        "locator",
+        "relationship"
+      ],
+      "properties": {
+        "record_id": {
+          "$ref": "#/$defs/id"
+        },
+        "locator": {
+          "$ref": "#/$defs/pointer"
+        },
+        "relationship": {
+          "enum": [
+            "supports",
+            "conflicts",
+            "context",
+            "unresolved"
+          ]
+        }
+      }
+    },
+    "path": {
+      "type": "string",
+      "pattern": "^catalog/[a-z-]+/[A-Za-z0-9][A-Za-z0-9._/-]*\\.(json|yaml|yml)$",
+      "maxLength": 1000
+    }
+  }
+}

@@ -1,0 +1,111 @@
+{
+  "kind": "source-manifest",
+  "schema_version": "0.1",
+  "id": "ha-webostv-6a811d3",
+  "ecosystem": "home-assistant",
+  "description": "Home Assistant 2026.10.0 webOS integration-family state paths. Not a model-specific driver match or physical result.",
+  "repository": {
+    "url": "https://github.com/home-assistant/core",
+    "commit": "6a811d3359c7b2076dc9e1cf900843a129c044af"
+  },
+  "artifacts": [
+    {
+      "id": "webostv-manifest",
+      "path": "homeassistant/components/webostv/manifest.json",
+      "sha256": "c2f4ea88a3508cc22568a7c6e3b427b4ec8c281653352eebc3f583111d93b78e",
+      "media_type": "application/json",
+      "description": "Integration identity, local_push declaration and pinned dependency.",
+      "layer": "platform-exposure",
+      "artifact_role": "evidence",
+      "source_maturity": "community",
+      "license": {
+        "expression": "Apache-2.0",
+        "evidence_path": "LICENSE.md"
+      }
+    },
+    {
+      "id": "webostv-media-player",
+      "path": "homeassistant/components/webostv/media_player.py",
+      "sha256": "25e4b06e61577dd5c896d163d4d8379c052c01a334e3638309e95a1ebe4edbe1",
+      "media_type": "text/x-python",
+      "description": "Entity state construction from the client's TV state.",
+      "layer": "platform-exposure",
+      "artifact_role": "evidence",
+      "source_maturity": "community",
+      "license": {
+        "expression": "Apache-2.0",
+        "evidence_path": "LICENSE.md"
+      }
+    },
+    {
+      "id": "webostv-entity",
+      "path": "homeassistant/components/webostv/entity.py",
+      "sha256": "cd3451b66ce5e14f73deca1ddce58d3908b96cd2d2fbf8d5c8582803a2416f27",
+      "media_type": "text/x-python",
+      "description": "CoordinatorEntity inheritance and integration-level manufacturer identity.",
+      "layer": "platform-exposure",
+      "artifact_role": "evidence",
+      "source_maturity": "community",
+      "license": {
+        "expression": "Apache-2.0",
+        "evidence_path": "LICENSE.md"
+      }
+    },
+    {
+      "id": "webostv-coordinator",
+      "path": "homeassistant/components/webostv/coordinator.py",
+      "sha256": "3788a885cb8dd0c71b877cc4cd5996634d695a834ed9be8bcad3110fa37ab4c6",
+      "media_type": "text/x-python",
+      "description": "Connection recovery and UpdateFailed conditions.",
+      "layer": "platform-exposure",
+      "artifact_role": "evidence",
+      "source_maturity": "community",
+      "license": {
+        "expression": "Apache-2.0",
+        "evidence_path": "LICENSE.md"
+      }
+    },
+    {
+      "id": "webostv-coordinator-base",
+      "path": "homeassistant/helpers/update_coordinator.py",
+      "sha256": "0af39b34a677ad53246333b80cbd0dfd73724af0a03d5cce39032640591b82ec",
+      "media_type": "text/x-python",
+      "description": "Shared CoordinatorEntity availability property.",
+      "layer": "platform-exposure",
+      "artifact_role": "evidence",
+      "source_maturity": "community",
+      "license": {
+        "expression": "Apache-2.0",
+        "evidence_path": "LICENSE.md"
+      }
+    },
+    {
+      "id": "webostv-screen",
+      "path": "homeassistant/components/webostv/switch.py",
+      "sha256": "2ea11aa9442809ed132eb3c406b8cf6c29e80649ec524671b9e7fd47eef61f80",
+      "media_type": "text/x-python",
+      "description": "Separate screen switch state and availability conditions.",
+      "layer": "platform-exposure",
+      "artifact_role": "evidence",
+      "source_maturity": "community",
+      "license": {
+        "expression": "Apache-2.0",
+        "evidence_path": "LICENSE.md"
+      }
+    },
+    {
+      "id": "webostv-license",
+      "path": "LICENSE.md",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "media_type": "text/plain",
+      "description": "Pinned Home Assistant Core license.",
+      "layer": "platform-exposure",
+      "artifact_role": "evidence",
+      "source_maturity": "community",
+      "license": {
+        "expression": "Apache-2.0",
+        "evidence_path": "LICENSE.md"
+      }
+    }
+  ]
+}

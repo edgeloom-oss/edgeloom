@@ -1,6 +1,6 @@
 # Community driver assistance architecture and development plan
 
-Status: design draft, 9 October 2026, America/New_York. The PI approved a
+Status: design draft; integration baseline updated 10 October 2026. The PI approved a
 SmartThings Edge-first workflow and the two-repository boundary. The new
 contracts, modules, commands and milestones below are proposed, not implemented.
 
@@ -16,20 +16,21 @@ remain separate from producing a candidate source tree.
 
 ## Current baseline and integration prerequisites
 
-The following exact states were inspected for this plan:
+The following accepted development states anchor this plan. The
+[construction schedule](driver-assistance-schedule.md) gives the ordered PR
+queue, effort estimates, parallel lanes and acceptance gates.
 
 | Repository state | Revision | Meaning for development |
 | --- | --- | --- |
-| Core public main | `a498e363b133c0a63a322d1dff6cdade90c53bce` | Catalog and external corroboration foundation |
-| Core open PR 64 | `8f66339260e8f921ada5bfbcd451373c5eafee14` | Bundle tools are still an unmerged dependency |
-| Core local media branch | `d7e801d10f02b6effe4d8403ec997913bfd7bb2c` | Adds draft device/bundle v0.2 and family-scoped reports |
-| Catalog public main | `2b391fa38650fab178f19327d288818baf2adccf` | Yale bundle PR 5 is merged |
-| Catalog local media branch | `12afc3326336176c9e3acd5aee0334c122586aec` | Adds the LG family example and pins the local core revision |
+| Core bundle integration | `cd6f5cb3af7538fa08f23974ac67dc6f9aa83434` | PR 64 merged; bundle tooling and Yale snapshot |
+| Core media integration | `5bd3c8a2d209799d183f7b95ad0653f169dd7e7b` | PR 65 merged; additive draft v0.2 contracts and family-scoped reports |
+| Catalog media integration | `f246a43a37c7f9df74de661f7eb7ef16ba01d00d` | PR 6 merged; Yale and LG family candidate bundles |
+| Catalog generator pin | `d7e801d10f02b6effe4d8403ec997913bfd7bb2c` | Preserved ancestor of core main, not a packaged release |
 
-Both local branches were clean before adding these design documents. Recheck
-remote heads before implementation; a local commit is not a released dependency.
-The catalog's explicit `CORE_REVISION` can pin a review commit, but a published
-user workflow needs a reachable, deliberately selected core revision.
+Recheck remote heads before implementation. The accepted dependency chain is
+reachable; the proposed assistance contracts and commands remain unimplemented.
+Documentation-only follow-ups do not by themselves require changing the
+catalog's deliberately selected `CORE_REVISION`.
 
 Existing components provide a starting point, not arbitrary driver generation:
 
@@ -343,7 +344,7 @@ can be a publication event; review its generated snapshot accordingly.
 
 | Slice | Core deliverable | Catalog deliverable | Exit criterion |
 | --- | --- | --- | --- |
-| P0 Baseline and design | Dependency map for PR 64 and media branch; ADR/roadmap proposal; version matrix | Matching baseline/pin and provenance audit | Paired revisions are reachable and reproducible; existing work preserved; no implicit merge or deployment |
+| P0 Baseline and design | Merged dependency baseline; focused design proposal; version matrix | Matching baseline/pin and provenance audit | Reachable pair is established; freeze the new contract and first bounded customization case before implementation |
 | P1 Contracts and vertical fixture | Request and recipe validators, resolution, negative fixtures; workpack contract only as needed by P2 | Two small candidate recipes, one source-only and one bounded SmartThings customization case | Legacy records unchanged; exact joins, rights/status, unknowns and forbidden hooks tested |
 | P2 Find and prepare | Explainable matching and deterministic workpack/brief export | Feature aliases, prerequisites and precise references for selected recipes | A request resolves to an existing reference, a customization task or an explicit research gap; no AI service required |
 | P3 Candidate implementation | One approved Zigbee generation path or template, candidate inventory checks and isolated tests | Reusable binding, test specification and result-linked bundle updates | One pinned example yields actual reviewable code/diff and check output; wrong base and out-of-scope output fail; no hardware claim |

@@ -1,0 +1,437 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/edgeloom-oss/edgeloom/schema/v0.2/catalog-device.schema.json",
+  "title": "EdgeLoom catalog device entry (draft v0.2)",
+  "description": "Draft v0.2: source-declared identity scope and network integration evidence. Not compatibility or hardware validation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "schema_version",
+    "id",
+    "manufacturer",
+    "model",
+    "protocol",
+    "identifiers",
+    "identity_evidence",
+    "firmware",
+    "hardware_evidence",
+    "features",
+    "limitations",
+    "identity_scope",
+    "category",
+    "connections"
+  ],
+  "properties": {
+    "kind": {
+      "const": "catalog-device"
+    },
+    "schema_version": {
+      "const": "0.2"
+    },
+    "id": {
+      "$ref": "#/$defs/id"
+    },
+    "manufacturer": {
+      "$ref": "#/$defs/text"
+    },
+    "model": {
+      "$ref": "#/$defs/text"
+    },
+    "protocol": {
+      "enum": [
+        "zwave",
+        "zigbee",
+        "ip",
+        "matter",
+        "other",
+        "unknown"
+      ]
+    },
+    "identifiers": {
+      "type": "object",
+      "minProperties": 1,
+      "maxProperties": 20,
+      "propertyNames": {
+        "enum": [
+          "manufacturer",
+          "model",
+          "manufacturer_id",
+          "product_type",
+          "product_id",
+          "family",
+          "vendor_id"
+        ]
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 300
+      }
+    },
+    "identity_evidence": {
+      "$ref": "#/$defs/reference"
+    },
+    "firmware": {
+      "$ref": "#/$defs/text"
+    },
+    "hardware_evidence": {
+      "type": "array",
+      "maxItems": 50,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "format": "uri",
+        "pattern": "^https://",
+        "maxLength": 2000
+      },
+      "description": "Links to reported observations, not independently authenticated tests. Empty means no hardware evidence recorded."
+    },
+    "features": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "summary",
+          "mapping_ids",
+          "next_steps"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "title": {
+            "$ref": "#/$defs/text"
+          },
+          "summary": {
+            "$ref": "#/$defs/text"
+          },
+          "mapping_ids": {
+            "type": "array",
+            "maxItems": 100,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/recordId"
+            }
+          },
+          "corroboration_ids": {
+            "type": "array",
+            "maxItems": 100,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/id"
+            }
+          },
+          "next_steps": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/$defs/text"
+            }
+          },
+          "source_references": {
+            "type": "array",
+            "maxItems": 20,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/reference"
+            }
+          }
+        }
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 50,
+      "items": {
+        "$ref": "#/$defs/text"
+      }
+    },
+    "identity_scope": {
+      "enum": [
+        "exact-model",
+        "device-family"
+      ]
+    },
+    "category": {
+      "enum": [
+        "sensor",
+        "switch",
+        "light",
+        "lock",
+        "media",
+        "appliance",
+        "climate",
+        "bridge",
+        "other",
+        "unknown"
+      ]
+    },
+    "connections": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "transports",
+          "application_protocol",
+          "platform",
+          "integration",
+          "platform_version",
+          "access",
+          "data_updates",
+          "basis",
+          "references",
+          "limitations"
+        ],
+        "properties": {
+          "id": {
+            "$ref": "#/$defs/id"
+          },
+          "transports": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 7,
+            "uniqueItems": true,
+            "items": {
+              "enum": [
+                "ethernet",
+                "wifi",
+                "thread",
+                "zigbee",
+                "zwave",
+                "bluetooth",
+                "unknown"
+              ]
+            },
+            "allOf": [
+              {
+                "if": {
+                  "contains": {
+                    "const": "unknown"
+                  }
+                },
+                "then": {
+                  "maxItems": 1
+                }
+              }
+            ]
+          },
+          "application_protocol": {
+            "$ref": "#/$defs/text"
+          },
+          "platform": {
+            "$ref": "#/$defs/text"
+          },
+          "integration": {
+            "$ref": "#/$defs/text"
+          },
+          "platform_version": {
+            "$ref": "#/$defs/text"
+          },
+          "access": {
+            "enum": [
+              "local",
+              "cloud",
+              "hybrid",
+              "unknown"
+            ]
+          },
+          "data_updates": {
+            "enum": [
+              "push",
+              "polling",
+              "hybrid",
+              "unknown"
+            ]
+          },
+          "basis": {
+            "const": "source-declared"
+          },
+          "references": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 20,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/$defs/reference"
+            }
+          },
+          "limitations": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/$defs/text"
+            }
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "protocol": {
+            "const": "zwave"
+          },
+          "identity_scope": {
+            "const": "exact-model"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "identifiers": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "manufacturer_id",
+              "product_type",
+              "product_id"
+            ],
+            "properties": {
+              "manufacturer_id": {
+                "$ref": "#/$defs/hex"
+              },
+              "product_type": {
+                "$ref": "#/$defs/hex"
+              },
+              "product_id": {
+                "$ref": "#/$defs/hex"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "protocol": {
+            "const": "zigbee"
+          },
+          "identity_scope": {
+            "const": "exact-model"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "identifiers": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "manufacturer",
+              "model"
+            ],
+            "properties": {
+              "manufacturer": {
+                "$ref": "#/$defs/text"
+              },
+              "model": {
+                "$ref": "#/$defs/text"
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "identity_scope": {
+            "const": "device-family"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "identifiers": {
+            "required": [
+              "family"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "identity_scope": {
+            "const": "exact-model"
+          },
+          "protocol": {
+            "enum": [
+              "ip",
+              "matter",
+              "other",
+              "unknown"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "identifiers": {
+            "required": [
+              "model"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,119}$"
+    },
+    "recordId": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"
+    },
+    "text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 2000
+    },
+    "hex": {
+      "type": "string",
+      "pattern": "^0x[0-9A-Fa-f]{4}$"
+    },
+    "reference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest_id",
+        "artifact_id",
+        "locator"
+      ],
+      "properties": {
+        "manifest_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"
+        },
+        "artifact_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9][a-z0-9._-]{0,119}$"
+        },
+        "locator": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    }
+  }
+}

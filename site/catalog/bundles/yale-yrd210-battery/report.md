@@ -2,7 +2,7 @@
 
 Candidate · version 0\.1\.0
 
-Bundle: yale\-yrd210\-battery · draft format 0.1
+Bundle: yale\-yrd210\-battery · schema 0\.1 · archive format 0.1
 
 Device: Yale YRD210 PB DB \(Zigbee\)
 Protocol: zigbee · Firmware: unknown
@@ -702,9 +702,9 @@ No scoped reviews recorded in this bundle.
 
 Record hashes and reference checks establish package consistency. They do not authenticate a publisher, establish independent review, or demonstrate device behavior.
 
-Catalog revision: 52589528d53abbbb5265a13339c14cc96c4e8741
-Declared core revision: 0c86fea045972458dc1e60eb435ced95036f04fe
-Input digest: ef399f78960484aedb4b63e80a6145498cfce928cef66cc1690e720384e9b898
+Catalog revision: d4068dabf34f08a2ce35496203b232b8519fcc52
+Declared core revision: d7e801d10f02b6effe4d8403ec997913bfd7bb2c
+Input digest: c2c2b9d73ed9e6f95ac00111f97aa3410e76c952c3e484876766a97ffa2d4fd2
 
 License: Apache\-2\.0 for catalog-authored records; upstream terms remain separate.
 

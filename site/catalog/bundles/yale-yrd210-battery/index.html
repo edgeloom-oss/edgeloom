@@ -22,10 +22,10 @@ content="Versioned candidate evidence, implementation reasoning and open tests."
 <nav aria-label="Primary"><a href="#sources">Sources</a>
 <a href="#participate">Credits &amp; review</a></nav></header>
 <main id="main" tabindex="-1"><section class="intro" aria-labelledby="title">
-<p class="eyebrow">Device Evidence Bundle · draft format 0.1</p>
+<p class="eyebrow">Device Evidence Bundle · draft schema 0.1</p>
 <h1 id="title">Yale YRD210 PB DB: explaining battery normalization</h1>
 <p class="lede">Follow the evidence behind a device capability, and help fill the gaps.</p>
-<p class="badge">Candidate · version 0.1.0</p><dl class="facts"><div><dt>Device</dt><dd>Yale YRD210 PB DB (Zigbee)</dd></div><div><dt>Protocol</dt><dd>zigbee</dd></div><div><dt>Firmware</dt><dd>unknown</dd></div><div><dt>Bundle version</dt><dd>0.1.0</dd></div></dl>
+<p class="badge">Candidate · version 0.1.0</p><dl class="facts"><div><dt>Device</dt><dd>Yale YRD210 PB DB (Zigbee)</dd></div><div><dt>Protocol</dt><dd>zigbee</dd></div><div><dt>Identity scope</dt><dd>exact-model (legacy declaration)</dd></div><div><dt>Firmware</dt><dd>unknown</dd></div><div><dt>Bundle version</dt><dd>0.1.0</dd></div></dl>
 <details><summary>Identity &amp; applicability</summary><dl class="facts"><div><dt>manufacturer</dt><dd>Yale</dd></div><div><dt>model</dt><dd>YRD210 PB DB</dd></div></dl>
 <ul><li>The selected ZHA signature requires manufacturer, model and the full endpoint/cluster signature; the selected Zigbee2MQTT definition matches only the model string.</li><li>No physical device was inspected; firmware remains unknown.</li><li>The official YRD210 manual is family context. It does not establish exact firmware/signature applicability or the raw Zigbee battery scale.</li><li>This case is distinct from the YRD156 Z-Wave device. The associated lock-state comparison is included to preserve the complete referenced device record; battery normalization is the first investigation.</li></ul></details>
 <div class="actions downloads" aria-label="Download this version">
@@ -41,7 +41,7 @@ An extracted archive already contains these files and does not include another c
 <p class="muted">Candidate publication does not change the review status of any record.</p>
 <details><summary>Scope &amp; limits</summary><ul><li>Candidate draft format and content prepared for public review under https://github.com/edgeloom-oss/edgeloom/issues/63 . Canonical identifies the maintained catalog snapshot, not a manufacturer certification or exclusive account of device behavior.</li><li>Firmware, physical behavior and exact platform applicability remain unconfirmed. No SDF binding or new driver implementation is included.</li><li>The package includes catalog-authored metadata and explanations, not the manual, upstream source code, executed upstream fixtures or telemetry.</li><li>New bundle text and document metadata were prepared with Codex assistance under github:@infinitywings&#x27;s direction. This is founder-contributed source research and curation, not independent review or an actual hardware report.</li><li>Referenced legacy records are included unchanged; their source maturity and candidate lifecycle are not promoted by package validation or publication.</li></ul></details>
 <details><summary>Cite this bundle</summary><p>github:@infinitywings. Yale YRD210 PB DB: explaining battery normalization. yale-yrd210-battery, version 0.1.0.</p>
-<p>Catalog revision: <code>52589528d53abbbb5265a13339c14cc96c4e8741</code></p></details></aside></div>
+<p>Catalog revision: <code>d4068dabf34f08a2ce35496203b232b8519fcc52</code></p></details></aside></div>
 <section id="sources" class="section" aria-labelledby="sources-title"><p class="eyebrow">Traceable records</p>
 <h2 id="sources-title">Sources &amp; evidence</h2>
 <p>Expand a record for its scope, citations and complete metadata. Record hashes pin the packaged metadata;
@@ -512,8 +512,8 @@ upstream documents and driver code remain at their referenced locations.</p><det
 <details><summary>Version history</summary><ul><li><strong>0.1.0</strong> · First candidate bundle: preserve the existing device/source/corroboration records, add official manual context, explain battery adaptation layers, and invite a scoped observation. No experiment or independent review has been added.</li></ul></details></section>
 <section class="section" aria-labelledby="integrity-title"><h2 id="integrity-title">Package integrity</h2>
 <p>Record hashes and reference checks establish package consistency. They do not authenticate a publisher, establish independent review, or demonstrate device behavior.</p><details><summary>Build provenance &amp; checks</summary>
-<dl class="facts"><div><dt>Catalog revision</dt><dd>52589528d53abbbb5265a13339c14cc96c4e8741</dd></div><div><dt>Declared core revision</dt><dd>0c86fea045972458dc1e60eb435ced95036f04fe</dd></div><div><dt>Input digest</dt><dd>ef399f78960484aedb4b63e80a6145498cfce928cef66cc1690e720384e9b898</dd></div></dl><details><summary>Generator provenance</summary><pre>{
-  &quot;implementation_digest&quot;: &quot;8eda03bb5bd6bb27f2ec85862ec425b484f0df6a7284884cef0b72dc7be94d05&quot;,
+<dl class="facts"><div><dt>Catalog revision</dt><dd>d4068dabf34f08a2ce35496203b232b8519fcc52</dd></div><div><dt>Declared core revision</dt><dd>d7e801d10f02b6effe4d8403ec997913bfd7bb2c</dd></div><div><dt>Input digest</dt><dd>c2c2b9d73ed9e6f95ac00111f97aa3410e76c952c3e484876766a97ffa2d4fd2</dd></div></dl><details><summary>Generator provenance</summary><pre>{
+  &quot;implementation_digest&quot;: &quot;4da04cad7e70ead6ab57c7ac26a24a1795b2e30883534af1366cb8f35790979f&quot;,
   &quot;package_version_label&quot;: &quot;0.2.0&quot;,
   &quot;version_label_is_not_release_attestation&quot;: true
 }</pre></details><details><summary>Package checks</summary><pre>{
@@ -524,7 +524,7 @@ upstream documents and driver code remain at their referenced locations.</p><det
   &quot;review_identity&quot;: &quot;not-authenticated&quot;,
   &quot;upstream_bytes&quot;: &quot;not-checked&quot;
 }</pre></details></details></section>
-</main><footer>EdgeLoom · Device Evidence Bundle draft v0.1 · Apache-2.0
+</main><footer>EdgeLoom · Device Evidence Bundle · Apache-2.0
 catalog-authored records.
 Third-party sources retain their own terms. This portable report works without network access;
 upstream and contribution links require a connection.</footer></body></html>

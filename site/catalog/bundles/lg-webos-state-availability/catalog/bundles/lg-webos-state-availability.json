@@ -1,0 +1,206 @@
+{
+  "kind": "device-evidence-bundle",
+  "schema_version": "0.2",
+  "id": "lg-webos-state-availability",
+  "version": "0.1.0",
+  "title": "LG webOS TV family: power, availability and screen state",
+  "subject": {
+    "manufacturer": "LG",
+    "model": "webOS TVs (integration family)",
+    "protocol": "ip",
+    "identity_scope": "device-family",
+    "identifiers": {
+      "manufacturer": "LG",
+      "family": "webOS TV"
+    },
+    "firmware": "unknown",
+    "scope_notes": [
+      "Source-only Home Assistant integration-family case. No physical TV was inspected, and no exact G2 or other model qualification is claimed.",
+      "Client fields, platform entity state, availability and screen state are separate layers.",
+      "No LG manufacturer manual, device telemetry, SDF mapping or independent review is included."
+    ]
+  },
+  "device_record_id": "lg-webos-tv-family",
+  "author": "github:@infinitywings",
+  "license": "Apache-2.0",
+  "publication_status": "candidate",
+  "records": [
+    {
+      "id": "ha-webostv-6a811d3",
+      "path": "catalog/sources/ha-webostv-6a811d3.json",
+      "sha256": "186e0d645a2e45c318e6a595b23ae0f1db66573226339752927302721ba0961f"
+    },
+    {
+      "id": "lg-webos-tv-family",
+      "path": "catalog/devices/lg-webos-tv-family.json",
+      "sha256": "b79dfce17398eed231336600caacd2fa122436d042d4c764601ced5224116a35"
+    },
+    {
+      "id": "ha-webostv-documentation-20261010",
+      "path": "catalog/documents/ha-webostv-documentation-20261010.json",
+      "sha256": "8176a1f20d46455c89880b26b148aba9f090c112dac77e493c95bfaec6cffd80"
+    }
+  ],
+  "features": [
+    {
+      "id": "power-state",
+      "title": "Power state is not screen state",
+      "summary": "The media-player adapter derives an entity state from client fields; it does not measure electrical power or prove physical screen state.",
+      "record_ids": [
+        "ha-webostv-6a811d3",
+        "lg-webos-tv-family",
+        "ha-webostv-documentation-20261010"
+      ],
+      "implementation_notes": [
+        {
+          "id": "media-player-state",
+          "decision": "Treat the media-player value as an adapter-produced state, not physical ground truth.",
+          "rationale": "At the pinned _update_states method (media_player.py lines 115–181), a false client tv_state.is_on selects OFF and returns; otherwise ON is set initially and client media_state entries can change it to PLAYING, PAUSED or IDLE. This inspected source path distinguishes state construction from availability. It does not establish how aiowebostv derived those fields from a device.",
+          "references": [
+            {
+              "record_id": "ha-webostv-6a811d3",
+              "locator": "#/artifacts/1",
+              "relationship": "supports"
+            }
+          ],
+          "conditions": [
+            "Home Assistant Core 2026.10.0 at the pinned commit only.",
+            "The upstream client was not imported, executed or independently validated. Do not interpret source branches as successful hardware tests."
+          ]
+        }
+      ],
+      "test_plan": [],
+      "gaps": [
+        "No physical-device observation or independent review.",
+        "Exact regional model, firmware and installed integration are unknown; this is not a G2-specific result."
+      ]
+    },
+    {
+      "id": "availability",
+      "title": "Unavailable is not a power measurement",
+      "summary": "Entity availability follows coordinator success and connection-recovery conditions, separately from the media-player state calculation.",
+      "record_ids": [
+        "ha-webostv-6a811d3",
+        "lg-webos-tv-family",
+        "ha-webostv-documentation-20261010"
+      ],
+      "implementation_notes": [
+        {
+          "id": "coordinator-availability",
+          "decision": "Keep availability separate from a device's power value.",
+          "rationale": "WebOsTvEntity inherits CoordinatorEntity (entity.py lines 15–24). CoordinatorEntity.available returns coordinator.last_update_success (update_coordinator.py lines 724–728). In the webOS coordinator's connection-recovery path (coordinator.py lines 45–68), an already-connected client returns immediately; specified connection errors raise UpdateFailed when no turn-on action exists and the config entry is LOADED. Pairing errors follow a different authentication-failure path. This explains why configuration and connectivity affect availability; it is not an exhaustive proof of all runtime transitions.",
+          "references": [
+            {
+              "record_id": "ha-webostv-6a811d3",
+              "locator": "#/artifacts/2",
+              "relationship": "supports"
+            },
+            {
+              "record_id": "ha-webostv-6a811d3",
+              "locator": "#/artifacts/3",
+              "relationship": "supports"
+            },
+            {
+              "record_id": "ha-webostv-6a811d3",
+              "locator": "#/artifacts/4",
+              "relationship": "supports"
+            }
+          ],
+          "conditions": [
+            "Connection status, coordinator success and the client is_on field are different predicates.",
+            "The manifest's local_push classification coexists with a ten-second coordinator recovery interval; do not infer the observed update latency from either declaration.",
+            "No recovery action, wake-on-LAN packet, new pairing or automation is performed by this bundle."
+          ]
+        }
+      ],
+      "test_plan": [],
+      "gaps": [
+        "No physical-device observation or independent review.",
+        "Exact regional model, firmware and installed integration are unknown; this is not a G2-specific result.",
+        "Dependency-level connection and state decoding, all exception paths and entity serialization have not been traced end-to-end."
+      ]
+    },
+    {
+      "id": "screen-state",
+      "title": "A separate, conditional screen entity",
+      "summary": "Screen state and availability have separate conditions; a declared switch does not establish support on every model.",
+      "record_ids": [
+        "ha-webostv-6a811d3",
+        "lg-webos-tv-family",
+        "ha-webostv-documentation-20261010"
+      ],
+      "implementation_notes": [
+        {
+          "id": "screen-state-and-availability",
+          "decision": "Preserve the separate screen entity and its conditional applicability.",
+          "rationale": "The pinned switch.py disables the screen entity by default, computes availability from inherited availability, client is_on and a local unsupported flag, and returns client is_screen_on for screen state (lines 28–52). Its command path catches a service-not-found error and marks the entity unsupported (lines 66–78). These declarations must not be flattened into a universal power switch or a claim that every webOS TV supports screen control.",
+          "references": [
+            {
+              "record_id": "ha-webostv-6a811d3",
+              "locator": "#/artifacts/5",
+              "relationship": "supports"
+            },
+            {
+              "record_id": "ha-webostv-documentation-20261010",
+              "locator": "#/locations/1",
+              "relationship": "context"
+            }
+          ],
+          "conditions": [
+            "Source-only inspection, not a control test or recommendation to enable the entity.",
+            "The exact TV model and firmware may change applicability. Keep unsupported and unavailable distinct from screen-off."
+          ]
+        }
+      ],
+      "test_plan": [
+        {
+          "id": "future-read-only-intake",
+          "question": "For one identified, already-integrated TV, which state and availability fields are actually exposed?",
+          "procedure": [
+            "Confirm model, firmware, HA version, integration and whether relevant entities are already enabled; use research aliases.",
+            "After separate agreement on a read-only window, observe existing state fields during ordinary user activity without changing configuration or issuing commands.",
+            "Record relative times and missing/unknown values; exclude account names, household identifiers, app/channel names and viewing history."
+          ],
+          "requested_evidence": [
+            "Sanitized model/version information and the selected implementation path.",
+            "A bounded, consented observation with actual versus expected values and explicit unobserved stages; no raw household export."
+          ]
+        }
+      ],
+      "gaps": [
+        "No physical-device observation or independent review.",
+        "Exact regional model, firmware and installed integration are unknown; this is not a G2-specific result.",
+        "An exact-model manufacturer manual is not yet linked; current document context comes from the integration publisher."
+      ]
+    }
+  ],
+  "reviews": [],
+  "credits": [
+    {
+      "identity": "github:@infinitywings",
+      "roles": [
+        "author",
+        "source-research",
+        "maintenance"
+      ],
+      "record_ids": [
+        "ha-webostv-6a811d3",
+        "lg-webos-tv-family",
+        "ha-webostv-documentation-20261010"
+      ]
+    }
+  ],
+  "history": [
+    {
+      "version": "0.1.0",
+      "summary": "First source-only family case under draft schema 0.2. Pin source declarations, explain three state layers, and preserve all hardware/model/review gaps."
+    }
+  ],
+  "limitations": [
+    "Source-only candidate under draft schema 0.2. Repository acceptance or snapshot publication does not confer independent review, hardware validation or a packaged software release.",
+    "Original metadata and explanations prepared with Codex assistance under the founder's direction; no independent community review.",
+    "Upstream Home Assistant contributors retain attribution through repository, commit, artifact and license links. No upstream endorsement or additional contributor review credit is claimed.",
+    "Only metadata and original explanations are packaged; upstream source files and documentation are not redistributed.",
+    "This package never connects to a device, scans a network, executes an upstream driver or adds support to Home Assistant."
+  ]
+}

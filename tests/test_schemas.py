@@ -418,6 +418,15 @@ def test_repo_document_census_recognizes_only_schema_artifacts(repo_root: Path) 
             "documents/yale-yrd210-manual-rev-g.json",
         )
     }
+    expected |= {
+        Path("site/catalog/bundles/lg-webos-state-availability/catalog") / relative
+        for relative in (
+            "bundles/lg-webos-state-availability.json",
+            "devices/lg-webos-tv-family.json",
+            "sources/ha-webostv-6a811d3.json",
+            "documents/ha-webostv-documentation-20261010.json",
+        )
+    }
     recognized = {
         result.path.relative_to(repo_root)
         for result in (schemas.validate_document(path) for path in schemas.iter_documents([repo_root]))

@@ -35,7 +35,7 @@
   <p class="eyebrow">An open, source-linked evidence catalog</p>
   <h1>What does your<br>driver <em>expose?</em></h1>
   <p class="lede">Find a device. Inspect a feature. Follow the evidence.</p>
-  <p class="scope-note">Early pilot: 2 device model(s) · 3 mapping sets · 6 mapping assertions · 4 corroboration records.
+  <p class="scope-note">Early pilot: 3 device / family entries · 3 mapping sets · 6 mapping assertions · 4 corroboration records.
     Counts are evidence inventory, not supported-device or adoption metrics.</p>
 </section>
 <section class="browser" aria-label="Device browser">
@@ -47,8 +47,7 @@
     <div>
       <label for="protocol">Protocol</label>
       <select id="protocol">
-        <option value="">All protocols</option><option value="zwave">Z-Wave</option>
-        <option value="zigbee">Zigbee</option>
+        <option value="">All protocols</option><option value="ip">IP / API</option><option value="zigbee">Zigbee</option><option value="zwave">Z-Wave</option>
       </select>
     </div>
     <div>
@@ -61,12 +60,23 @@
     </div>
     <button type="reset" class="reset">Reset</button>
   </form>
-  <p id="result-count" role="status" aria-live="polite">2 device model(s) indexed</p>
-  <div class="device-grid"><article class="device-card" data-device data-search="yale yrd156 zwave z-wave 0x0129 0x803a 0x0508 auto-relock duration the pinned community configuration describes a duration parameter. it is absent from the examined base-lock capability list and the selected lock-status sdf object. this does not establish that the whole driver or smartthings ui lacks a setting, or that sdf cannot express one. lock-state events a strict locked/unlocked subset has a candidate correspondence with the selected sdf property. unknown state and method/user metadata are not preserved. the examined handler path requires a true migration flag; that state has not been established for a real yrd156. access identity and lock codes the examined migrated path carries user and credential metadata absent from the selected lock-code sdf object. a pin write payload and the reported identity records do not establish a reversible value mapping. z-wave js configuration the yrd156 configuration imports parameter 3&#x27;s auto-relock duration definition: seconds, 0–180, default 30. parameter 2 separately enables auto-relock. home assistant · z-wave js set_config_parameter declares parameter, value, endpoint and optional value_size fields. this is a generic entry point for configuration parameters, not a yrd156-specific successful write. home assistant · door lock cc async_set_lock_configuration passes auto_relock_time to doorlockccconfigurationsetoptions. this protocol-level option is not proof of equivalence to yale&#x27;s configuration parameter 3. home assistant · z-wave js zwavelock.is_locked returns none for a missing primary value or doorlockmode.unknown, instead of treating it as unlocked. home assistant · simulated test test_door_lock_no_value replaces a schlage be469 fixture&#x27;s mode value with none and asserts state_unknown."
+  <p id="result-count" role="status" aria-live="polite">3 device / family entries indexed</p>
+  <div class="device-grid"><article class="device-card" data-device data-search="lg webos tvs (integration family) ip ip / api identity scope: device-family (source-declared, not proof of physical identity) category: media home assistant core / webostv · platform version: 2026.10.0 transport: unknown · application protocol/api: lg webos api via aiowebostv (wire-level behavior not traced) access: local · data updates: push · basis: source-declared evidence: ha-webostv-6a811d3/webostv-manifest @ /iot_class evidence: ha-webostv-6a811d3/webostv-manifest @ /requirements/0 evidence: ha-webostv-6a811d3/webostv-coordinator @ webostvdataupdatecoordinator._async_update_data; scan_interval local_push is the integration manifest&#x27;s classification, not an observation of a household device or a claim that every path is event-driven. the coordinator also schedules connection recovery. transport is unknown for any physical instance. no ip address, account, pairing or network discovery was used. the pinned integration depends on aiowebostv 0.10.0; that dependency&#x27;s state derivation and wire-level protocol remain outside this source trace. lg webos tv power state is not screen state the media-player adapter derives an entity state from client fields; it does not measure electrical power or prove physical screen state. unavailable is not a power measurement entity availability follows coordinator success and connection-recovery conditions, separately from the media-player state calculation. a separate, conditional screen entity screen state and availability have separate conditions; a declared switch does not establish support on every model."
+data-protocol="ip" data-status="candidate">
+<div class="card-top"><span class="eyebrow">ip · device evidence</span>
+<span class="badge">candidate</span></div>
+<h2><a href="devices/lg-webos-tv-family/">LG webOS TVs (integration family)</a></h2>
+<p class="state">Device-family scope · exact model not established</p>
+<p>Inspect what the published artifacts describe, expose, and leave unresolved.</p>
+<ul class="feature-links"><li><a href="devices/lg-webos-tv-family/#power-state">Power state is not screen state <span aria-hidden="true">↗</span></a></li><li><a href="devices/lg-webos-tv-family/#availability">Unavailable is not a power measurement <span aria-hidden="true">↗</span></a></li><li><a href="devices/lg-webos-tv-family/#screen-state">A separate, conditional screen entity <span aria-hidden="true">↗</span></a></li><li><a href="bundles/lg-webos-state-availability/">Evidence bundle v0.1.0 <span aria-hidden="true">↗</span></a></li></ul>
+<div class="card-bottom"><span>No hardware evidence recorded</span>
+<a href="devices/lg-webos-tv-family/">Open report <span aria-hidden="true">→</span></a></div></article>
+<article class="device-card" data-device data-search="yale yrd156 zwave z-wave 0x0129 0x803a 0x0508 auto-relock duration the pinned community configuration describes a duration parameter. it is absent from the examined base-lock capability list and the selected lock-status sdf object. this does not establish that the whole driver or smartthings ui lacks a setting, or that sdf cannot express one. lock-state events a strict locked/unlocked subset has a candidate correspondence with the selected sdf property. unknown state and method/user metadata are not preserved. the examined handler path requires a true migration flag; that state has not been established for a real yrd156. access identity and lock codes the examined migrated path carries user and credential metadata absent from the selected lock-code sdf object. a pin write payload and the reported identity records do not establish a reversible value mapping. z-wave js configuration the yrd156 configuration imports parameter 3&#x27;s auto-relock duration definition: seconds, 0–180, default 30. parameter 2 separately enables auto-relock. home assistant · z-wave js set_config_parameter declares parameter, value, endpoint and optional value_size fields. this is a generic entry point for configuration parameters, not a yrd156-specific successful write. home assistant · door lock cc async_set_lock_configuration passes auto_relock_time to doorlockccconfigurationsetoptions. this protocol-level option is not proof of equivalence to yale&#x27;s configuration parameter 3. home assistant · z-wave js zwavelock.is_locked returns none for a missing primary value or doorlockmode.unknown, instead of treating it as unlocked. home assistant · simulated test test_door_lock_no_value replaces a schlage be469 fixture&#x27;s mode value with none and asserts state_unknown."
 data-protocol="zwave" data-status="candidate">
 <div class="card-top"><span class="eyebrow">zwave · device evidence</span>
 <span class="badge">candidate</span></div>
 <h2><a href="devices/yale-yrd156/">Yale YRD156</a></h2>
+
 <p>Inspect what the published artifacts describe, expose, and leave unresolved.</p>
 <ul class="feature-links"><li><a href="devices/yale-yrd156/#auto-relock">Auto-relock duration <span aria-hidden="true">↗</span></a></li><li><a href="devices/yale-yrd156/#lock-state">Lock-state events <span aria-hidden="true">↗</span></a></li><li><a href="devices/yale-yrd156/#access-identities">Access identity and lock codes <span aria-hidden="true">↗</span></a></li></ul>
 <div class="card-bottom"><span>No hardware evidence recorded</span>
@@ -76,6 +86,7 @@ data-protocol="zigbee" data-status="candidate">
 <div class="card-top"><span class="eyebrow">zigbee · device evidence</span>
 <span class="badge">candidate</span></div>
 <h2><a href="devices/yale-yrd210-pb-db/">Yale YRD210 PB DB (Zigbee)</a></h2>
+
 <p>Inspect what the published artifacts describe, expose, and leave unresolved.</p>
 <ul class="feature-links"><li><a href="devices/yale-yrd210-pb-db/#battery">Battery normalization <span aria-hidden="true">↗</span></a></li><li><a href="devices/yale-yrd210-pb-db/#lock-state">Lock control and observed state <span aria-hidden="true">↗</span></a></li><li><a href="bundles/yale-yrd210-battery/">Evidence bundle v0.1.0 <span aria-hidden="true">↗</span></a></li></ul>
 <div class="card-bottom"><span>No hardware evidence recorded</span>
@@ -98,17 +109,17 @@ data-protocol="zigbee" data-status="candidate">
   <p>Source-level findings need review and device feedback. Profile absence does not establish whole-driver
     or UI absence; a missing model property does not establish a limitation of SDF.</p>
 </section>
-<section class="feature" aria-label="Device evidence bundles"><p class="eyebrow">Versioned evidence packages</p><h2>Follow the implementation decisions</h2><p>Read document citations, implementation explanations, reported observations and open questions. A candidate package records available evidence and its limits.</p><ul class="feature-links"><li><a href="bundles/yale-yrd210-battery/">Yale YRD210 PB DB: explaining battery normalization</a> <span class="state">v0.1.0 · candidate</span> <a href="bundles/yale-yrd210-battery/bundle.zip" download>Download package</a></li></ul></section></main>
+<section class="feature" aria-label="Device evidence bundles"><p class="eyebrow">Versioned evidence packages</p><h2>Follow the implementation decisions</h2><p>Read document citations, implementation explanations, reported observations and open questions. A candidate package records available evidence and its limits.</p><ul class="feature-links"><li><a href="bundles/lg-webos-state-availability/">LG webOS TV family: power, availability and screen state</a> <span class="state">v0.1.0 · candidate</span> <a href="bundles/lg-webos-state-availability/bundle.zip" download>Download package</a></li><li><a href="bundles/yale-yrd210-battery/">Yale YRD210 PB DB: explaining battery normalization</a> <span class="state">v0.1.0 · candidate</span> <a href="bundles/yale-yrd210-battery/bundle.zip" download>Download package</a></li></ul></section></main>
   <footer>
     <p>Open evidence. Not a certification, driver installer, or compatibility guarantee.</p>
-    <p>Catalog revision: <a href="https://github.com/edgeloom-oss/edgeloom-catalog/tree/52589528d53abbbb5265a13339c14cc96c4e8741">52589528d53a</a> · <a href="./catalog.json">Machine-readable index</a></p>
+    <p>Catalog revision: <a href="https://github.com/edgeloom-oss/edgeloom-catalog/tree/d4068dabf34f08a2ce35496203b232b8519fcc52">d4068dabf34f</a> · <a href="./catalog.json">Machine-readable index</a></p>
     <details>
       <summary>Build provenance &amp; boundaries</summary>
-      <p>Input SHA-256: <code>1dd1bf258fd3920d8f740c33bf07bce8629643bdb12eeb07bc96e319b670bec3</code></p>
-      <p>Generator policy: catalog/v0.1. Implementation SHA-256: <code>edf5e424e4d0460d1cc429eaed93c511630241ebb8797bc0dd38a7e830bd4bb4</code>.</p>
-      <p>Declared core revision: <code>0c86fea045972458dc1e60eb435ced95036f04fe</code> (see the catalog's CORE_REVISION).</p>
+      <p>Input SHA-256: <code>26c0d572d3e7e04ec9ba3d7bdabd4439feadca81902c8a5a8381bb7aaa3e4b1e</code></p>
+      <p>Generator policy: catalog/v0.1. Implementation SHA-256: <code>f31f7ef401a2085979ef2d63c687b76a60c2ac5a21b910d46ae0f5f6f3ea5778</code>.</p>
+      <p>Declared core revision: <code>d7e801d10f02b6effe4d8403ec997913bfd7bb2c</code> (see the catalog's CORE_REVISION).</p>
       <p>Contracts and cross-record references passed. Manifest file digests matched.
-        Upstream source bytes: matched.</p>
+        Upstream source bytes: not-checked.</p>
       <ul><li>Device associations, classifications, license labels, and review states are catalog-author declarations, not independently authenticated by this build.</li><li>Resolved locators establish field existence only, not the interpretation, completeness, runtime behavior, SDF conformance, or interoperability of an artifact.</li><li>Selectors, JSON5 and Lua locators need manual review. No upstream Lua is executed.</li><li>Profile absence is not whole-driver or UI absence. A missing property in a particular SDF model is not a limitation of SDF itself.</li><li>Hardware-evidence links are reported observations, not tests performed by this tool. No patch availability is inferred.</li><li>Cross-source observations and lineage are curator declarations. Shared backends are not independent evidence; upstream test fixtures are not physical-device tests or independent EdgeLoom review. No source count promotes a candidate.</li></ul>
     </details>
   </footer>

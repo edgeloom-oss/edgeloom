@@ -231,7 +231,7 @@
     "title": "Yale YRD210 PB DB: explaining battery normalization",
     "version": "0.1.0"
   },
-  "catalog_revision": "52589528d53abbbb5265a13339c14cc96c4e8741",
+  "catalog_revision": "d4068dabf34f08a2ce35496203b232b8519fcc52",
   "checks": {
     "contracts": "passed",
     "hardware": "not-tested-by-this-tool",
@@ -240,14 +240,14 @@
     "review_identity": "not-authenticated",
     "upstream_bytes": "not-checked"
   },
-  "declared_core_revision": "0c86fea045972458dc1e60eb435ced95036f04fe",
+  "declared_core_revision": "d7e801d10f02b6effe4d8403ec997913bfd7bb2c",
   "format": "device-evidence-bundle/0.1",
   "generator": {
-    "implementation_digest": "8eda03bb5bd6bb27f2ec85862ec425b484f0df6a7284884cef0b72dc7be94d05",
+    "implementation_digest": "4da04cad7e70ead6ab57c7ac26a24a1795b2e30883534af1366cb8f35790979f",
     "package_version_label": "0.2.0",
     "version_label_is_not_release_attestation": true
   },
-  "input_digest": "ef399f78960484aedb4b63e80a6145498cfce928cef66cc1690e720384e9b898",
+  "input_digest": "c2c2b9d73ed9e6f95ac00111f97aa3410e76c952c3e484876766a97ffa2d4fd2",
   "records": {
     "yale-yrd210-manual-rev-g": {
       "accessed_at": "2026-10-08",
