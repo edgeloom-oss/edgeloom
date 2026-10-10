@@ -5,9 +5,9 @@ Source-level evidence, not a compatibility or installation recommendation.
 - Protocol: zigbee
 - Identifiers: \{   "manufacturer": "Yale",   "model": "YRD210 PB DB" \}
 - Firmware: Unknown; exact endpoint/cluster signature and installed platform versions unconfirmed
-- Catalog revision: 52589528d53abbbb5265a13339c14cc96c4e8741
-- Input digest: 1dd1bf258fd3920d8f740c33bf07bce8629643bdb12eeb07bc96e319b670bec3
-- Source byte check: matched
+- Catalog revision: d4068dabf34f08a2ce35496203b232b8519fcc52
+- Input digest: 26c0d572d3e7e04ec9ba3d7bdabd4439feadca81902c8a5a8381bb7aaa3e4b1e
+- Source byte check: not-checked
 - Hardware evidence: none recorded
 
 ## Battery normalization
@@ -26,18 +26,18 @@ Candidate external corroboration; not independent EdgeLoom review.
   - Condition: The full endpoint/cluster signature must also match; manufacturer/model alone is insufficient for quirk selection\.
   - Condition: This is a cluster\-attribute adjustment, not a claim that the final HA entity shows twice the battery percentage\.
   - Condition: Firmware and downstream ZHA entity normalization are not inspected in this record\.
-  - [Pinned source](https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py): YRD210PBDB220TSLL\.signature and replacement; manual-review
-  - [Pinned source](https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/__init__.py): DoublingPowerConfigurationCluster\.\_update\_attribute; manual-review
-  - [Pinned source](https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py): YRD210PBDB220TSLL\.signature\.MODELS\_INFO; manual-review
+  - [Pinned source](https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py): YRD210PBDB220TSLL\.signature and replacement; not-checked
+  - [Pinned source](https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/__init__.py): DoublingPowerConfigurationCluster\.\_update\_attribute; not-checked
+  - [Pinned source](https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py): YRD210PBDB220TSLL\.signature\.MODELS\_INFO; not-checked
 - Zigbee2MQTT converter: supports / device-model / code-declaration
   - The YRD210 PB DB entry uses dontDividePercentage: true\. The battery converter therefore skips its default divide\-by\-two step, when the reported percentage exists and is below 255\.
   - Declared identity match: \{   "model": "YRD210 PB DB" \}
   - Condition: This definition matches zigbeeModel, without an explicit manufacturer constraint; vendor is descriptive metadata\.
   - Condition: voltageToPercentage must be absent for the selected percentage branch\.
   - Condition: Static source inspection only; no converter or upstream driver is executed\.
-  - [Pinned source](https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts): YRD210\-HA\-605; lockExtend\(\{battery: \{dontDividePercentage: true\}\}\); manual-review
-  - [Pinned source](https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/converters/fromZigbee.ts): battery\.convert; batteryPercentageRemaining; dontDividePercentage; manual-review
-  - [Pinned source](https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts): definitions\[zigbeeModel includes YRD210 PB DB\]; manual-review
+  - [Pinned source](https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts): YRD210\-HA\-605; lockExtend\(\{battery: \{dontDividePercentage: true\}\}\); not-checked
+  - [Pinned source](https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/converters/fromZigbee.ts): battery\.convert; batteryPercentageRemaining; dontDividePercentage; not-checked
+  - [Pinned source](https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts): definitions\[zigbeeModel includes YRD210 PB DB\]; not-checked
 
 Declared lineage (not an independence score):
 
@@ -71,16 +71,16 @@ Candidate external corroboration; not independent EdgeLoom review.
   - Declared identity match: \{   "manufacturer": "Yale",   "model": "YRD210 PB DB" \}
   - Condition: Endpoint and complete cluster signature must match\.
   - Condition: Cluster presence is not whole\-platform exposure or hardware success\.
-  - [Pinned source](https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py): YRD210PBDB220TSLL\.signature and replacement; DoorLock\.cluster\_id; manual-review
-  - [Pinned source](https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py): YRD210PBDB220TSLL\.signature\.MODELS\_INFO; manual-review
+  - [Pinned source](https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py): YRD210PBDB220TSLL\.signature and replacement; DoorLock\.cluster\_id; not-checked
+  - [Pinned source](https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py): YRD210PBDB220TSLL\.signature\.MODELS\_INFO; not-checked
 - Zigbee2MQTT exposes: context / device-model / code-declaration
   - The shared e\.lock\(\) constructor declares state as LOCK/UNLOCK with state/set/get access, and lock\_state as not\_fully\_locked/locked/unlocked with state\-only access\.
   - Declared identity match: \{   "model": "YRD210 PB DB" \}
   - Condition: Model\-only matcher; no explicit manufacturer constraint in this definition\.
   - Condition: Exposed metadata is not a firmware capability test or confirmation that all state values occur\.
-  - [Pinned source](https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts): YRD210\-HA\-605; lockExtend; exposes e\.lock\(\); manual-review
-  - [Pinned source](https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/lib/exposes.ts): presets\.lock; Lock\.withState; Lock\.withLockState; access; manual-review
-  - [Pinned source](https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts): definitions\[zigbeeModel includes YRD210 PB DB\]; manual-review
+  - [Pinned source](https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts): YRD210\-HA\-605; lockExtend; exposes e\.lock\(\); not-checked
+  - [Pinned source](https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/lib/exposes.ts): presets\.lock; Lock\.withState; Lock\.withLockState; access; not-checked
+  - [Pinned source](https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts): definitions\[zigbeeModel includes YRD210 PB DB\]; not-checked
 
 Declared lineage (not an independence score):
 

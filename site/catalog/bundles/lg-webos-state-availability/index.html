@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>LG webOS TV family: power, availability and screen state · EdgeLoom evidence bundle</title>
+<meta name="description"
+content="Versioned device evidence, implementation reasoning, sources and open tests.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LG webOS TV family: power, availability and screen state · EdgeLoom evidence bundle">
+<meta property="og:description"
+content="Versioned candidate evidence, implementation reasoning and open tests.">
+<meta property="og:url" content="https://edgeloom-oss.github.io/edgeloom/catalog/bundles/lg-webos-state-availability/">
+<meta property="og:image" content="https://edgeloom-oss.github.io/edgeloom/assets/og-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LG webOS TV family: power, availability and screen state · EdgeLoom evidence bundle">
+<meta name="twitter:description"
+content="Versioned candidate evidence, implementation reasoning and open tests.">
+<meta name="twitter:image" content="https://edgeloom-oss.github.io/edgeloom/assets/og-card.png">
+<link rel="stylesheet" href="bundle.css"></head><body>
+<a class="skip" href="#main">Skip to evidence</a>
+<header><a class="brand" href="https://edgeloom-oss.github.io/edgeloom/catalog/"><span aria-hidden="true">▦</span> EdgeLoom
+<span class="brand-label"> / evidence bundle</span></a>
+<nav aria-label="Primary"><a href="#sources">Sources</a>
+<a href="#participate">Credits &amp; review</a></nav></header>
+<main id="main" tabindex="-1"><section class="intro" aria-labelledby="title">
+<p class="eyebrow">Device Evidence Bundle · draft schema 0.2</p>
+<h1 id="title">LG webOS TV family: power, availability and screen state</h1>
+<p class="lede">Follow the evidence behind a device capability, and help fill the gaps.</p>
+<p class="badge">Candidate · version 0.1.0</p><dl class="facts"><div><dt>Device</dt><dd>LG webOS TVs (integration family)</dd></div><div><dt>Protocol</dt><dd>ip</dd></div><div><dt>Identity scope</dt><dd>device-family</dd></div><div><dt>Firmware</dt><dd>unknown</dd></div><div><dt>Bundle version</dt><dd>0.1.0</dd></div></dl>
+<details><summary>Identity &amp; applicability</summary><dl class="facts"><div><dt>manufacturer</dt><dd>LG</dd></div><div><dt>family</dt><dd>webOS TV</dd></div></dl>
+<ul><li>Source-only Home Assistant integration-family case. No physical TV was inspected, and no exact G2 or other model qualification is claimed.</li><li>Client fields, platform entity state, availability and screen state are separate layers.</li><li>No LG manufacturer manual, device telemetry, SDF mapping or independent review is included.</li></ul></details>
+<div class="actions downloads" aria-label="Download this version">
+<a class="button" href="bundle.zip" download>Download bundle ZIP</a>
+<a href="report.md" download>Markdown</a><a href="report.json" download>JSON</a>
+<a href="checksums.txt" download>Checksums</a></div>
+<p class="muted download-note">The ZIP link is available in the hosted or built report.
+An extracted archive already contains these files and does not include another copy of itself.</p></section>
+<nav class="feature-nav" aria-label="Capabilities"><a href="#feature-1">Power state is not screen state</a><a href="#feature-2">Unavailable is not a power measurement</a><a href="#feature-3">A separate, conditional screen entity</a></nav>
+<div class="layout"><div><section class="feature" id="feature-1" aria-labelledby="feature-title-1"><p class="eyebrow">Feature · power-state</p><h2 id="feature-title-1">Power state is not screen state</h2><p class="lede">The media-player adapter derives an entity state from client fields; it does not measure electrical power or prove physical screen state.</p><p class="notice">No physical-device observations recorded for this feature.</p><h3>Implementation reasoning</h3><details class="decision"><summary>Treat the media-player value as an adapter-produced state, not physical ground truth.</summary><p>At the pinned _update_states method (media_player.py lines 115–181), a false client tv_state.is_on selects OFF and returns; otherwise ON is set initially and client media_state entries can change it to PLAYING, PAUSED or IDLE. This inspected source path distinguishes state construction from availability. It does not establish how aiowebostv derived those fields from a device.</p><h4>Applies under these conditions</h4><ul><li>Home Assistant Core 2026.10.0 at the pinned commit only.</li><li>The upstream client was not imported, executed or independently validated. Do not interpret source branches as successful hardware tests.</li></ul><h4>Evidence references</h4><ul><li><span class="badge">supports</span> <a href="#record-1">ha-webostv-6a811d3</a> <code>#/artifacts/1</code></li></ul></details><details class="evidence"><summary>Sources &amp; reported observations (3)</summary><ul><li><a href="#record-1">home-assistant · source snapshot</a><span class="meta">source-manifest</span></li><li><a href="#record-2">LG webOS TVs (integration family) · device identity</a><span class="meta">catalog-device</span></li><li><a href="#record-3">Home Assistant LG webOS TV integration documentation</a><span class="meta">document-source</span></li></ul></details><h3>Open questions</h3><ul><li>No physical-device observation or independent review.</li><li>Exact regional model, firmware and installed integration are unknown; this is not a G2-specific result.</li></ul><div class="contribute"><h3>Contribute to this feature</h3><p>One source, observation, correction or scoped review is a useful contribution.</p><div class="actions"><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=device-source.yml&amp;bundle=lg-webos-state-availability&amp;version=0.1.0&amp;feature=power-state">Add a source ↗</a><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=device-observation.yml&amp;bundle=lg-webos-state-availability&amp;version=0.1.0&amp;feature=power-state">Report an observation ↗</a><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=correction.yml&amp;bundle=lg-webos-state-availability&amp;version=0.1.0&amp;feature=power-state">Suggest a correction ↗</a><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=independent-review.yml&amp;bundle=lg-webos-state-availability&amp;version=0.1.0&amp;feature=power-state">Review this evidence ↗</a></div></div></section><section class="feature" id="feature-2" aria-labelledby="feature-title-2"><p class="eyebrow">Feature · availability</p><h2 id="feature-title-2">Unavailable is not a power measurement</h2><p class="lede">Entity availability follows coordinator success and connection-recovery conditions, separately from the media-player state calculation.</p><p class="notice">No physical-device observations recorded for this feature.</p><h3>Implementation reasoning</h3><details class="decision"><summary>Keep availability separate from a device&#x27;s power value.</summary><p>WebOsTvEntity inherits CoordinatorEntity (entity.py lines 15–24). CoordinatorEntity.available returns coordinator.last_update_success (update_coordinator.py lines 724–728). In the webOS coordinator&#x27;s connection-recovery path (coordinator.py lines 45–68), an already-connected client returns immediately; specified connection errors raise UpdateFailed when no turn-on action exists and the config entry is LOADED. Pairing errors follow a different authentication-failure path. This explains why configuration and connectivity affect availability; it is not an exhaustive proof of all runtime transitions.</p><h4>Applies under these conditions</h4><ul><li>Connection status, coordinator success and the client is_on field are different predicates.</li><li>The manifest&#x27;s local_push classification coexists with a ten-second coordinator recovery interval; do not infer the observed update latency from either declaration.</li><li>No recovery action, wake-on-LAN packet, new pairing or automation is performed by this bundle.</li></ul><h4>Evidence references</h4><ul><li><span class="badge">supports</span> <a href="#record-1">ha-webostv-6a811d3</a> <code>#/artifacts/2</code></li><li><span class="badge">supports</span> <a href="#record-1">ha-webostv-6a811d3</a> <code>#/artifacts/3</code></li><li><span class="badge">supports</span> <a href="#record-1">ha-webostv-6a811d3</a> <code>#/artifacts/4</code></li></ul></details><details class="evidence"><summary>Sources &amp; reported observations (3)</summary><ul><li><a href="#record-1">home-assistant · source snapshot</a><span class="meta">source-manifest</span></li><li><a href="#record-2">LG webOS TVs (integration family) · device identity</a><span class="meta">catalog-device</span></li><li><a href="#record-3">Home Assistant LG webOS TV integration documentation</a><span class="meta">document-source</span></li></ul></details><h3>Open questions</h3><ul><li>No physical-device observation or independent review.</li><li>Exact regional model, firmware and installed integration are unknown; this is not a G2-specific result.</li><li>Dependency-level connection and state decoding, all exception paths and entity serialization have not been traced end-to-end.</li></ul><div class="contribute"><h3>Contribute to this feature</h3><p>One source, observation, correction or scoped review is a useful contribution.</p><div class="actions"><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=device-source.yml&amp;bundle=lg-webos-state-availability&amp;version=0.1.0&amp;feature=availability">Add a source ↗</a><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=device-observation.yml&amp;bundle=lg-webos-state-availability&amp;version=0.1.0&amp;feature=availability">Report an observation ↗</a><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=correction.yml&amp;bundle=lg-webos-state-availability&amp;version=0.1.0&amp;feature=availability">Suggest a correction ↗</a><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=independent-review.yml&amp;bundle=lg-webos-state-availability&amp;version=0.1.0&amp;feature=availability">Review this evidence ↗</a></div></div></section><section class="feature" id="feature-3" aria-labelledby="feature-title-3"><p class="eyebrow">Feature · screen-state</p><h2 id="feature-title-3">A separate, conditional screen entity</h2><p class="lede">Screen state and availability have separate conditions; a declared switch does not establish support on every model.</p><p class="notice">No physical-device observations recorded for this feature.</p><h3>Implementation reasoning</h3><details class="decision"><summary>Preserve the separate screen entity and its conditional applicability.</summary><p>The pinned switch.py disables the screen entity by default, computes availability from inherited availability, client is_on and a local unsupported flag, and returns client is_screen_on for screen state (lines 28–52). Its command path catches a service-not-found error and marks the entity unsupported (lines 66–78). These declarations must not be flattened into a universal power switch or a claim that every webOS TV supports screen control.</p><h4>Applies under these conditions</h4><ul><li>Source-only inspection, not a control test or recommendation to enable the entity.</li><li>The exact TV model and firmware may change applicability. Keep unsupported and unavailable distinct from screen-off.</li></ul><h4>Evidence references</h4><ul><li><span class="badge">supports</span> <a href="#record-1">ha-webostv-6a811d3</a> <code>#/artifacts/5</code></li><li><span class="badge">context</span> <a href="#record-3">ha-webostv-documentation-20261010</a> <code>#/locations/1</code></li></ul></details><details class="evidence"><summary>Sources &amp; reported observations (3)</summary><ul><li><a href="#record-1">home-assistant · source snapshot</a><span class="meta">source-manifest</span></li><li><a href="#record-2">LG webOS TVs (integration family) · device identity</a><span class="meta">catalog-device</span></li><li><a href="#record-3">Home Assistant LG webOS TV integration documentation</a><span class="meta">document-source</span></li></ul></details><h3>Open questions</h3><ul><li>No physical-device observation or independent review.</li><li>Exact regional model, firmware and installed integration are unknown; this is not a G2-specific result.</li><li>An exact-model manufacturer manual is not yet linked; current document context comes from the integration publisher.</li></ul><h3>Help test this feature</h3><details><summary>For one identified, already-integrated TV, which state and availability fields are actually exposed?</summary><p class="muted">Proposed procedure; no execution result is implied.</p><ol><li>Confirm model, firmware, HA version, integration and whether relevant entities are already enabled; use research aliases.</li><li>After separate agreement on a read-only window, observe existing state fields during ordinary user activity without changing configuration or issuing commands.</li><li>Record relative times and missing/unknown values; exclude account names, household identifiers, app/channel names and viewing history.</li></ol><h4>Requested evidence</h4><ul><li>Sanitized model/version information and the selected implementation path.</li><li>A bounded, consented observation with actual versus expected values and explicit unobserved stages; no raw household export.</li></ul></details><div class="contribute"><h3>Contribute to this feature</h3><p>One source, observation, correction or scoped review is a useful contribution.</p><div class="actions"><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=device-source.yml&amp;bundle=lg-webos-state-availability&amp;version=0.1.0&amp;feature=screen-state">Add a source ↗</a><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=device-observation.yml&amp;bundle=lg-webos-state-availability&amp;version=0.1.0&amp;feature=screen-state">Report an observation ↗</a><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=correction.yml&amp;bundle=lg-webos-state-availability&amp;version=0.1.0&amp;feature=screen-state">Suggest a correction ↗</a><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=independent-review.yml&amp;bundle=lg-webos-state-availability&amp;version=0.1.0&amp;feature=screen-state">Review this evidence ↗</a></div></div></section></div><aside aria-labelledby="about-bundle">
+<p class="eyebrow">About this version</p><h2 id="about-bundle">An inspectable snapshot</h2>
+<p>Read the explanation, inspect its sources, and contribute evidence for a specific feature.</p>
+<p class="muted">Candidate publication does not change the review status of any record.</p>
+<details><summary>Scope &amp; limits</summary><ul><li>Source-only candidate under draft schema 0.2. Repository acceptance or snapshot publication does not confer independent review, hardware validation or a packaged software release.</li><li>Original metadata and explanations prepared with Codex assistance under the founder&#x27;s direction; no independent community review.</li><li>Upstream Home Assistant contributors retain attribution through repository, commit, artifact and license links. No upstream endorsement or additional contributor review credit is claimed.</li><li>Only metadata and original explanations are packaged; upstream source files and documentation are not redistributed.</li><li>This package never connects to a device, scans a network, executes an upstream driver or adds support to Home Assistant.</li></ul></details>
+<details><summary>Cite this bundle</summary><p>github:@infinitywings. LG webOS TV family: power, availability and screen state. lg-webos-state-availability, version 0.1.0.</p>
+<p>Catalog revision: <code>d4068dabf34f08a2ce35496203b232b8519fcc52</code></p></details></aside></div>
+<section id="sources" class="section" aria-labelledby="sources-title"><p class="eyebrow">Traceable records</p>
+<h2 id="sources-title">Sources &amp; evidence</h2>
+<p>Expand a record for its scope, citations and complete metadata. Record hashes pin the packaged metadata;
+upstream documents and driver code remain at their referenced locations.</p><details class="record" id="record-1"><summary>home-assistant · source snapshot</summary><p class="meta">source-manifest · ha-webostv-6a811d3</p><p>Home Assistant 2026.10.0 webOS integration-family state paths. Not a model-specific driver match or physical result.</p><p><a href="https://github.com/home-assistant/core" rel="noreferrer">Upstream repository ↗</a> · commit <code>6a811d3359c7b2076dc9e1cf900843a129c044af</code></p><ul><li><a href="https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/components/webostv/manifest.json" rel="noreferrer">homeassistant/components/webostv/manifest.json</a><p>Integration identity, local_push declaration and pinned dependency.</p><small>Declared source SHA-256: <code>c2f4ea88a3508cc22568a7c6e3b427b4ec8c281653352eebc3f583111d93b78e</code></small></li><li><a href="https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/components/webostv/media_player.py" rel="noreferrer">homeassistant/components/webostv/media_player.py</a><p>Entity state construction from the client&#x27;s TV state.</p><small>Declared source SHA-256: <code>25e4b06e61577dd5c896d163d4d8379c052c01a334e3638309e95a1ebe4edbe1</code></small></li><li><a href="https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/components/webostv/entity.py" rel="noreferrer">homeassistant/components/webostv/entity.py</a><p>CoordinatorEntity inheritance and integration-level manufacturer identity.</p><small>Declared source SHA-256: <code>cd3451b66ce5e14f73deca1ddce58d3908b96cd2d2fbf8d5c8582803a2416f27</code></small></li><li><a href="https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/components/webostv/coordinator.py" rel="noreferrer">homeassistant/components/webostv/coordinator.py</a><p>Connection recovery and UpdateFailed conditions.</p><small>Declared source SHA-256: <code>3788a885cb8dd0c71b877cc4cd5996634d695a834ed9be8bcad3110fa37ab4c6</code></small></li><li><a href="https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/helpers/update_coordinator.py" rel="noreferrer">homeassistant/helpers/update_coordinator.py</a><p>Shared CoordinatorEntity availability property.</p><small>Declared source SHA-256: <code>0af39b34a677ad53246333b80cbd0dfd73724af0a03d5cce39032640591b82ec</code></small></li><li><a href="https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/homeassistant/components/webostv/switch.py" rel="noreferrer">homeassistant/components/webostv/switch.py</a><p>Separate screen switch state and availability conditions.</p><small>Declared source SHA-256: <code>2ea11aa9442809ed132eb3c406b8cf6c29e80649ec524671b9e7fd47eef61f80</code></small></li><li><a href="https://github.com/home-assistant/core/blob/6a811d3359c7b2076dc9e1cf900843a129c044af/LICENSE.md" rel="noreferrer">LICENSE.md</a><p>Pinned Home Assistant Core license.</p><small>Declared source SHA-256: <code>c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4</code></small></li></ul><p class="muted">Source references describe pinned implementation snapshots. Upstream code is not included or executed by this bundle.</p><details><summary>Complete record</summary><pre>{
+  &quot;artifacts&quot;: [
+    {
+      &quot;artifact_role&quot;: &quot;evidence&quot;,
+      &quot;description&quot;: &quot;Integration identity, local_push declaration and pinned dependency.&quot;,
+      &quot;id&quot;: &quot;webostv-manifest&quot;,
+      &quot;layer&quot;: &quot;platform-exposure&quot;,
+      &quot;license&quot;: {
+        &quot;evidence_path&quot;: &quot;LICENSE.md&quot;,
+        &quot;expression&quot;: &quot;Apache-2.0&quot;
+      },
+      &quot;media_type&quot;: &quot;application/json&quot;,
+      &quot;path&quot;: &quot;homeassistant/components/webostv/manifest.json&quot;,
+      &quot;sha256&quot;: &quot;c2f4ea88a3508cc22568a7c6e3b427b4ec8c281653352eebc3f583111d93b78e&quot;,
+      &quot;source_maturity&quot;: &quot;community&quot;
+    },
+    {
+      &quot;artifact_role&quot;: &quot;evidence&quot;,
+      &quot;description&quot;: &quot;Entity state construction from the client&#x27;s TV state.&quot;,
+      &quot;id&quot;: &quot;webostv-media-player&quot;,
+      &quot;layer&quot;: &quot;platform-exposure&quot;,
+      &quot;license&quot;: {
+        &quot;evidence_path&quot;: &quot;LICENSE.md&quot;,
+        &quot;expression&quot;: &quot;Apache-2.0&quot;
+      },
+      &quot;media_type&quot;: &quot;text/x-python&quot;,
+      &quot;path&quot;: &quot;homeassistant/components/webostv/media_player.py&quot;,
+      &quot;sha256&quot;: &quot;25e4b06e61577dd5c896d163d4d8379c052c01a334e3638309e95a1ebe4edbe1&quot;,
+      &quot;source_maturity&quot;: &quot;community&quot;
+    },
+    {
+      &quot;artifact_role&quot;: &quot;evidence&quot;,
+      &quot;description&quot;: &quot;CoordinatorEntity inheritance and integration-level manufacturer identity.&quot;,
+      &quot;id&quot;: &quot;webostv-entity&quot;,
+      &quot;layer&quot;: &quot;platform-exposure&quot;,
+      &quot;license&quot;: {
+        &quot;evidence_path&quot;: &quot;LICENSE.md&quot;,
+        &quot;expression&quot;: &quot;Apache-2.0&quot;
+      },
+      &quot;media_type&quot;: &quot;text/x-python&quot;,
+      &quot;path&quot;: &quot;homeassistant/components/webostv/entity.py&quot;,
+      &quot;sha256&quot;: &quot;cd3451b66ce5e14f73deca1ddce58d3908b96cd2d2fbf8d5c8582803a2416f27&quot;,
+      &quot;source_maturity&quot;: &quot;community&quot;
+    },
+    {
+      &quot;artifact_role&quot;: &quot;evidence&quot;,
+      &quot;description&quot;: &quot;Connection recovery and UpdateFailed conditions.&quot;,
+      &quot;id&quot;: &quot;webostv-coordinator&quot;,
+      &quot;layer&quot;: &quot;platform-exposure&quot;,
+      &quot;license&quot;: {
+        &quot;evidence_path&quot;: &quot;LICENSE.md&quot;,
+        &quot;expression&quot;: &quot;Apache-2.0&quot;
+      },
+      &quot;media_type&quot;: &quot;text/x-python&quot;,
+      &quot;path&quot;: &quot;homeassistant/components/webostv/coordinator.py&quot;,
+      &quot;sha256&quot;: &quot;3788a885cb8dd0c71b877cc4cd5996634d695a834ed9be8bcad3110fa37ab4c6&quot;,
+      &quot;source_maturity&quot;: &quot;community&quot;
+    },
+    {
+      &quot;artifact_role&quot;: &quot;evidence&quot;,
+      &quot;description&quot;: &quot;Shared CoordinatorEntity availability property.&quot;,
+      &quot;id&quot;: &quot;webostv-coordinator-base&quot;,
+      &quot;layer&quot;: &quot;platform-exposure&quot;,
+      &quot;license&quot;: {
+        &quot;evidence_path&quot;: &quot;LICENSE.md&quot;,
+        &quot;expression&quot;: &quot;Apache-2.0&quot;
+      },
+      &quot;media_type&quot;: &quot;text/x-python&quot;,
+      &quot;path&quot;: &quot;homeassistant/helpers/update_coordinator.py&quot;,
+      &quot;sha256&quot;: &quot;0af39b34a677ad53246333b80cbd0dfd73724af0a03d5cce39032640591b82ec&quot;,
+      &quot;source_maturity&quot;: &quot;community&quot;
+    },
+    {
+      &quot;artifact_role&quot;: &quot;evidence&quot;,
+      &quot;description&quot;: &quot;Separate screen switch state and availability conditions.&quot;,
+      &quot;id&quot;: &quot;webostv-screen&quot;,
+      &quot;layer&quot;: &quot;platform-exposure&quot;,
+      &quot;license&quot;: {
+        &quot;evidence_path&quot;: &quot;LICENSE.md&quot;,
+        &quot;expression&quot;: &quot;Apache-2.0&quot;
+      },
+      &quot;media_type&quot;: &quot;text/x-python&quot;,
+      &quot;path&quot;: &quot;homeassistant/components/webostv/switch.py&quot;,
+      &quot;sha256&quot;: &quot;2ea11aa9442809ed132eb3c406b8cf6c29e80649ec524671b9e7fd47eef61f80&quot;,
+      &quot;source_maturity&quot;: &quot;community&quot;
+    },
+    {
+      &quot;artifact_role&quot;: &quot;evidence&quot;,
+      &quot;description&quot;: &quot;Pinned Home Assistant Core license.&quot;,
+      &quot;id&quot;: &quot;webostv-license&quot;,
+      &quot;layer&quot;: &quot;platform-exposure&quot;,
+      &quot;license&quot;: {
+        &quot;evidence_path&quot;: &quot;LICENSE.md&quot;,
+        &quot;expression&quot;: &quot;Apache-2.0&quot;
+      },
+      &quot;media_type&quot;: &quot;text/plain&quot;,
+      &quot;path&quot;: &quot;LICENSE.md&quot;,
+      &quot;sha256&quot;: &quot;c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4&quot;,
+      &quot;source_maturity&quot;: &quot;community&quot;
+    }
+  ],
+  &quot;description&quot;: &quot;Home Assistant 2026.10.0 webOS integration-family state paths. Not a model-specific driver match or physical result.&quot;,
+  &quot;ecosystem&quot;: &quot;home-assistant&quot;,
+  &quot;id&quot;: &quot;ha-webostv-6a811d3&quot;,
+  &quot;kind&quot;: &quot;source-manifest&quot;,
+  &quot;repository&quot;: {
+    &quot;commit&quot;: &quot;6a811d3359c7b2076dc9e1cf900843a129c044af&quot;,
+    &quot;url&quot;: &quot;https://github.com/home-assistant/core&quot;
+  },
+  &quot;schema_version&quot;: &quot;0.1&quot;
+}</pre></details><p class="meta">Packaged record: <code>catalog/sources/ha-webostv-6a811d3.json</code><br>Record SHA-256: <code>186e0d645a2e45c318e6a595b23ae0f1db66573226339752927302721ba0961f</code></p></details><details class="record" id="record-2"><summary>LG webOS TVs (integration family) · device identity</summary><p class="meta">catalog-device · lg-webos-tv-family</p><h3>Declared integration context</h3><ul><li>Identity scope: device-family (source-declared, not proof of physical identity)</li><li>Category: media</li><li>Home Assistant Core / webostv · platform version: 2026.10.0</li><li>Transport: unknown · application protocol/API: LG webOS API via aiowebostv (wire-level behavior not traced)</li><li>Access: local · data updates: push · basis: source-declared</li><li>Evidence: ha-webostv-6a811d3/webostv-manifest @ /iot_class</li><li>Evidence: ha-webostv-6a811d3/webostv-manifest @ /requirements/0</li><li>Evidence: ha-webostv-6a811d3/webostv-coordinator @ WebOsTvDataUpdateCoordinator._async_update_data; SCAN_INTERVAL</li><li>local_push is the integration manifest&#x27;s classification, not an observation of a household device or a claim that every path is event-driven. The coordinator also schedules connection recovery.</li><li>Transport is unknown for any physical instance. No IP address, account, pairing or network discovery was used.</li><li>The pinned integration depends on aiowebostv 0.10.0; that dependency&#x27;s state derivation and wire-level protocol remain outside this source trace.</li></ul><ul><li>Integration-family source study only; no exact regional model, firmware, G2 compatibility or physical observation established.</li><li>No independent review, SDF mapping, driver installation or control recommendation.</li><li>Founder-directed, AI-assisted curation. Home Assistant contributors retain upstream credit; their authorship is not EdgeLoom review or endorsement.</li></ul><details><summary>Complete record</summary><pre>{
+  &quot;category&quot;: &quot;media&quot;,
+  &quot;connections&quot;: [
+    {
+      &quot;access&quot;: &quot;local&quot;,
+      &quot;application_protocol&quot;: &quot;LG webOS API via aiowebostv (wire-level behavior not traced)&quot;,
+      &quot;basis&quot;: &quot;source-declared&quot;,
+      &quot;data_updates&quot;: &quot;push&quot;,
+      &quot;id&quot;: &quot;ha-webostv&quot;,
+      &quot;integration&quot;: &quot;webostv&quot;,
+      &quot;limitations&quot;: [
+        &quot;local_push is the integration manifest&#x27;s classification, not an observation of a household device or a claim that every path is event-driven. The coordinator also schedules connection recovery.&quot;,
+        &quot;Transport is unknown for any physical instance. No IP address, account, pairing or network discovery was used.&quot;,
+        &quot;The pinned integration depends on aiowebostv 0.10.0; that dependency&#x27;s state derivation and wire-level protocol remain outside this source trace.&quot;
+      ],
+      &quot;platform&quot;: &quot;Home Assistant Core&quot;,
+      &quot;platform_version&quot;: &quot;2026.10.0&quot;,
+      &quot;references&quot;: [
+        {
+          &quot;artifact_id&quot;: &quot;webostv-manifest&quot;,
+          &quot;locator&quot;: &quot;/iot_class&quot;,
+          &quot;manifest_id&quot;: &quot;ha-webostv-6a811d3&quot;
+        },
+        {
+          &quot;artifact_id&quot;: &quot;webostv-manifest&quot;,
+          &quot;locator&quot;: &quot;/requirements/0&quot;,
+          &quot;manifest_id&quot;: &quot;ha-webostv-6a811d3&quot;
+        },
+        {
+          &quot;artifact_id&quot;: &quot;webostv-coordinator&quot;,
+          &quot;locator&quot;: &quot;WebOsTvDataUpdateCoordinator._async_update_data; SCAN_INTERVAL&quot;,
+          &quot;manifest_id&quot;: &quot;ha-webostv-6a811d3&quot;
+        }
+      ],
+      &quot;transports&quot;: [
+        &quot;unknown&quot;
+      ]
+    }
+  ],
+  &quot;features&quot;: [
+    {
+      &quot;id&quot;: &quot;power-state&quot;,
+      &quot;mapping_ids&quot;: [],
+      &quot;next_steps&quot;: [
+        &quot;Inspect the pinned adapter branches and separate reported state from physical state.&quot;,
+        &quot;Supply exact model, webOS and installed HA versions before a model-specific case.&quot;
+      ],
+      &quot;source_references&quot;: [
+        {
+          &quot;artifact_id&quot;: &quot;webostv-media-player&quot;,
+          &quot;locator&quot;: &quot;LgWebOSMediaPlayerEntity._update_states (lines 115-181)&quot;,
+          &quot;manifest_id&quot;: &quot;ha-webostv-6a811d3&quot;
+        }
+      ],
+      &quot;summary&quot;: &quot;The media-player adapter derives an entity state from client fields; it does not measure electrical power or prove physical screen state.&quot;,
+      &quot;title&quot;: &quot;Power state is not screen state&quot;
+    },
+    {
+      &quot;id&quot;: &quot;availability&quot;,
+      &quot;mapping_ids&quot;: [],
+      &quot;next_steps&quot;: [
+        &quot;Trace the availability chain before treating unavailable as off.&quot;,
+        &quot;Review current configuration without adding a turn-on automation or waking the TV.&quot;
+      ],
+      &quot;source_references&quot;: [
+        {
+          &quot;artifact_id&quot;: &quot;webostv-entity&quot;,
+          &quot;locator&quot;: &quot;WebOsTvEntity(CoordinatorEntity) (lines 15-24)&quot;,
+          &quot;manifest_id&quot;: &quot;ha-webostv-6a811d3&quot;
+        },
+        {
+          &quot;artifact_id&quot;: &quot;webostv-coordinator&quot;,
+          &quot;locator&quot;: &quot;WebOsTvDataUpdateCoordinator._async_update_data (lines 45-68)&quot;,
+          &quot;manifest_id&quot;: &quot;ha-webostv-6a811d3&quot;
+        },
+        {
+          &quot;artifact_id&quot;: &quot;webostv-coordinator-base&quot;,
+          &quot;locator&quot;: &quot;CoordinatorEntity.available (lines 724-728)&quot;,
+          &quot;manifest_id&quot;: &quot;ha-webostv-6a811d3&quot;
+        }
+      ],
+      &quot;summary&quot;: &quot;Entity availability follows coordinator success and connection-recovery conditions, separately from the media-player state calculation.&quot;,
+      &quot;title&quot;: &quot;Unavailable is not a power measurement&quot;
+    },
+    {
+      &quot;id&quot;: &quot;screen-state&quot;,
+      &quot;mapping_ids&quot;: [],
+      &quot;next_steps&quot;: [
+        &quot;Check source conditions; do not enable or exercise screen control solely for catalog intake.&quot;,
+        &quot;An exact-model manual and bounded read-only observation remain missing.&quot;
+      ],
+      &quot;source_references&quot;: [
+        {
+          &quot;artifact_id&quot;: &quot;webostv-screen&quot;,
+          &quot;locator&quot;: &quot;LgWebOSScreenSwitchEntity.available/is_on/_async_set_screen_state (lines 28-78)&quot;,
+          &quot;manifest_id&quot;: &quot;ha-webostv-6a811d3&quot;
+        }
+      ],
+      &quot;summary&quot;: &quot;Screen state and availability have separate conditions; a declared switch does not establish support on every model.&quot;,
+      &quot;title&quot;: &quot;A separate, conditional screen entity&quot;
+    }
+  ],
+  &quot;firmware&quot;: &quot;unknown&quot;,
+  &quot;hardware_evidence&quot;: [],
+  &quot;id&quot;: &quot;lg-webos-tv-family&quot;,
+  &quot;identifiers&quot;: {
+    &quot;family&quot;: &quot;webOS TV&quot;,
+    &quot;manufacturer&quot;: &quot;LG&quot;
+  },
+  &quot;identity_evidence&quot;: {
+    &quot;artifact_id&quot;: &quot;webostv-manifest&quot;,
+    &quot;locator&quot;: &quot;/name&quot;,
+    &quot;manifest_id&quot;: &quot;ha-webostv-6a811d3&quot;
+  },
+  &quot;identity_scope&quot;: &quot;device-family&quot;,
+  &quot;kind&quot;: &quot;catalog-device&quot;,
+  &quot;limitations&quot;: [
+    &quot;Integration-family source study only; no exact regional model, firmware, G2 compatibility or physical observation established.&quot;,
+    &quot;No independent review, SDF mapping, driver installation or control recommendation.&quot;,
+    &quot;Founder-directed, AI-assisted curation. Home Assistant contributors retain upstream credit; their authorship is not EdgeLoom review or endorsement.&quot;
+  ],
+  &quot;manufacturer&quot;: &quot;LG&quot;,
+  &quot;model&quot;: &quot;webOS TVs (integration family)&quot;,
+  &quot;protocol&quot;: &quot;ip&quot;,
+  &quot;schema_version&quot;: &quot;0.2&quot;
+}</pre></details><p class="meta">Packaged record: <code>catalog/devices/lg-webos-tv-family.json</code><br>Record SHA-256: <code>b79dfce17398eed231336600caacd2fa122436d042d4c764601ced5224116a35</code></p></details><details class="record" id="record-3"><summary>Home Assistant LG webOS TV integration documentation</summary><p class="meta">document-source · ha-webostv-documentation-20261010</p><p class="badge">official source declaration · family-context</p><p><a href="https://www.home-assistant.io/integrations/webostv/" rel="noreferrer">Open upstream document ↗</a></p><dl class="facts"><div><dt>Publisher</dt><dd>Home Assistant</dd></div><div><dt>Document version</dt><dd>Mutable integration documentation inspected 2026-10-10 UTC</dd></div><div><dt>Accessed</dt><dd>2026-10-10</dd></div><div><dt>Applies to</dt><dd>LG webOS TV family</dd></div></dl><ul><li>Official documentation of the integration, not an LG manufacturer manual or exact-model qualification.</li></ul><ul><li><strong>Supported devices</strong> — Integration-family context, not identification of a physical unit.</li><li><strong>Supported functionality / Switches</strong> — Separate screen entity and conditional availability.</li><li><strong>Turning on the TV from Home Assistant</strong> — Configuration context for off versus unavailable.</li></ul><p class="muted">Link only; document bytes are not pinned or included.</p><p>Redistribution: not-granted. Link and original bounded paraphrases only. No upstream page, screenshots or manual redistributed; no rights determination inferred.</p><ul><li>Mutable page; no archived byte snapshot. Pinned code below is the reproducible implementation source.</li><li>Official integration documentation is not independent EdgeLoom review. Exact-model LG manual remains missing.</li></ul><details><summary>Complete record</summary><pre>{
+  &quot;accessed_at&quot;: &quot;2026-10-10&quot;,
+  &quot;applicability&quot;: {
+    &quot;manufacturer&quot;: &quot;LG&quot;,
+    &quot;model&quot;: &quot;webOS TV family&quot;,
+    &quot;notes&quot;: [
+      &quot;Official documentation of the integration, not an LG manufacturer manual or exact-model qualification.&quot;
+    ],
+    &quot;scope&quot;: &quot;family-context&quot;
+  },
+  &quot;capture&quot;: {
+    &quot;mode&quot;: &quot;link-only&quot;
+  },
+  &quot;contributed_by&quot;: &quot;github:@infinitywings&quot;,
+  &quot;document_version&quot;: &quot;Mutable integration documentation inspected 2026-10-10 UTC&quot;,
+  &quot;id&quot;: &quot;ha-webostv-documentation-20261010&quot;,
+  &quot;kind&quot;: &quot;document-source&quot;,
+  &quot;limitations&quot;: [
+    &quot;Mutable page; no archived byte snapshot. Pinned code below is the reproducible implementation source.&quot;,
+    &quot;Official integration documentation is not independent EdgeLoom review. Exact-model LG manual remains missing.&quot;
+  ],
+  &quot;locations&quot;: [
+    {
+      &quot;description&quot;: &quot;Integration-family context, not identification of a physical unit.&quot;,
+      &quot;id&quot;: &quot;scope&quot;,
+      &quot;locator&quot;: &quot;Supported devices&quot;
+    },
+    {
+      &quot;description&quot;: &quot;Separate screen entity and conditional availability.&quot;,
+      &quot;id&quot;: &quot;screen&quot;,
+      &quot;locator&quot;: &quot;Supported functionality / Switches&quot;
+    },
+    {
+      &quot;description&quot;: &quot;Configuration context for off versus unavailable.&quot;,
+      &quot;id&quot;: &quot;availability&quot;,
+      &quot;locator&quot;: &quot;Turning on the TV from Home Assistant&quot;
+    }
+  ],
+  &quot;publisher&quot;: &quot;Home Assistant&quot;,
+  &quot;rights&quot;: {
+    &quot;notice&quot;: &quot;Link and original bounded paraphrases only. No upstream page, screenshots or manual redistributed; no rights determination inferred.&quot;,
+    &quot;redistribution&quot;: &quot;not-granted&quot;
+  },
+  &quot;schema_version&quot;: &quot;0.1&quot;,
+  &quot;source_maturity&quot;: &quot;official&quot;,
+  &quot;title&quot;: &quot;Home Assistant LG webOS TV integration documentation&quot;,
+  &quot;url&quot;: &quot;https://www.home-assistant.io/integrations/webostv/&quot;
+}</pre></details><p class="meta">Packaged record: <code>catalog/documents/ha-webostv-documentation-20261010.json</code><br>Record SHA-256: <code>8176a1f20d46455c89880b26b148aba9f090c112dac77e493c95bfaec6cffd80</code></p></details></section>
+<section id="participate" class="section" aria-labelledby="participate-title">
+<p class="eyebrow">People &amp; progress</p><h2 id="participate-title">Review &amp; contributions</h2>
+<div class="comparison-grid"><div><h3>Scoped reviews</h3><p>No scoped reviews recorded in this bundle.</p></div>
+<div><h3>Contribution credits</h3><ul class="credits"><li><strong>github:@infinitywings</strong><span class="meta">author, source-research, maintenance</span><small>Records: ha-webostv-6a811d3, lg-webos-tv-family, ha-webostv-documentation-20261010</small></li></ul></div></div>
+<details><summary>Version history</summary><ul><li><strong>0.1.0</strong> · First source-only family case under draft schema 0.2. Pin source declarations, explain three state layers, and preserve all hardware/model/review gaps.</li></ul></details></section>
+<section class="section" aria-labelledby="integrity-title"><h2 id="integrity-title">Package integrity</h2>
+<p>Record hashes and reference checks establish package consistency. They do not authenticate a publisher, establish independent review, or demonstrate device behavior.</p><details><summary>Build provenance &amp; checks</summary>
+<dl class="facts"><div><dt>Catalog revision</dt><dd>d4068dabf34f08a2ce35496203b232b8519fcc52</dd></div><div><dt>Declared core revision</dt><dd>d7e801d10f02b6effe4d8403ec997913bfd7bb2c</dd></div><div><dt>Input digest</dt><dd>e02434dd5b486a2770a6e0e735228c72a87aff2a6d760e3d08906c0146c467c6</dd></div></dl><details><summary>Generator provenance</summary><pre>{
+  &quot;implementation_digest&quot;: &quot;b70b171b2659ff36ca28116620ee52a7c32a1218a009bdbae5876aeda6054b72&quot;,
+  &quot;package_version_label&quot;: &quot;0.2.0&quot;,
+  &quot;version_label_is_not_release_attestation&quot;: true
+}</pre></details><details><summary>Package checks</summary><pre>{
+  &quot;contracts&quot;: &quot;passed&quot;,
+  &quot;hardware&quot;: &quot;not-tested-by-this-tool&quot;,
+  &quot;record_digests&quot;: &quot;matched&quot;,
+  &quot;references&quot;: &quot;passed&quot;,
+  &quot;review_identity&quot;: &quot;not-authenticated&quot;,
+  &quot;upstream_bytes&quot;: &quot;not-checked&quot;
+}</pre></details></details></section>
+</main><footer>EdgeLoom · Device Evidence Bundle · Apache-2.0
+catalog-authored records.
+Third-party sources retain their own terms. This portable report works without network access;
+upstream and contribution links require a connection.</footer></body></html>

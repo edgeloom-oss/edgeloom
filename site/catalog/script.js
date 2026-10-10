@@ -26,7 +26,7 @@ if (filters) {
       card.hidden = !matches;
       if (matches) visible += 1;
     }
-    count.textContent = `${visible} device ${visible === 1 ? "model" : "models"} indexed${visible === cards.length ? "" : " matching these filters"}`;
+    count.textContent = `${visible} device / family ${visible === 1 ? "entry" : "entries"} indexed${visible === cards.length ? "" : " matching these filters"}`;
     empty.hidden = visible !== 0;
     const url = new URL(window.location.href);
     for (const [key, value] of [["q", query.value.trim()], ["protocol", protocol.value], ["review", review.value]]) {

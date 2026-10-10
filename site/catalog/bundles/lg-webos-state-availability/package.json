@@ -1,0 +1,18 @@
+{
+  "bundle_path": "catalog/bundles/lg-webos-state-availability.json",
+  "files": {
+    "bundle.css": "5af9aa8d6848431216be3a6e132c8b2365a4bb49440d53298df3451c50e51b30",
+    "catalog/bundles/lg-webos-state-availability.json": "7734780bc835299830755306dcfb2043b8c0a1ac430ef642617a7685f6b50081",
+    "catalog/devices/lg-webos-tv-family.json": "b79dfce17398eed231336600caacd2fa122436d042d4c764601ced5224116a35",
+    "catalog/documents/ha-webostv-documentation-20261010.json": "8176a1f20d46455c89880b26b148aba9f090c112dac77e493c95bfaec6cffd80",
+    "catalog/sources/ha-webostv-6a811d3.json": "186e0d645a2e45c318e6a595b23ae0f1db66573226339752927302721ba0961f",
+    "index.html": "716524ea60641cc836fd1ddf972ba7f49841fd9b9ab2b5f62519ebce8d5b7285",
+    "report.json": "c0bc0a82c29af763b884ead05c4c5502ac36a93867642c9573e3feab0e0a6b07",
+    "report.md": "3674ea9ebf9abd5fd210bdaa7b853a0163ae05edc13d894ea605cad8aaeaf961",
+    "schema/catalog-device.v0.2.schema.json": "85e42018d50e6eaa63dee823fd09dcae8c57812cec964eb53f79d6e33a89b92d",
+    "schema/device-evidence-bundle.v0.2.schema.json": "b73d7a8b393d9263e5483efe5ee99dbb169b3f292832648e083b8c22ce706264",
+    "schema/document-source.schema.json": "dc04b5ebb90c9fd4954c211abe7bdfc4c584db320c58db91cbde3216d075b63b",
+    "schema/source-manifest.schema.json": "d4338bce4717461f571df076d17154303e2bc824b9127f4d6e81d0ac2870831c"
+  },
+  "format": "device-evidence-bundle/0.1"
+}

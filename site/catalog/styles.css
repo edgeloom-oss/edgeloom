@@ -65,7 +65,7 @@ code { font-family: "SFMono-Regular", Consolas, monospace; font-size: .78rem; ov
 .feature-nav { display: flex; gap: .6rem; flex-wrap: wrap; margin: 2rem 0; }
 .feature-nav a { padding: .45rem .8rem; background: #e8eee5; border: 1px solid var(--line); border-radius: 2rem; text-decoration: none; font-size: .85rem; }
 .report-layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 3rem; }
-.feature { border-top: 1px solid var(--line); padding: 2rem 0; scroll-margin-top: 1rem; }
+.feature { border-top: 1px solid var(--line); padding: 2rem 0; scroll-margin-top: 1rem; overflow-wrap: anywhere; }
 .feature h2 { font-size: 2rem; }
 .feature-summary { color: var(--soft); }
 .finding { margin-top: 1rem; padding: 1.1rem; background: white; border: 1px solid var(--line); border-radius: .5rem; }
@@ -98,7 +98,7 @@ aside p { font-size: .85rem; }
   .search-field { grid-column: 1 / -1; }
   .reset { grid-column: 1 / -1; }
   .facts { grid-template-columns: 1fr 1fr; }
-  .report-layout { grid-template-columns: 1fr; gap: 0; }
+  .report-layout { grid-template-columns: minmax(0, 1fr); gap: 0; }
   aside { margin: 0 0 2rem; }
 }
 @media (max-width: 540px) {

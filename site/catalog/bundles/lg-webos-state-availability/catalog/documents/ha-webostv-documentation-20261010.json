@@ -1,0 +1,48 @@
+{
+  "kind": "document-source",
+  "schema_version": "0.1",
+  "id": "ha-webostv-documentation-20261010",
+  "title": "Home Assistant LG webOS TV integration documentation",
+  "publisher": "Home Assistant",
+  "url": "https://www.home-assistant.io/integrations/webostv/",
+  "document_version": "Mutable integration documentation inspected 2026-10-10 UTC",
+  "accessed_at": "2026-10-10",
+  "source_maturity": "official",
+  "applicability": {
+    "manufacturer": "LG",
+    "model": "webOS TV family",
+    "scope": "family-context",
+    "notes": [
+      "Official documentation of the integration, not an LG manufacturer manual or exact-model qualification."
+    ]
+  },
+  "locations": [
+    {
+      "id": "scope",
+      "locator": "Supported devices",
+      "description": "Integration-family context, not identification of a physical unit."
+    },
+    {
+      "id": "screen",
+      "locator": "Supported functionality / Switches",
+      "description": "Separate screen entity and conditional availability."
+    },
+    {
+      "id": "availability",
+      "locator": "Turning on the TV from Home Assistant",
+      "description": "Configuration context for off versus unavailable."
+    }
+  ],
+  "capture": {
+    "mode": "link-only"
+  },
+  "rights": {
+    "redistribution": "not-granted",
+    "notice": "Link and original bounded paraphrases only. No upstream page, screenshots or manual redistributed; no rights determination inferred."
+  },
+  "contributed_by": "github:@infinitywings",
+  "limitations": [
+    "Mutable page; no archived byte snapshot. Pinned code below is the reproducible implementation source.",
+    "Official integration documentation is not independent EdgeLoom review. Exact-model LG manual remains missing."
+  ]
+}

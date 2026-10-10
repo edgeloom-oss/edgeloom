@@ -67,6 +67,8 @@ recipes and evidence. AI coding is optional; arbitrary driver generation,
 automatic device installation and hardware validation are not existing features.
 Implementation proceeds through contracts, matching/workpacks, one bounded
 candidate-generation path, community entry points and separately scoped testing.
+The [construction schedule](docs/driver-assistance-schedule.md) turns this into
+an ordered PR queue, effort estimates, parallel lanes and acceptance gates.
 
 - **Shipped** — available on `main` and covered by the normal CI/release path.
 - **Next** — the current implementation gate; work should land before later
@@ -160,7 +162,7 @@ neutral model lacks it, or the available evidence is insufficient.
 
 ## Phase 2 — SmartThings lock pilot
 
-**Status: Device browser and external corroboration merged; evidence bundles in draft review**
+**Status: Device browser, corroboration and draft bundle tooling merged; evidence review remains open**
 
 The separate catalog contains Yale YRD156 and YRD210 device cases, three mapping
 sets, six mapping assertions and four corroboration records. These are

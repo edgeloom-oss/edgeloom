@@ -5,9 +5,9 @@ Source-level evidence, not a compatibility or installation recommendation.
 - Protocol: zwave
 - Identifiers: \{   "manufacturer\_id": "0x0129",   "product\_id": "0x0508",   "product\_type": "0x803A" \}
 - Firmware: Unknown; no real\-unit firmware or SLGA\_MIGRATED state recorded
-- Catalog revision: 52589528d53abbbb5265a13339c14cc96c4e8741
-- Input digest: 1dd1bf258fd3920d8f740c33bf07bce8629643bdb12eeb07bc96e319b670bec3
-- Source byte check: matched
+- Catalog revision: d4068dabf34f08a2ce35496203b232b8519fcc52
+- Input digest: 26c0d572d3e7e04ec9ba3d7bdabd4439feadca81902c8a5a8381bb7aaa3e4b1e
+- Source byte check: not-checked
 - Hardware evidence: none recorded
 
 ## Auto\-relock duration
@@ -28,19 +28,19 @@ Review lifecycle: candidate (declared).
 - Limit: The current schema requires a neutral\-layer context node even when the mapping conclusion is neutral\-model\-missing; that context is the bounded lock\-status property set examined for this record\.
 
 - Evidence: The community configuration identifies the YRD156 with product tuple 0x0129/0x803A/0x0508\.
-  - [Pinned source](https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json); locator: /manufacturerId\|/devices/0/productType\|/devices/0/productId; check: manual-review
+  - [Pinned source](https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json); locator: /manufacturerId\|/devices/0/productType\|/devices/0/productId; check: not-checked
 - Evidence: The SmartThings fingerprint uses the same product tuple and assigns it to the base\-lock profile examined for the platform\-exposure gap\.
-  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml); locator: zwaveManufacturer\[id=Yale/YRD156\]; check: manual-review
+  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml); locator: zwaveManufacturer\[id=Yale/YRD156\]; check: not-checked
 - Evidence: The pinned community YRD156 config imports auto\_relock\_time\_180 for configuration parameter 3\.
-  - [Pinned source](https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json); locator: /paramInformation/\[\#=3\]; check: manual-review
+  - [Pinned source](https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json); locator: /paramInformation/\[\#=3\]; check: not-checked
 - Evidence: The imported template describes Auto Relock Time in seconds with a default value of 30 and imports the named base\_0\-180\_nounit definition\.
-  - [Pinned source](https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/templates/yale_template.json); locator: /auto\_relock\_time\_180; check: manual-review
+  - [Pinned source](https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/templates/yale_template.json); locator: /auto\_relock\_time\_180; check: not-checked
 - Evidence: The pinned shared base definition supplies an unsigned minimum of 0 and maximum of 180 for the imported duration field\.
-  - [Pinned source](https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/templates/master_template.json); locator: /base\_0\-180\_nounit; check: manual-review
+  - [Pinned source](https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/templates/master_template.json); locator: /base\_0\-180\_nounit; check: not-checked
 - Evidence: The complete pinned base\-lock capability list has lock, lockCodes, lockCredentials, lockUsers, battery, and refresh, but no auto\-relock field\.
-  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml); locator: /components/0/capabilities; check: resolved
+  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml); locator: /components/0/capabilities; check: not-checked
 - Evidence: The complete pinned lock\-status property set contains lockState only and does not contain an auto\-relock enable or duration property\.
-  - [Pinned source](https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_status.sdf.json); locator: /sdfObject/lock\.status/sdfProperty; check: resolved
+  - [Pinned source](https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_status.sdf.json); locator: /sdfObject/lock\.status/sdfProperty; check: not-checked
 
 ### Configuration parameter versus lock configuration
 
@@ -53,23 +53,23 @@ Candidate external corroboration; not independent EdgeLoom review.
   - Declared identity match: \{   "manufacturer\_id": "0x0129",   "product\_id": "0x0508",   "product\_type": "0x803A" \}
   - Condition: Community configuration only; parameter availability and enable/disable semantics need firmware\-specific confirmation\.
   - Condition: The chosen tuple is not interchangeable with every Yale model or protocol variant\.
-  - [Pinned source](https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json): /paramInformation; resolved
-  - [Pinned source](https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/templates/yale_template.json): auto\_relock\_time\_180; auto\_relock; manual-review
-  - [Pinned source](https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/templates/master_template.json): base\_0\-180\_nounit; manual-review
-  - [Pinned source](https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json): /devices/0; resolved
+  - [Pinned source](https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json): /paramInformation; not-checked
+  - [Pinned source](https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/templates/yale_template.json): auto\_relock\_time\_180; auto\_relock; not-checked
+  - [Pinned source](https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/templates/master_template.json): base\_0\-180\_nounit; not-checked
+  - [Pinned source](https://github.com/zwave-js/zwave-js/blob/c4c599e1e6a0f6fab1f356f92307b8f94e895e60/packages/config/config/devices/0x0129/yrd156.json): /devices/0; not-checked
 - Home Assistant · Z\-Wave JS: context / platform-generic / code-declaration
   - set\_config\_parameter declares parameter, value, endpoint and optional value\_size fields\. This is a generic entry point for configuration parameters, not a YRD156\-specific successful write\.
   - Declared identity match: \{\}
   - Condition: Requires the relevant runtime node metadata, permissions and supported parameter\.
   - Condition: The pinned catalog Z\-Wave JS config is a comparison baseline, not a claim that HA deploys exactly that revision\.
-  - [Pinned source](https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/services.yaml): /set\_config\_parameter/fields; resolved
+  - [Pinned source](https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/services.yaml): /set\_config\_parameter/fields; not-checked
 - Home Assistant · Door Lock CC: unresolved / platform-generic / code-declaration
   - async\_set\_lock\_configuration passes auto\_relock\_time to DoorLockCCConfigurationSetOptions\. This protocol\-level option is not proof of equivalence to Yale's configuration parameter 3\.
   - Declared identity match: \{\}
   - Condition: Device command\-class version and actual supported options are unknown for this case\.
   - Condition: No operational instructions, write payloads or safe setting recommendation are provided\.
-  - [Pinned source](https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/lock.py): ZWaveLock\.async\_set\_lock\_configuration; DoorLockCCConfigurationSetOptions; manual-review
-  - [Pinned source](https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/services.yaml): /set\_lock\_configuration/fields/auto\_relock\_time; resolved
+  - [Pinned source](https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/lock.py): ZWaveLock\.async\_set\_lock\_configuration; DoorLockCCConfigurationSetOptions; not-checked
+  - [Pinned source](https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/services.yaml): /set\_lock\_configuration/fields/auto\_relock\_time; not-checked
 
 Declared lineage (not an independence score):
 
@@ -109,17 +109,17 @@ Review lifecycle: candidate (declared).
 - Limit: Contract version 0\.1 lacks a driver\-source artifact role; the pinned Lua source is transparently recorded under the generic evidence role\.
 
 - Evidence: The pinned fingerprint identifies product tuple 0x0129/0x803A/0x0508 and assigns the YRD156 to the base\-lock profile\.
-  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml); locator: zwaveManufacturer\[id=Yale/YRD156\]; check: manual-review
+  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml); locator: zwaveManufacturer\[id=Yale/YRD156\]; check: not-checked
 - Evidence: On the current handler path, the pinned function maps a strict operation subset to locked or unlocked, maps other outcomes to unknown, and can attach method and user data\.
-  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/zwave_responses.lua); locator: lua:function ZwaveHandlers\.door\_operation\_event\_handler; check: manual-review
+  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/zwave_responses.lua); locator: lua:function ZwaveHandlers\.door\_operation\_event\_handler; check: not-checked
 - Evidence: The main driver template registers the pinned current Z\-Wave response functions for notification and user\-code reports\.
-  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/init.lua); locator: lua:driver\_template\.zwave\_handlers; check: manual-review
+  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/init.lua); locator: lua:driver\_template\.zwave\_handlers; check: not-checked
 - Evidence: When the persisted SLGA\_MIGRATED field is unset or false, the pinned can\-handle function selects the legacy subdriver instead of this path\.
-  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/legacy-handlers/can_handle.lua); locator: lua:return function\(opts, driver, device, \.\.\.\); check: manual-review
+  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/legacy-handlers/can_handle.lua); locator: lua:return function\(opts, driver, device, \.\.\.\); check: not-checked
 - Evidence: The base\-lock profile exposes the native SmartThings lock capability\.
-  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml); locator: /components/0/capabilities\[id=lock\]; check: manual-review
+  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml); locator: /components/0/capabilities\[id=lock\]; check: not-checked
 - Evidence: The pinned SDF property allows exactly Locked and Unlocked strings\.
-  - [Pinned source](https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_status.sdf.json); locator: /sdfObject/lock\.status/sdfProperty/lockState; check: resolved
+  - [Pinned source](https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_status.sdf.json); locator: /sdfObject/lock\.status/sdfProperty/lockState; check: not-checked
 
 ### Keep unknown state separate
 
@@ -132,13 +132,13 @@ Candidate external corroboration; not independent EdgeLoom review.
   - Declared identity match: \{\}
   - Condition: Generic entity code; no YRD156\-specific node capture is present\.
   - Condition: The underlying Z\-Wave JS stack supplies command\-class values\.
-  - [Pinned source](https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/lock.py): ZWaveLock\.is\_locked; manual-review
+  - [Pinned source](https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/homeassistant/components/zwave_js/lock.py): ZWaveLock\.is\_locked; not-checked
 - Home Assistant · simulated test: context / platform-generic / test-fixture
   - test\_door\_lock\_no\_value replaces a Schlage BE469 fixture's mode value with None and asserts STATE\_UNKNOWN\.
   - Declared identity match: \{\}
   - Condition: This is a Schlage fixture, not a YRD156 hardware test\.
   - Condition: The upstream test was inspected, not executed by EdgeLoom; repository CI is not inherited as a per\-device pass\.
-  - [Pinned source](https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/tests/components/zwave_js/test_lock.py): test\_door\_lock\_no\_value; manual-review
+  - [Pinned source](https://github.com/home-assistant/core/blob/067f88281665776424fbb4826697c46d5e7a6837/tests/components/zwave_js/test_lock.py): test\_door\_lock\_no\_value; not-checked
 
 Declared lineage (not an independence score):
 
@@ -178,21 +178,21 @@ Review lifecycle: candidate (declared).
 - Limit: Contract version 0\.1 lacks a driver\-source artifact role; the pinned Lua source is transparently recorded under the generic evidence role\.
 
 - Evidence: The pinned fingerprint identifies product tuple 0x0129/0x803A/0x0508 and assigns the YRD156 to the base\-lock profile used by this record\.
-  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml); locator: zwaveManufacturer\[id=Yale/YRD156\]; check: manual-review
+  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/fingerprints.yml); locator: zwaveManufacturer\[id=Yale/YRD156\]; check: not-checked
 - Evidence: On the current handler path, the function derives userIndex, userName, userType, credentialIndex, credentialType, and credentialName records from Z\-Wave user\-code reports\.
-  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/zwave_responses.lua); locator: lua:function ZwaveHandlers\.user\_code\_report; check: manual-review
+  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/zwave_responses.lua); locator: lua:function ZwaveHandlers\.user\_code\_report; check: not-checked
 - Evidence: The base\-lock profile separately exposes lockCodes, lockCredentials, and lockUsers capabilities\.
-  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml); locator: /components/0/capabilities; check: resolved
+  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/profiles/base-lock.yml); locator: /components/0/capabilities; check: not-checked
 - Evidence: Credential data is accepted as a write\-time UserCode payload\. The pinned response path records slot occupancy and identity metadata rather than returning or caching the PIN value\.
-  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/capabilities.lua); locator: lua:function CapabilityHandlers\.add\_credential\|update\_credential; check: manual-review
+  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/lock_handlers/capabilities.lua); locator: lua:function CapabilityHandlers\.add\_credential\|update\_credential; check: not-checked
 - Evidence: The main driver template registers the current lockUsers, lockCredentials, and user\-code report handlers; migrated marker state is emitted only when the persisted migration flag is true\.
-  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/init.lua); locator: lua:driver\_template\.capability\_handlers\|driver\_template\.zwave\_handlers; check: manual-review
+  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/init.lua); locator: lua:driver\_template\.capability\_handlers\|driver\_template\.zwave\_handlers; check: not-checked
 - Evidence: When SLGA\_MIGRATED is unset or false, the pinned can\-handle function routes the device to the legacy subdriver\.
-  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/legacy-handlers/can_handle.lua); locator: lua:return function\(opts, driver, device, \.\.\.\); check: manual-review
+  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/legacy-handlers/can_handle.lua); locator: lua:return function\(opts, driver, device, \.\.\.\); check: not-checked
 - Evidence: The explicit legacy migration command emits lockUsers and lockCredentials state and then persists SLGA\_MIGRATED as true\.
-  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/legacy-handlers/init.lua); locator: lua:function migrate; check: manual-review
+  - [Pinned source](https://github.com/SmartThingsCommunity/SmartThingsEdgeDrivers/blob/6b8a9cf69462d314a7c81b7a709037744d7d788d/drivers/SmartThings/zwave-lock/src/legacy-handlers/init.lua); locator: lua:function migrate; check: not-checked
 - Evidence: The SDF model defines an array of string lock\-code values but no user or credential identity, type, lifecycle, authorization, or privacy metadata\.
-  - [Pinned source](https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_code.sdf.json); locator: /sdfObject/lock\.code/sdfProperty/lockCodeList; check: resolved
+  - [Pinned source](https://github.com/one-data-model/ocf-models/blob/c97d095c239539b8242ceb4f12cf6deaeedb16e2/sdfObject/sdfobject-lock_code.sdf.json); locator: /sdfObject/lock\.code/sdfProperty/lockCodeList; check: not-checked
 
 Next steps:
 

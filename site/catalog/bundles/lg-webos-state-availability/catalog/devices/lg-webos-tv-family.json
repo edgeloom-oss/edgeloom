@@ -1,0 +1,126 @@
+{
+  "kind": "catalog-device",
+  "schema_version": "0.2",
+  "id": "lg-webos-tv-family",
+  "manufacturer": "LG",
+  "model": "webOS TVs (integration family)",
+  "protocol": "ip",
+  "identity_scope": "device-family",
+  "category": "media",
+  "identifiers": {
+    "manufacturer": "LG",
+    "family": "webOS TV"
+  },
+  "identity_evidence": {
+    "manifest_id": "ha-webostv-6a811d3",
+    "artifact_id": "webostv-manifest",
+    "locator": "/name"
+  },
+  "firmware": "unknown",
+  "hardware_evidence": [],
+  "connections": [
+    {
+      "id": "ha-webostv",
+      "transports": [
+        "unknown"
+      ],
+      "application_protocol": "LG webOS API via aiowebostv (wire-level behavior not traced)",
+      "platform": "Home Assistant Core",
+      "integration": "webostv",
+      "platform_version": "2026.10.0",
+      "access": "local",
+      "data_updates": "push",
+      "basis": "source-declared",
+      "references": [
+        {
+          "manifest_id": "ha-webostv-6a811d3",
+          "artifact_id": "webostv-manifest",
+          "locator": "/iot_class"
+        },
+        {
+          "manifest_id": "ha-webostv-6a811d3",
+          "artifact_id": "webostv-manifest",
+          "locator": "/requirements/0"
+        },
+        {
+          "manifest_id": "ha-webostv-6a811d3",
+          "artifact_id": "webostv-coordinator",
+          "locator": "WebOsTvDataUpdateCoordinator._async_update_data; SCAN_INTERVAL"
+        }
+      ],
+      "limitations": [
+        "local_push is the integration manifest's classification, not an observation of a household device or a claim that every path is event-driven. The coordinator also schedules connection recovery.",
+        "Transport is unknown for any physical instance. No IP address, account, pairing or network discovery was used.",
+        "The pinned integration depends on aiowebostv 0.10.0; that dependency's state derivation and wire-level protocol remain outside this source trace."
+      ]
+    }
+  ],
+  "features": [
+    {
+      "id": "power-state",
+      "title": "Power state is not screen state",
+      "summary": "The media-player adapter derives an entity state from client fields; it does not measure electrical power or prove physical screen state.",
+      "mapping_ids": [],
+      "next_steps": [
+        "Inspect the pinned adapter branches and separate reported state from physical state.",
+        "Supply exact model, webOS and installed HA versions before a model-specific case."
+      ],
+      "source_references": [
+        {
+          "manifest_id": "ha-webostv-6a811d3",
+          "artifact_id": "webostv-media-player",
+          "locator": "LgWebOSMediaPlayerEntity._update_states (lines 115-181)"
+        }
+      ]
+    },
+    {
+      "id": "availability",
+      "title": "Unavailable is not a power measurement",
+      "summary": "Entity availability follows coordinator success and connection-recovery conditions, separately from the media-player state calculation.",
+      "mapping_ids": [],
+      "next_steps": [
+        "Trace the availability chain before treating unavailable as off.",
+        "Review current configuration without adding a turn-on automation or waking the TV."
+      ],
+      "source_references": [
+        {
+          "manifest_id": "ha-webostv-6a811d3",
+          "artifact_id": "webostv-entity",
+          "locator": "WebOsTvEntity(CoordinatorEntity) (lines 15-24)"
+        },
+        {
+          "manifest_id": "ha-webostv-6a811d3",
+          "artifact_id": "webostv-coordinator",
+          "locator": "WebOsTvDataUpdateCoordinator._async_update_data (lines 45-68)"
+        },
+        {
+          "manifest_id": "ha-webostv-6a811d3",
+          "artifact_id": "webostv-coordinator-base",
+          "locator": "CoordinatorEntity.available (lines 724-728)"
+        }
+      ]
+    },
+    {
+      "id": "screen-state",
+      "title": "A separate, conditional screen entity",
+      "summary": "Screen state and availability have separate conditions; a declared switch does not establish support on every model.",
+      "mapping_ids": [],
+      "next_steps": [
+        "Check source conditions; do not enable or exercise screen control solely for catalog intake.",
+        "An exact-model manual and bounded read-only observation remain missing."
+      ],
+      "source_references": [
+        {
+          "manifest_id": "ha-webostv-6a811d3",
+          "artifact_id": "webostv-screen",
+          "locator": "LgWebOSScreenSwitchEntity.available/is_on/_async_set_screen_state (lines 28-78)"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "Integration-family source study only; no exact regional model, firmware, G2 compatibility or physical observation established.",
+    "No independent review, SDF mapping, driver installation or control recommendation.",
+    "Founder-directed, AI-assisted curation. Home Assistant contributors retain upstream credit; their authorship is not EdgeLoom review or endorsement."
+  ]
+}
