@@ -1,0 +1,55 @@
+{
+  "kind": "source-manifest",
+  "schema_version": "0.1",
+  "id": "zha-yale-d6fcec5",
+  "ecosystem": "zha",
+  "description": "Merged Yale Real Living signature and battery quirk declarations. Device selection also depends on endpoint/cluster signatures, not just a marketing name.",
+  "repository": {
+    "url": "https://github.com/zigpy/zha-device-handlers",
+    "commit": "d6fcec59eff9f63f154723500be9378be926d927"
+  },
+  "artifacts": [
+    {
+      "id": "zha-yale-realliving",
+      "path": "zhaquirks/yale/realliving.py",
+      "sha256": "c481e5b44fc3f00b6e58e44134ae1bbd5d42a5af074df6fd39a7dafe5765c402",
+      "media_type": "text/x-python",
+      "description": "Manufacturer/model and endpoint signature; replacement power-configuration cluster.",
+      "layer": "platform-exposure",
+      "artifact_role": "evidence",
+      "source_maturity": "community",
+      "license": {
+        "expression": "Apache-2.0",
+        "evidence_path": "LICENSE.md"
+      }
+    },
+    {
+      "id": "zha-battery-cluster",
+      "path": "zhaquirks/__init__.py",
+      "sha256": "5481da1a0ce5fd6d2a4592f1a95c6ed1e1d4288a83edce817d0995981a42209b",
+      "media_type": "text/x-python",
+      "description": "DoublingPowerConfigurationCluster implementation; not a full downstream entity pipeline.",
+      "layer": "platform-exposure",
+      "artifact_role": "evidence",
+      "source_maturity": "community",
+      "license": {
+        "expression": "Apache-2.0",
+        "evidence_path": "LICENSE.md"
+      }
+    },
+    {
+      "id": "zha-license",
+      "path": "LICENSE.md",
+      "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "media_type": "text/plain",
+      "description": "Pinned upstream license text.",
+      "layer": "platform-exposure",
+      "artifact_role": "evidence",
+      "source_maturity": "community",
+      "license": {
+        "expression": "Apache-2.0",
+        "evidence_path": "LICENSE.md"
+      }
+    }
+  ]
+}

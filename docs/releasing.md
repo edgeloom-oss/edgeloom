@@ -45,8 +45,13 @@ python -m venv /tmp/edgeloom-release-check
 ```
 
 From that environment, run `audit` and `validate` against an evidence record and
-the catalog fixtures. Confirm that all five bundled schema kinds resolve without
-the checkout. Run a dependency audit against the resolved runtime environment.
+the catalog fixtures. Confirm that all ten bundled schema kinds resolve without
+the checkout. Run the synthetic document-only bundle through `bundle check`,
+`build`, two byte-identical `export` calls and `verify`. Confirm that the wheel
+ships `bundle.css` and that verification rejects a tampered package. A local
+build's package-version label is not evidence that this code was published on
+PyPI: update the software version only in the approved release preparation.
+Run a dependency audit against the resolved runtime environment.
 The pull request CI must pass Python 3.11 and 3.12, package, and site jobs.
 
 The two changelog comparison links for the new version will return 404 until the

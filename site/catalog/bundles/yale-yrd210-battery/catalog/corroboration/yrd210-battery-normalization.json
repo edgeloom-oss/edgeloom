@@ -1,0 +1,114 @@
+{
+  "kind": "catalog-corroboration",
+  "schema_version": "0.1",
+  "id": "yrd210-battery-normalization",
+  "device_id": "yale-yrd210-pb-db",
+  "feature_id": "battery",
+  "title": "Same battery intent, different adaptation",
+  "summary": "Both snapshots account for nonstandard battery reporting, but at different layers. Compare the raw attribute and the final entity value before proposing a numeric binding; do not copy either adjustment twice.",
+  "source_manifests": [
+    {
+      "id": "zha-yale-d6fcec5",
+      "path": "catalog/sources/zha-yale-d6fcec5.json",
+      "sha256": "dec7079fabb43777be098f10d5e6dda11642bd926f45df9cc030342380a0e4d7"
+    },
+    {
+      "id": "z2m-yale-5750b44",
+      "path": "catalog/sources/z2m-yale-5750b44.json",
+      "sha256": "b1b7c256d3d3d805125684a3c680144d8f05b5f9a4b86067e4730cd5953ffa00"
+    }
+  ],
+  "lineage": [
+    {
+      "manifest_id": "zha-yale-d6fcec5",
+      "family": "zha-quirks",
+      "depends_on": []
+    },
+    {
+      "manifest_id": "z2m-yale-5750b44",
+      "family": "zigbee-herdsman-converters",
+      "depends_on": []
+    }
+  ],
+  "observations": [
+    {
+      "id": "zha-doubling",
+      "platform": "ZHA quirk",
+      "scope": "device-model",
+      "evidence_kind": "code-declaration",
+      "relationship": "supports",
+      "claim": "The Yale YRD210 PB DB signature selects a replacement DoublingPowerConfigurationCluster. That cluster multiplies battery_percentage_remaining (0x0021) by two.",
+      "identity_match": {
+        "manufacturer": "Yale",
+        "model": "YRD210 PB DB"
+      },
+      "identity_evidence": {
+        "manifest_id": "zha-yale-d6fcec5",
+        "artifact_id": "zha-yale-realliving",
+        "locator": "YRD210PBDB220TSLL.signature.MODELS_INFO"
+      },
+      "references": [
+        {
+          "manifest_id": "zha-yale-d6fcec5",
+          "artifact_id": "zha-yale-realliving",
+          "locator": "YRD210PBDB220TSLL.signature and replacement"
+        },
+        {
+          "manifest_id": "zha-yale-d6fcec5",
+          "artifact_id": "zha-battery-cluster",
+          "locator": "DoublingPowerConfigurationCluster._update_attribute"
+        }
+      ],
+      "conditions": [
+        "The full endpoint/cluster signature must also match; manufacturer/model alone is insufficient for quirk selection.",
+        "This is a cluster-attribute adjustment, not a claim that the final HA entity shows twice the battery percentage.",
+        "Firmware and downstream ZHA entity normalization are not inspected in this record."
+      ]
+    },
+    {
+      "id": "z2m-no-halving",
+      "platform": "Zigbee2MQTT converter",
+      "scope": "device-model",
+      "evidence_kind": "code-declaration",
+      "relationship": "supports",
+      "claim": "The YRD210 PB DB entry uses dontDividePercentage: true. The battery converter therefore skips its default divide-by-two step, when the reported percentage exists and is below 255.",
+      "identity_match": {
+        "model": "YRD210 PB DB"
+      },
+      "identity_evidence": {
+        "manifest_id": "z2m-yale-5750b44",
+        "artifact_id": "z2m-yale-definitions",
+        "locator": "definitions[zigbeeModel includes YRD210 PB DB]"
+      },
+      "references": [
+        {
+          "manifest_id": "z2m-yale-5750b44",
+          "artifact_id": "z2m-yale-definitions",
+          "locator": "YRD210-HA-605; lockExtend({battery: {dontDividePercentage: true}})"
+        },
+        {
+          "manifest_id": "z2m-yale-5750b44",
+          "artifact_id": "z2m-battery-converter",
+          "locator": "battery.convert; batteryPercentageRemaining; dontDividePercentage"
+        }
+      ],
+      "conditions": [
+        "This definition matches zigbeeModel, without an explicit manufacturer constraint; vendor is descriptive metadata.",
+        "voltageToPercentage must be absent for the selected percentage branch.",
+        "Static source inspection only; no converter or upstream driver is executed."
+      ]
+    }
+  ],
+  "review": {
+    "lifecycle": "candidate",
+    "author": "github:@infinitywings",
+    "reviewers": []
+  },
+  "limitations": [
+    "Human-authored candidate observations; no independent EdgeLoom review or physical-device test.",
+    "Sources are pinned snapshots, not a claim about the currently installed integration, coordinator or firmware.",
+    "Relationship labels are curator interpretations, not computed semantic equivalence. Conflicting observations must remain visible.",
+    "Different declared source families are not proof of independence: shared specs, authors or copied knowledge may exist.",
+    "No raw device report, final-entity comparison, unit-test result or SDF binding is established."
+  ]
+}

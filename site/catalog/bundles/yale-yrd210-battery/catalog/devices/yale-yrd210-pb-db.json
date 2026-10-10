@@ -1,0 +1,56 @@
+{
+  "kind": "catalog-device",
+  "schema_version": "0.1",
+  "id": "yale-yrd210-pb-db",
+  "manufacturer": "Yale",
+  "model": "YRD210 PB DB (Zigbee)",
+  "protocol": "zigbee",
+  "identifiers": {
+    "manufacturer": "Yale",
+    "model": "YRD210 PB DB"
+  },
+  "identity_evidence": {
+    "manifest_id": "zha-yale-d6fcec5",
+    "artifact_id": "zha-yale-realliving",
+    "locator": "YRD210PBDB220TSLL.signature.MODELS_INFO"
+  },
+  "firmware": "Unknown; exact endpoint/cluster signature and installed platform versions unconfirmed",
+  "hardware_evidence": [],
+  "features": [
+    {
+      "id": "battery",
+      "title": "Battery normalization",
+      "summary": "Two upstream adaptations for the same model string, at different layers. Raw cluster values and final entity percentages are not interchangeable.",
+      "mapping_ids": [],
+      "corroboration_ids": [
+        "yrd210-battery-normalization"
+      ],
+      "next_steps": [
+        "Compare the exact manufacturer/model and full endpoint/cluster signature.",
+        "Report a sanitized raw battery attribute and final entity value, including firmware and platform versions.",
+        "Do not apply either adjustment twice or treat this report as a patch recommendation."
+      ]
+    },
+    {
+      "id": "lock-state",
+      "title": "Lock control and observed state",
+      "summary": "A cluster declaration and a richer exposes declaration are different evidence scopes. No complete cross-platform or SDF mapping has been established.",
+      "mapping_ids": [],
+      "corroboration_ids": [
+        "yrd210-lock-exposure"
+      ],
+      "next_steps": [
+        "Distinguish a requested lock command from the reported actual lock state.",
+        "Retain partially locked and unknown values when investigating a correspondence.",
+        "Contribute a source correction or sanitized observation; never include real PINs or user identifiers."
+      ]
+    }
+  ],
+  "limitations": [
+    "Founder-authored candidate corroboration only; no independent review or hardware testing.",
+    "Not the YRD156 Z-Wave case; protocol variants and nearby marketing models are not interchangeable.",
+    "ZHA requires the full device signature; Zigbee2MQTT's selected entry uses a weaker model-only matcher.",
+    "No SDF binding, safe installation recipe or automatic repair is provided for this case.",
+    "Source lineage is declared and incomplete; no independent-source or adoption score is inferred."
+  ]
+}

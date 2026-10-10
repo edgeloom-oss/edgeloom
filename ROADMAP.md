@@ -132,11 +132,12 @@ neutral model lacks it, or the available evidence is insufficient.
 
 ## Phase 2 — SmartThings lock pilot
 
-**Status: Candidate pilot populated; first usable-device-evidence slice implemented on a review branch**
+**Status: Device browser and external corroboration merged; evidence bundles in draft review**
 
-The separate catalog now contains one Yale YRD156 device case, three mapping
-sets, and six assertions. These are founder-authored candidates, not three
-supported devices. No independent review or physical-device test is recorded.
+The separate catalog contains Yale YRD156 and YRD210 device cases, three mapping
+sets, six mapping assertions and four corroboration records. These are
+founder-authored candidates, not supported-device certifications.
+No independent review or physical-device test is recorded.
 Sources are referenced at fixed commits with digests rather than redistributed.
 
 ### Current construction milestone — Catalog v0.1: usable device evidence
@@ -160,13 +161,13 @@ report in approximately five minutes, share a source-linked finding, and report
 a mismatch without authoring a mapping. Automated checks must not promote
 candidate records or equate profile absence with complete driver/UI absence.
 
-Steps 1–4 are implemented in the current review increment. They are not yet a
-published package release or deployment. Step 5 and independent review remain
+Steps 1–4 are merged into the development tree; they are not included in the
+PyPI 0.2.0 package. Step 5 and independent review remain
 open; this slice does not satisfy the full pilot exit gate below.
 
-### Next review increment — external corroboration, not borrowed review
+### Merged increment — external corroboration, not borrowed review
 
-Implemented on a separate stacked review branch: a draft candidate-only
+Merged into the development tree: a draft candidate-only
 corroboration contract, exact manifest joins, scoped identity matches, declared
 acyclic source lineage, and side-by-side observations in JSON/Markdown/HTML.
 The populated first slice adds HA Z-Wave JS configuration/unknown-state context
@@ -175,8 +176,8 @@ ZHA and Zigbee2MQTT snapshots. No existing mapping is promoted or rewritten.
 
 Remaining sequence:
 
-1. Review the two pending usability PRs, then this stacked increment, before
-   release or public snapshot publication.
+1. Validate the next installable package and reconcile its release notes before
+   requesting software release approval.
 2. Trace the complete downstream ZHA battery entity path and request sanitized
    raw/final-value observations; neither is evidenced by a cluster quirk alone.
 3. Add further distinct lock identities only with pinned overlap and explicit
@@ -190,6 +191,35 @@ Remaining sequence:
 No bulk ingestion, upstream execution, hardware-validity badge, majority-vote
 conflict resolution or AI-generated verification is included. AI-assisted
 candidate extraction remains exploratory and must preserve human disposition.
+
+### Current construction milestone — Device Evidence Bundle draft v0.1
+
+The [public design discussion](https://github.com/edgeloom-oss/edgeloom/issues/63)
+precedes adoption. Core owns contracts, validation and reporting; the companion
+catalog owns versioned records and the contribution workflow.
+
+1. Add document-source, reported-observation and bundle contracts without
+   changing existing source/mapping contracts. Accept partial knowledge without
+   requiring an SDF mapping or fabricating a completed experiment.
+2. Check exact record closure, digest/identity/feature joins and scoped review
+   references. Export deterministic bounded ZIPs and independently verify their
+   consistency without downloading or executing upstream content.
+3. Present explanations by feature with concise summaries, expandable evidence,
+   versions/downloads and contribution links for a source, observation,
+   correction or review. Integrate these reports into the existing browser.
+4. Seed a Yale YRD210 battery bundle with official manual metadata and existing
+   pinned code comparisons. Keep manual applicability, upstream byte verification,
+   independent review and physical-device observations distinct.
+5. Run regression, clean-wheel, deterministic-package, desktop/mobile and link
+   checks; submit reviewable core/catalog PRs with exact pins. Software release
+   remains a separate approval. A core merge that contains the prepared snapshot
+   also needs Pages publication approval because `main` auto-deploys; follow the
+   [paired review/publication checklist](docs/bundle-release-readiness.md).
+
+Acceptance: a contributor can inspect one explanation, trace its sources,
+download and verify the scoped package, and propose one bounded correction
+without writing a driver or SDF mapping. Independent community review and real
+hardware observations remain subsequent evidence gates, not CI outcomes.
 
 Create 3–5 manually reviewed records before attempting broad ingestion. The
 pilot will connect pinned SmartThings Z-Wave and Zigbee lock artifacts with

@@ -9,6 +9,12 @@ this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.htm
 
 ### Added
 
+- Draft Device Evidence Bundle v0.1: document-source and reported-observation
+  contracts, exact record closures, feature explanations, scoped review hashes
+  and credits. Offline `bundle check/build/export/verify` provides reproducible
+  ZIPs and portable HTML/Markdown/JSON with bounds and safe-path checks. Catalog
+  views link optional bundles; no record promotion, upstream execution or
+  hardware validation is implied. Not included in PyPI 0.2.0.
 - Draft candidate-only `catalog-corroboration` sidecars: pinned source joins,
   declared lineage cycle checks, explicit partial device-identity matches,
   generic versus model-scoped observations, and visible conflicts. Static

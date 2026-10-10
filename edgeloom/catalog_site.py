@@ -25,6 +25,24 @@ def _template(template_name: str, **values: object) -> str:
     return Template(read_bytes(ASSETS, template_name).decode()).substitute(values)
 
 
+def _bundle_links(bundles: list[dict], prefix: str = "") -> str:
+    if not bundles:
+        return ""
+    links = "".join(
+        f'<li><a href="{prefix}bundles/{_e(bundle["id"])}/">{_e(bundle["title"])}</a> '
+        f'<span class="state">v{_e(bundle["version"])} · {_e(bundle["publication_status"])}</span> '
+        f'<a href="{prefix}bundles/{_e(bundle["id"])}/bundle.zip" download>Download package</a></li>'
+        for bundle in bundles
+    )
+    return (
+        '<section class="feature" aria-label="Device evidence bundles">'
+        '<p class="eyebrow">Versioned evidence packages</p><h2>Follow the implementation decisions</h2>'
+        "<p>Read document citations, implementation explanations, reported observations and open "
+        "questions. A candidate package records available evidence and its limits.</p>"
+        f'<ul class="feature-links">{links}</ul></section>'
+    )
+
+
 def _layout(title: str, description: str, content: str, index: dict, prefix="./", path="") -> str:
     revision = index["catalog_revision"]
     revision_link = (
@@ -86,6 +104,12 @@ def index_html(index: dict) -> str:
             '<span aria-hidden="true">↗</span></a></li>'
             for feature in device["features"]
         )
+        features += "".join(
+            f'<li><a href="bundles/{_e(bundle["id"])}/">Evidence bundle '
+            f'v{_e(bundle["version"])} <span aria-hidden="true">↗</span></a></li>'
+            for bundle in index.get("bundles", [])
+            if bundle["device_record_id"] == device["id"]
+        )
         hardware = (
             "Hardware observations linked; not authenticated"
             if device["hardware_evidence"]
@@ -101,6 +125,7 @@ data-protocol="{device["protocol"]}" data-status="{" ".join(statuses)}">
 <div class="card-bottom"><span>{hardware}</span>
 <a href="devices/{device["id"]}/">Open report <span aria-hidden="true">→</span></a></div></article>''')
     content = _template("index.html", **index["counts"], cards="\n".join(cards))
+    content += _bundle_links(index.get("bundles", []))
     return _layout(
         "Device evidence",
         "Inspect source-linked smart-home driver features, mapping gaps, and evidence limits. "
@@ -117,7 +142,12 @@ def device_html(index: dict, device: dict) -> str:
     identity = device["identity_evidence"]
     source = next(item for item in index["sources"] if item["id"] == identity["manifest_id"])
     artifact = next(item for item in source["artifacts"] if item["id"] == identity["artifact_id"])
-    sections = []
+    sections = [
+        _bundle_links(
+            [bundle for bundle in index.get("bundles", []) if bundle["device_record_id"] == device["id"]],
+            "../../",
+        )
+    ]
     for feature in device["features"]:
         conclusions, details = [], []
         for mid in feature["mapping_ids"]:

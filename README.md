@@ -145,6 +145,19 @@ source bytes. Reports do not install drivers, infer patch availability, or
 promote candidate mappings. Device entries, features, sources and mapping sets
 remain separate from the existing driver discovery inventory.
 
+### Device evidence bundles (draft preview)
+
+A versioned bundle explains **why a feature is implemented that way**: it joins
+official document references, pinned implementation records, scoped observations,
+test plans and gaps. Contributors can add a source or observation before an SDF
+mapping exists. The first candidate example follows Yale YRD210 battery behavior;
+it does not claim a tested physical device or independent review.
+
+See the [bundle draft and reproducible preview](docs/device-evidence-bundles.md)
+for `bundle check/build/export/verify`. Packages contain catalog-authored records
+and portable reports, not redistributed manuals or drivers. This draft is not
+in PyPI 0.2.0; use the documented pinned installation.
+
 ## Components
 
 | Path | Component | Command | Documentation |

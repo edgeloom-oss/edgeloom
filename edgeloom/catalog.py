@@ -256,8 +256,11 @@ def _atomic_bytes(target: Path, payload: bytes) -> None:
 
 def write_site(catalog: Catalog, index: dict, output: Path) -> int:
     """Replace only known generated files in a dedicated, marked output directory."""
+    from edgeloom import bundles
     from edgeloom.catalog_site import generated_files
 
+    if output.is_symlink():
+        raise CatalogError("Output must not be a symbolic link")
     output = output.resolve()
     if (
         output == catalog.root
@@ -266,10 +269,37 @@ def write_site(catalog: Catalog, index: dict, output: Path) -> int:
     ):
         raise CatalogError("Output must not overwrite catalog inputs or a parent directory")
     marker = ".edgeloom-catalog-output.json"
-    files = generated_files(index)
-    allowed = re.compile(
-        r"(?:index\.html|catalog\.json|styles\.css|script\.js|devices/[a-z0-9-]+/index\.html|reports/[a-z0-9-]+\.md)"
+    files = {name: value.encode("utf-8") for name, value in generated_files(index).items()}
+    try:
+        loaded_bundles = bundles.load_all(catalog.root)
+        if [_bundle_summary(bundle) for bundle in loaded_bundles] != index.get("bundles", []):
+            raise CatalogError("Bundle inputs changed since the catalog index was built")
+        for bundle in loaded_bundles:
+            package = bundles.package_files(bundle)
+            archive = bundles._zip_bytes(package)
+            prefix = f"bundles/{bundle.manifest['id']}/"
+            files.update({prefix + name: payload for name, payload in package.items()})
+            files[prefix + "bundle.zip"] = archive
+            if len(files) > 2000:
+                raise CatalogError("Invalid generated-output file list")
+            if sum(map(len, files.values())) > 32 * MAX_BYTES:
+                raise CatalogError("Generated view exceeds the 32 MiB output budget")
+    except bundles.BundleError as exc:
+        raise CatalogError(str(exc)) from exc
+    bundle_id = r"[a-z0-9][a-z0-9._-]{0,119}"
+    record_folders = r"(?:sources|mappings|devices|corroboration|documents|observations|bundles)"
+    package_members = (
+        r"(?:index\.html|report\.(?:md|json)|bundle\.(?:css|zip)|package\.json|checksums\.txt|"
+        r"schema/(?:source-manifest|catalog-mapping-set|catalog-device|catalog-corroboration|"
+        r"document-source|catalog-observation|device-evidence-bundle)\.schema\.json|"
+        rf"catalog/{record_folders}/[A-Za-z0-9][A-Za-z0-9._/-]*\.(?:json|yaml|yml))"
     )
+    allowed = re.compile(
+        r"(?:index\.html|catalog\.json|styles\.css|script\.js|devices/[a-z0-9-]+/index\.html|"
+        rf"reports/[a-z0-9-]+\.md|bundles/{bundle_id}/{package_members})"
+    )
+    if len(files) > 2000 or any(not allowed.fullmatch(path) for path in files):
+        raise CatalogError("Invalid generated-output file list")
     previous: list[str] = []
     if output.exists() and any(output.iterdir()):
         try:
@@ -287,13 +317,13 @@ def write_site(catalog: Catalog, index: dict, output: Path) -> int:
             _child(output, relative)
             if path.is_file() and relative not in {*previous, marker}:
                 raise CatalogError(f"Output contains an unrelated file: {relative}")
-    if sum(len(value.encode()) for value in files.values()) > 32 * MAX_BYTES:
+    if sum(map(len, files.values())) > 32 * MAX_BYTES:
         raise CatalogError("Generated view exceeds the 32 MiB output budget")
     for relative in {*previous, *files, marker}:
         _child(output, relative)
     output.mkdir(parents=True, exist_ok=True)
     for relative, value in files.items():
-        _atomic_bytes(_child(output, relative), value.encode("utf-8"))
+        _atomic_bytes(_child(output, relative), value)
     for relative in set(previous) - files.keys():
         _child(output, relative).unlink(missing_ok=True)
     _atomic_bytes(_child(output, marker), render_json({"files": sorted(files)}).encode())
@@ -402,8 +432,15 @@ def catalog_revision(root: Path) -> str:
 
 
 def build_index(catalog: Catalog, cache: Path | None = None) -> dict:
+    from edgeloom import bundles
+
     revision = catalog_revision(catalog.root)
     records = catalog.records
+    try:
+        loaded_bundles = bundles.load_all(catalog.root)
+    except bundles.BundleError as exc:
+        raise CatalogError(str(exc)) from exc
+    bundle_summaries = [_bundle_summary(bundle) for bundle in loaded_bundles]
     core_pin = None
     if (catalog.root / "CORE_REVISION").exists():
         core_pin = read_bytes(catalog.root, "CORE_REVISION").decode().strip()
@@ -423,6 +460,15 @@ def build_index(catalog: Catalog, cache: Path | None = None) -> dict:
         schemas.CATALOG_CORROBORATION,
     ):
         policy_files[f"schema/{kind}"] = digest(schemas.schema_path(kind).read_bytes())
+    if loaded_bundles:
+        for name in ("bundles.py", "bundle_site.py", "catalog_assets/bundle.css"):
+            policy_files[name] = digest(read_bytes(implementation, name))
+        for kind in (
+            schemas.DOCUMENT_SOURCE,
+            schemas.CATALOG_OBSERVATION,
+            schemas.DEVICE_EVIDENCE_BUNDLE,
+        ):
+            policy_files[f"schema/{kind}"] = digest(schemas.schema_path(kind).read_bytes())
     sources = []
     for source in sorted(catalog.sources.values(), key=lambda item: item["id"]):
         artifacts = []
@@ -476,13 +522,16 @@ def build_index(catalog: Catalog, cache: Path | None = None) -> dict:
                 )
             observations.append({**observation, "locator_checks": checks})
         corroborations.append({**record, **records[record["id"]], "observations": observations})
+    input_records = {"records": records, "declared_core_revision": core_pin}
+    if loaded_bundles:
+        input_records["bundle_inputs"] = {
+            summary["id"]: summary["input_digest"] for summary in bundle_summaries
+        }
     return {
         "report_version": "0.1",
         "catalog_repository": CATALOG_REPOSITORY,
         "catalog_revision": revision,
-        "input_digest": digest(
-            render_json({"records": records, "declared_core_revision": core_pin}).encode()
-        ),
+        "input_digest": digest(render_json(input_records).encode()),
         "generator": {
             "policy": "catalog/v0.1",
             "package_version_label": __version__,
@@ -507,6 +556,7 @@ def build_index(catalog: Catalog, cache: Path | None = None) -> dict:
         "mapping_sets": mapping_sets,
         "sources": sources,
         "corroborations": corroborations,
+        "bundles": bundle_summaries,
         "limitations": [
             "Device associations, classifications, license labels, and review states are "
             "catalog-author declarations, not independently authenticated by this build.",
@@ -521,6 +571,21 @@ def build_index(catalog: Catalog, cache: Path | None = None) -> dict:
             "not independent evidence; upstream test fixtures are not physical-device tests or "
             "independent EdgeLoom review. No source count promotes a candidate.",
         ],
+    }
+
+
+def _bundle_summary(bundle) -> dict:
+    """Public metadata plus the selected package inputs; never embeds source bytes."""
+    manifest = bundle.manifest
+    return {
+        "id": manifest["id"],
+        "title": manifest["title"],
+        "version": manifest["version"],
+        "device_record_id": manifest.get("device_record_id"),
+        "publication_status": manifest["publication_status"],
+        "input_digest": digest(
+            render_json({path: digest(payload) for path, payload in sorted(bundle.payloads.items())}).encode()
+        ),
     }
 
 

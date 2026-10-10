@@ -1,0 +1,33 @@
+{
+  "kind": "document-source",
+  "schema_version": "0.1",
+  "id": "synthetic-manual",
+  "title": "Synthetic fixture manual",
+  "publisher": "Synthetic Test Company",
+  "url": "https://example.invalid/synthetic-manual.pdf",
+  "document_version": "fixture-1",
+  "accessed_at": "2026-10-08",
+  "source_maturity": "experimental",
+  "applicability": {
+    "manufacturer": "Synthetic Test Company",
+    "model": "Synthetic Lock",
+    "scope": "exact-model",
+    "notes": ["Synthetic metadata, not a genuine manufacturer publication."]
+  },
+  "locations": [
+    {
+      "id": "battery",
+      "locator": "Page 2",
+      "description": "Synthetic battery claim"
+    }
+  ],
+  "capture": {"mode": "link-only"},
+  "rights": {
+    "redistribution": "not-granted",
+    "notice": "No upstream document is included or licensed for redistribution."
+  },
+  "contributed_by": "fixture-researcher",
+  "limitations": [
+    "This URL and document are synthetic; no upstream download was performed."
+  ]
+}

@@ -4,13 +4,13 @@ Requires Git, Python 3.11+ and internet for installation. No SmartThings account
 hub, Home Assistant token, AI key or physical lock is needed. The new commands
 are a development increment, **not included in PyPI 0.2.0**.
 
-Until these stacked PRs merge, clone the catalog's `codex/catalog-external-evidence`
-branch. After merge, use its default branch instead. The core checkout below
-always uses the exact `CORE_REVISION`, not an unpinned software branch.
+The catalog browser and external corroboration are merged. Use its default
+branch; the core checkout below uses the exact `CORE_REVISION`, not an unpinned
+software branch. The separate [bundle draft](device-evidence-bundles.md) has
+its own review-branch instructions.
 
 ```bash
-git clone --branch codex/catalog-external-evidence \
-  https://github.com/edgeloom-oss/edgeloom-catalog.git
+git clone https://github.com/edgeloom-oss/edgeloom-catalog.git
 cd edgeloom-catalog
 git clone https://github.com/edgeloom-oss/edgeloom.git .edgeloom-core
 git -C .edgeloom-core checkout "$(tr -d '[:space:]' < CORE_REVISION)"

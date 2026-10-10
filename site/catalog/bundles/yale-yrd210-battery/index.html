@@ -1,0 +1,530 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Yale YRD210 PB DB: explaining battery normalization · EdgeLoom evidence bundle</title>
+<meta name="description"
+content="Versioned device evidence, implementation reasoning, sources and open tests.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Yale YRD210 PB DB: explaining battery normalization · EdgeLoom evidence bundle">
+<meta property="og:description"
+content="Versioned candidate evidence, implementation reasoning and open tests.">
+<meta property="og:url" content="https://edgeloom-oss.github.io/edgeloom/catalog/bundles/yale-yrd210-battery/">
+<meta property="og:image" content="https://edgeloom-oss.github.io/edgeloom/assets/og-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Yale YRD210 PB DB: explaining battery normalization · EdgeLoom evidence bundle">
+<meta name="twitter:description"
+content="Versioned candidate evidence, implementation reasoning and open tests.">
+<meta name="twitter:image" content="https://edgeloom-oss.github.io/edgeloom/assets/og-card.png">
+<link rel="stylesheet" href="bundle.css"></head><body>
+<a class="skip" href="#main">Skip to evidence</a>
+<header><a class="brand" href="https://edgeloom-oss.github.io/edgeloom/catalog/"><span aria-hidden="true">▦</span> EdgeLoom
+<span class="brand-label"> / evidence bundle</span></a>
+<nav aria-label="Primary"><a href="#sources">Sources</a>
+<a href="#participate">Credits &amp; review</a></nav></header>
+<main id="main" tabindex="-1"><section class="intro" aria-labelledby="title">
+<p class="eyebrow">Device Evidence Bundle · draft format 0.1</p>
+<h1 id="title">Yale YRD210 PB DB: explaining battery normalization</h1>
+<p class="lede">Follow the evidence behind a device capability, and help fill the gaps.</p>
+<p class="badge">Candidate · version 0.1.0</p><dl class="facts"><div><dt>Device</dt><dd>Yale YRD210 PB DB (Zigbee)</dd></div><div><dt>Protocol</dt><dd>zigbee</dd></div><div><dt>Firmware</dt><dd>unknown</dd></div><div><dt>Bundle version</dt><dd>0.1.0</dd></div></dl>
+<details><summary>Identity &amp; applicability</summary><dl class="facts"><div><dt>manufacturer</dt><dd>Yale</dd></div><div><dt>model</dt><dd>YRD210 PB DB</dd></div></dl>
+<ul><li>The selected ZHA signature requires manufacturer, model and the full endpoint/cluster signature; the selected Zigbee2MQTT definition matches only the model string.</li><li>No physical device was inspected; firmware remains unknown.</li><li>The official YRD210 manual is family context. It does not establish exact firmware/signature applicability or the raw Zigbee battery scale.</li><li>This case is distinct from the YRD156 Z-Wave device. The associated lock-state comparison is included to preserve the complete referenced device record; battery normalization is the first investigation.</li></ul></details>
+<div class="actions downloads" aria-label="Download this version">
+<a class="button" href="bundle.zip" download>Download bundle ZIP</a>
+<a href="report.md" download>Markdown</a><a href="report.json" download>JSON</a>
+<a href="checksums.txt" download>Checksums</a></div>
+<p class="muted download-note">The ZIP link is available in the hosted or built report.
+An extracted archive already contains these files and does not include another copy of itself.</p></section>
+<nav class="feature-nav" aria-label="Capabilities"><a href="#feature-1">Battery normalization</a><a href="#feature-2">Lock-state context</a></nav>
+<div class="layout"><div><section class="feature" id="feature-1" aria-labelledby="feature-title-1"><p class="eyebrow">Feature · battery</p><h2 id="feature-title-1">Battery normalization</h2><p class="lede">The manual describes a local low-battery warning. Two upstream implementations adapt a battery value at different layers. Raw reports and final platform values are still needed to explain whether those paths agree for a particular firmware and signature.</p><p class="notice">No physical-device observations recorded for this feature.</p><h3>Implementation reasoning</h3><details class="decision"><summary>Keep the manual&#x27;s local battery warning separate from a numeric platform percentage.</summary><p>The inspected manual explains the warning indicator and replacement batteries, but supplies no value scale for the Zigbee battery attribute. It provides context rather than a numeric binding.</p><h4>Applies under these conditions</h4><ul><li>Family applicability only; no exact firmware, full signature or raw-scale claim follows from the manual.</li><li>The upstream PDF is referenced by URL and an inspected digest; it is not included in this package.</li></ul><h4>Evidence references</h4><ul><li><span class="badge">context</span> <a href="#record-6">yale-yrd210-manual-rev-g</a> <code>#/locations/1</code></li><li><span class="badge">context</span> <a href="#record-6">yale-yrd210-manual-rev-g</a> <code>#/locations/2</code></li></ul></details><details class="decision"><summary>Document ZHA&#x27;s doubling at the cluster attribute stage.</summary><p>The pinned quirk selects DoublingPowerConfigurationCluster, whose battery_percentage_remaining update multiplies attribute 0x0021 by two. This describes an intermediate value; the final Home Assistant entity pipeline has not been traced in this record.</p><h4>Applies under these conditions</h4><ul><li>The exact manufacturer/model and full endpoint/cluster signature must select this quirk.</li><li>Do not infer that the displayed entity percentage is doubled or copy this adjustment into another layer without tracing that layer.</li></ul><h4>Evidence references</h4><ul><li><span class="badge">supports</span> <a href="#record-2">yrd210-battery-normalization</a> <code>#/observations/0</code></li><li><span class="badge">context</span> <a href="#record-4">zha-yale-d6fcec5</a> <code>#/artifacts/1</code></li></ul></details><details class="decision"><summary>Document Zigbee2MQTT&#x27;s skipped default halving at the converter stage.</summary><p>The pinned model entry sets dontDividePercentage to true. The selected converter branch retains the reported percentage instead of applying its default divide-by-two step. This does not contradict a cluster-level adjustment followed by different downstream processing.</p><h4>Applies under these conditions</h4><ul><li>The selected definition uses a model-string matcher; manufacturer equality is not an enforced constraint there.</li><li>The percentage must exist and be below 255, and voltageToPercentage must be absent for the cited branch.</li><li>Source inspection did not execute the converter, test a physical lock or establish cross-platform equivalence.</li></ul><h4>Evidence references</h4><ul><li><span class="badge">supports</span> <a href="#record-2">yrd210-battery-normalization</a> <code>#/observations/1</code></li><li><span class="badge">context</span> <a href="#record-5">z2m-yale-5750b44</a> <code>#/artifacts/1</code></li></ul></details><details class="evidence"><summary>Sources &amp; reported observations (5)</summary><ul><li><a href="#record-1">Yale YRD210 PB DB (Zigbee) · device identity</a><span class="meta">catalog-device</span></li><li><a href="#record-2">Same battery intent, different adaptation</a><span class="meta">catalog-corroboration</span></li><li><a href="#record-4">zha · source snapshot</a><span class="meta">source-manifest</span></li><li><a href="#record-5">zigbee2mqtt · source snapshot</a><span class="meta">source-manifest</span></li><li><a href="#record-6">Yale Real Living Push Button Deadbolt (YRD210): Installation and Programming Instructions</a><span class="meta">document-source</span></li></ul></details><h3>Open questions</h3><ul><li>No physical-device observations or executed simulations have been submitted.</li><li>No manufacturer definition of the raw battery attribute scale for the exact Zigbee module/firmware has been found.</li><li>The complete ZHA to Home Assistant entity normalization path is not yet documented.</li><li>Cross-platform numerical equivalence, low-battery thresholds, error/sentinel propagation and applicability across firmware remain unresolved.</li></ul><h3>Help test this feature</h3><details><summary>For an identified device and firmware, how does an observed raw battery attribute become the platform&#x27;s displayed percentage?</summary><p class="muted">Proposed procedure; no execution result is implied.</p><ol><li>On an already configured device you control, record public manufacturer/model identifiers, firmware if available, protocol, full endpoint/cluster signature and installed platform/driver versions.</li><li>During ordinary reporting, capture a sanitized battery attribute value and its attribute identifier, the relevant intermediate conversion if visible, and the final displayed value for the same report/time.</li><li>Identify which implementation path the installed version selected, distinguish measured values from deductions, and repeat only as needed to describe normal reporting. No driver patch or device re-pairing is requested.</li><li>Submit expected and actual values, time, repetition count and limitations. Keep differences between separate devices or platforms explicit rather than treating them as the same controlled execution.</li></ol><h4>Requested evidence</h4><ul><li>Public model/signature, firmware or explicit unknown, and exact integration/converter revisions.</li><li>Sanitized raw and displayed values with enough timing context to associate them; no household/network identifiers or credentials.</li><li>Any unobservable intermediate stage and whether the result supports, contradicts or leaves the proposed explanation unresolved.</li></ul></details><div class="contribute"><h3>Contribute to this feature</h3><p>One source, observation, correction or scoped review is a useful contribution.</p><div class="actions"><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=device-source.yml&amp;bundle=yale-yrd210-battery&amp;version=0.1.0&amp;feature=battery">Add a source ↗</a><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=device-observation.yml&amp;bundle=yale-yrd210-battery&amp;version=0.1.0&amp;feature=battery">Report an observation ↗</a><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=correction.yml&amp;bundle=yale-yrd210-battery&amp;version=0.1.0&amp;feature=battery">Suggest a correction ↗</a><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=independent-review.yml&amp;bundle=yale-yrd210-battery&amp;version=0.1.0&amp;feature=battery">Review this evidence ↗</a></div></div></section><section class="feature" id="feature-2" aria-labelledby="feature-title-2"><p class="eyebrow">Feature · lock-state</p><h2 id="feature-title-2">Lock-state context</h2><p class="lede">The referenced device also carries a bounded comparison of ZHA&#x27;s cluster declaration and Zigbee2MQTT&#x27;s command/state exposure. It is retained as context, with no complete semantic mapping or hardware result.</p><p class="notice">No physical-device observations recorded for this feature.</p><h3>Implementation reasoning</h3><details class="decision"><summary>Preserve command exposure and reported lock state as different declarations.</summary><p>The pinned ZHA quirk declares a DoorLock cluster. Zigbee2MQTT separately exposes a command-capable state field and a reported lock_state field with a not_fully_locked value. These declarations alone cannot establish identical runtime behavior.</p><h4>Applies under these conditions</h4><ul><li>Do not collapse partially locked or unknown states into a successful requested command.</li><li>The downstream Home Assistant lock entity is not traced here; no SDF binding or lock-operation experiment is proposed by this bundle.</li></ul><h4>Evidence references</h4><ul><li><span class="badge">context</span> <a href="#record-3">yrd210-lock-exposure</a> <code>#/observations/0</code></li><li><span class="badge">context</span> <a href="#record-3">yrd210-lock-exposure</a> <code>#/observations/1</code></li></ul></details><details class="evidence"><summary>Sources &amp; reported observations (4)</summary><ul><li><a href="#record-1">Yale YRD210 PB DB (Zigbee) · device identity</a><span class="meta">catalog-device</span></li><li><a href="#record-3">Cluster declaration versus exposed state</a><span class="meta">catalog-corroboration</span></li><li><a href="#record-4">zha · source snapshot</a><span class="meta">source-manifest</span></li><li><a href="#record-5">zigbee2mqtt · source snapshot</a><span class="meta">source-manifest</span></li></ul></details><h3>Open questions</h3><ul><li>The source comparison remains candidate, without an independent review, full downstream state trace or physical-device observation.</li></ul><div class="contribute"><h3>Contribute to this feature</h3><p>One source, observation, correction or scoped review is a useful contribution.</p><div class="actions"><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=device-source.yml&amp;bundle=yale-yrd210-battery&amp;version=0.1.0&amp;feature=lock-state">Add a source ↗</a><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=device-observation.yml&amp;bundle=yale-yrd210-battery&amp;version=0.1.0&amp;feature=lock-state">Report an observation ↗</a><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=correction.yml&amp;bundle=yale-yrd210-battery&amp;version=0.1.0&amp;feature=lock-state">Suggest a correction ↗</a><a href="https://github.com/edgeloom-oss/edgeloom-catalog/issues/new?template=independent-review.yml&amp;bundle=yale-yrd210-battery&amp;version=0.1.0&amp;feature=lock-state">Review this evidence ↗</a></div></div></section></div><aside aria-labelledby="about-bundle">
+<p class="eyebrow">About this version</p><h2 id="about-bundle">An inspectable snapshot</h2>
+<p>Read the explanation, inspect its sources, and contribute evidence for a specific feature.</p>
+<p class="muted">Candidate publication does not change the review status of any record.</p>
+<details><summary>Scope &amp; limits</summary><ul><li>Candidate draft format and content prepared for public review under https://github.com/edgeloom-oss/edgeloom/issues/63 . Canonical identifies the maintained catalog snapshot, not a manufacturer certification or exclusive account of device behavior.</li><li>Firmware, physical behavior and exact platform applicability remain unconfirmed. No SDF binding or new driver implementation is included.</li><li>The package includes catalog-authored metadata and explanations, not the manual, upstream source code, executed upstream fixtures or telemetry.</li><li>New bundle text and document metadata were prepared with Codex assistance under github:@infinitywings&#x27;s direction. This is founder-contributed source research and curation, not independent review or an actual hardware report.</li><li>Referenced legacy records are included unchanged; their source maturity and candidate lifecycle are not promoted by package validation or publication.</li></ul></details>
+<details><summary>Cite this bundle</summary><p>github:@infinitywings. Yale YRD210 PB DB: explaining battery normalization. yale-yrd210-battery, version 0.1.0.</p>
+<p>Catalog revision: <code>52589528d53abbbb5265a13339c14cc96c4e8741</code></p></details></aside></div>
+<section id="sources" class="section" aria-labelledby="sources-title"><p class="eyebrow">Traceable records</p>
+<h2 id="sources-title">Sources &amp; evidence</h2>
+<p>Expand a record for its scope, citations and complete metadata. Record hashes pin the packaged metadata;
+upstream documents and driver code remain at their referenced locations.</p><details class="record" id="record-1"><summary>Yale YRD210 PB DB (Zigbee) · device identity</summary><p class="meta">catalog-device · yale-yrd210-pb-db</p><p></p><ul><li>Founder-authored candidate corroboration only; no independent review or hardware testing.</li><li>Not the YRD156 Z-Wave case; protocol variants and nearby marketing models are not interchangeable.</li><li>ZHA requires the full device signature; Zigbee2MQTT&#x27;s selected entry uses a weaker model-only matcher.</li><li>No SDF binding, safe installation recipe or automatic repair is provided for this case.</li><li>Source lineage is declared and incomplete; no independent-source or adoption score is inferred.</li></ul><details><summary>Complete record</summary><pre>{
+  &quot;features&quot;: [
+    {
+      &quot;corroboration_ids&quot;: [
+        &quot;yrd210-battery-normalization&quot;
+      ],
+      &quot;id&quot;: &quot;battery&quot;,
+      &quot;mapping_ids&quot;: [],
+      &quot;next_steps&quot;: [
+        &quot;Compare the exact manufacturer/model and full endpoint/cluster signature.&quot;,
+        &quot;Report a sanitized raw battery attribute and final entity value, including firmware and platform versions.&quot;,
+        &quot;Do not apply either adjustment twice or treat this report as a patch recommendation.&quot;
+      ],
+      &quot;summary&quot;: &quot;Two upstream adaptations for the same model string, at different layers. Raw cluster values and final entity percentages are not interchangeable.&quot;,
+      &quot;title&quot;: &quot;Battery normalization&quot;
+    },
+    {
+      &quot;corroboration_ids&quot;: [
+        &quot;yrd210-lock-exposure&quot;
+      ],
+      &quot;id&quot;: &quot;lock-state&quot;,
+      &quot;mapping_ids&quot;: [],
+      &quot;next_steps&quot;: [
+        &quot;Distinguish a requested lock command from the reported actual lock state.&quot;,
+        &quot;Retain partially locked and unknown values when investigating a correspondence.&quot;,
+        &quot;Contribute a source correction or sanitized observation; never include real PINs or user identifiers.&quot;
+      ],
+      &quot;summary&quot;: &quot;A cluster declaration and a richer exposes declaration are different evidence scopes. No complete cross-platform or SDF mapping has been established.&quot;,
+      &quot;title&quot;: &quot;Lock control and observed state&quot;
+    }
+  ],
+  &quot;firmware&quot;: &quot;Unknown; exact endpoint/cluster signature and installed platform versions unconfirmed&quot;,
+  &quot;hardware_evidence&quot;: [],
+  &quot;id&quot;: &quot;yale-yrd210-pb-db&quot;,
+  &quot;identifiers&quot;: {
+    &quot;manufacturer&quot;: &quot;Yale&quot;,
+    &quot;model&quot;: &quot;YRD210 PB DB&quot;
+  },
+  &quot;identity_evidence&quot;: {
+    &quot;artifact_id&quot;: &quot;zha-yale-realliving&quot;,
+    &quot;locator&quot;: &quot;YRD210PBDB220TSLL.signature.MODELS_INFO&quot;,
+    &quot;manifest_id&quot;: &quot;zha-yale-d6fcec5&quot;
+  },
+  &quot;kind&quot;: &quot;catalog-device&quot;,
+  &quot;limitations&quot;: [
+    &quot;Founder-authored candidate corroboration only; no independent review or hardware testing.&quot;,
+    &quot;Not the YRD156 Z-Wave case; protocol variants and nearby marketing models are not interchangeable.&quot;,
+    &quot;ZHA requires the full device signature; Zigbee2MQTT&#x27;s selected entry uses a weaker model-only matcher.&quot;,
+    &quot;No SDF binding, safe installation recipe or automatic repair is provided for this case.&quot;,
+    &quot;Source lineage is declared and incomplete; no independent-source or adoption score is inferred.&quot;
+  ],
+  &quot;manufacturer&quot;: &quot;Yale&quot;,
+  &quot;model&quot;: &quot;YRD210 PB DB (Zigbee)&quot;,
+  &quot;protocol&quot;: &quot;zigbee&quot;,
+  &quot;schema_version&quot;: &quot;0.1&quot;
+}</pre></details><p class="meta">Packaged record: <code>catalog/devices/yale-yrd210-pb-db.json</code><br>Record SHA-256: <code>52e249d90c1594ec2fc52e68dcdaff89bf0d8d016c9a551cca02ce2114814ea2</code></p></details><details class="record" id="record-2"><summary>Same battery intent, different adaptation</summary><p class="meta">catalog-corroboration · yrd210-battery-normalization</p><p>Both snapshots account for nonstandard battery reporting, but at different layers. Compare the raw attribute and the final entity value before proposing a numeric binding; do not copy either adjustment twice.</p><p class="muted">Code declarations and upstream test fixtures describe source evidence; they are not physical-device results.</p><div class="comparison-grid"><article class="comparison"><h3>ZHA quirk</h3><p class="meta">code-declaration · supports</p><p>The Yale YRD210 PB DB signature selects a replacement DoublingPowerConfigurationCluster. That cluster multiplies battery_percentage_remaining (0x0021) by two.</p><ul><li>The full endpoint/cluster signature must also match; manufacturer/model alone is insufficient for quirk selection.</li><li>This is a cluster-attribute adjustment, not a claim that the final HA entity shows twice the battery percentage.</li><li>Firmware and downstream ZHA entity normalization are not inspected in this record.</li></ul><ul><li><a href="https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py" rel="noreferrer">zha-yale-realliving · YRD210PBDB220TSLL.signature and replacement</a></li><li><a href="https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/__init__.py" rel="noreferrer">zha-battery-cluster · DoublingPowerConfigurationCluster._update_attribute</a></li></ul></article><article class="comparison"><h3>Zigbee2MQTT converter</h3><p class="meta">code-declaration · supports</p><p>The YRD210 PB DB entry uses dontDividePercentage: true. The battery converter therefore skips its default divide-by-two step, when the reported percentage exists and is below 255.</p><ul><li>This definition matches zigbeeModel, without an explicit manufacturer constraint; vendor is descriptive metadata.</li><li>voltageToPercentage must be absent for the selected percentage branch.</li><li>Static source inspection only; no converter or upstream driver is executed.</li></ul><ul><li><a href="https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts" rel="noreferrer">z2m-yale-definitions · YRD210-HA-605; lockExtend({battery: {dontDividePercentage: true}})</a></li><li><a href="https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/converters/fromZigbee.ts" rel="noreferrer">z2m-battery-converter · battery.convert; batteryPercentageRemaining; dontDividePercentage</a></li></ul></article></div><ul><li>Human-authored candidate observations; no independent EdgeLoom review or physical-device test.</li><li>Sources are pinned snapshots, not a claim about the currently installed integration, coordinator or firmware.</li><li>Relationship labels are curator interpretations, not computed semantic equivalence. Conflicting observations must remain visible.</li><li>Different declared source families are not proof of independence: shared specs, authors or copied knowledge may exist.</li><li>No raw device report, final-entity comparison, unit-test result or SDF binding is established.</li></ul><details><summary>Complete record</summary><pre>{
+  &quot;device_id&quot;: &quot;yale-yrd210-pb-db&quot;,
+  &quot;feature_id&quot;: &quot;battery&quot;,
+  &quot;id&quot;: &quot;yrd210-battery-normalization&quot;,
+  &quot;kind&quot;: &quot;catalog-corroboration&quot;,
+  &quot;limitations&quot;: [
+    &quot;Human-authored candidate observations; no independent EdgeLoom review or physical-device test.&quot;,
+    &quot;Sources are pinned snapshots, not a claim about the currently installed integration, coordinator or firmware.&quot;,
+    &quot;Relationship labels are curator interpretations, not computed semantic equivalence. Conflicting observations must remain visible.&quot;,
+    &quot;Different declared source families are not proof of independence: shared specs, authors or copied knowledge may exist.&quot;,
+    &quot;No raw device report, final-entity comparison, unit-test result or SDF binding is established.&quot;
+  ],
+  &quot;lineage&quot;: [
+    {
+      &quot;depends_on&quot;: [],
+      &quot;family&quot;: &quot;zha-quirks&quot;,
+      &quot;manifest_id&quot;: &quot;zha-yale-d6fcec5&quot;
+    },
+    {
+      &quot;depends_on&quot;: [],
+      &quot;family&quot;: &quot;zigbee-herdsman-converters&quot;,
+      &quot;manifest_id&quot;: &quot;z2m-yale-5750b44&quot;
+    }
+  ],
+  &quot;observations&quot;: [
+    {
+      &quot;claim&quot;: &quot;The Yale YRD210 PB DB signature selects a replacement DoublingPowerConfigurationCluster. That cluster multiplies battery_percentage_remaining (0x0021) by two.&quot;,
+      &quot;conditions&quot;: [
+        &quot;The full endpoint/cluster signature must also match; manufacturer/model alone is insufficient for quirk selection.&quot;,
+        &quot;This is a cluster-attribute adjustment, not a claim that the final HA entity shows twice the battery percentage.&quot;,
+        &quot;Firmware and downstream ZHA entity normalization are not inspected in this record.&quot;
+      ],
+      &quot;evidence_kind&quot;: &quot;code-declaration&quot;,
+      &quot;id&quot;: &quot;zha-doubling&quot;,
+      &quot;identity_evidence&quot;: {
+        &quot;artifact_id&quot;: &quot;zha-yale-realliving&quot;,
+        &quot;locator&quot;: &quot;YRD210PBDB220TSLL.signature.MODELS_INFO&quot;,
+        &quot;manifest_id&quot;: &quot;zha-yale-d6fcec5&quot;
+      },
+      &quot;identity_match&quot;: {
+        &quot;manufacturer&quot;: &quot;Yale&quot;,
+        &quot;model&quot;: &quot;YRD210 PB DB&quot;
+      },
+      &quot;platform&quot;: &quot;ZHA quirk&quot;,
+      &quot;references&quot;: [
+        {
+          &quot;artifact_id&quot;: &quot;zha-yale-realliving&quot;,
+          &quot;locator&quot;: &quot;YRD210PBDB220TSLL.signature and replacement&quot;,
+          &quot;manifest_id&quot;: &quot;zha-yale-d6fcec5&quot;
+        },
+        {
+          &quot;artifact_id&quot;: &quot;zha-battery-cluster&quot;,
+          &quot;locator&quot;: &quot;DoublingPowerConfigurationCluster._update_attribute&quot;,
+          &quot;manifest_id&quot;: &quot;zha-yale-d6fcec5&quot;
+        }
+      ],
+      &quot;relationship&quot;: &quot;supports&quot;,
+      &quot;scope&quot;: &quot;device-model&quot;
+    },
+    {
+      &quot;claim&quot;: &quot;The YRD210 PB DB entry uses dontDividePercentage: true. The battery converter therefore skips its default divide-by-two step, when the reported percentage exists and is below 255.&quot;,
+      &quot;conditions&quot;: [
+        &quot;This definition matches zigbeeModel, without an explicit manufacturer constraint; vendor is descriptive metadata.&quot;,
+        &quot;voltageToPercentage must be absent for the selected percentage branch.&quot;,
+        &quot;Static source inspection only; no converter or upstream driver is executed.&quot;
+      ],
+      &quot;evidence_kind&quot;: &quot;code-declaration&quot;,
+      &quot;id&quot;: &quot;z2m-no-halving&quot;,
+      &quot;identity_evidence&quot;: {
+        &quot;artifact_id&quot;: &quot;z2m-yale-definitions&quot;,
+        &quot;locator&quot;: &quot;definitions[zigbeeModel includes YRD210 PB DB]&quot;,
+        &quot;manifest_id&quot;: &quot;z2m-yale-5750b44&quot;
+      },
+      &quot;identity_match&quot;: {
+        &quot;model&quot;: &quot;YRD210 PB DB&quot;
+      },
+      &quot;platform&quot;: &quot;Zigbee2MQTT converter&quot;,
+      &quot;references&quot;: [
+        {
+          &quot;artifact_id&quot;: &quot;z2m-yale-definitions&quot;,
+          &quot;locator&quot;: &quot;YRD210-HA-605; lockExtend({battery: {dontDividePercentage: true}})&quot;,
+          &quot;manifest_id&quot;: &quot;z2m-yale-5750b44&quot;
+        },
+        {
+          &quot;artifact_id&quot;: &quot;z2m-battery-converter&quot;,
+          &quot;locator&quot;: &quot;battery.convert; batteryPercentageRemaining; dontDividePercentage&quot;,
+          &quot;manifest_id&quot;: &quot;z2m-yale-5750b44&quot;
+        }
+      ],
+      &quot;relationship&quot;: &quot;supports&quot;,
+      &quot;scope&quot;: &quot;device-model&quot;
+    }
+  ],
+  &quot;review&quot;: {
+    &quot;author&quot;: &quot;github:@infinitywings&quot;,
+    &quot;lifecycle&quot;: &quot;candidate&quot;,
+    &quot;reviewers&quot;: []
+  },
+  &quot;schema_version&quot;: &quot;0.1&quot;,
+  &quot;source_manifests&quot;: [
+    {
+      &quot;id&quot;: &quot;zha-yale-d6fcec5&quot;,
+      &quot;path&quot;: &quot;catalog/sources/zha-yale-d6fcec5.json&quot;,
+      &quot;sha256&quot;: &quot;dec7079fabb43777be098f10d5e6dda11642bd926f45df9cc030342380a0e4d7&quot;
+    },
+    {
+      &quot;id&quot;: &quot;z2m-yale-5750b44&quot;,
+      &quot;path&quot;: &quot;catalog/sources/z2m-yale-5750b44.json&quot;,
+      &quot;sha256&quot;: &quot;b1b7c256d3d3d805125684a3c680144d8f05b5f9a4b86067e4730cd5953ffa00&quot;
+    }
+  ],
+  &quot;summary&quot;: &quot;Both snapshots account for nonstandard battery reporting, but at different layers. Compare the raw attribute and the final entity value before proposing a numeric binding; do not copy either adjustment twice.&quot;,
+  &quot;title&quot;: &quot;Same battery intent, different adaptation&quot;
+}</pre></details><p class="meta">Packaged record: <code>catalog/corroboration/yrd210-battery-normalization.json</code><br>Record SHA-256: <code>a86133fe349c2b94f44a56469349e00ce67fdfdd9cf7a4ec8f5936ad8334e367</code></p></details><details class="record" id="record-3"><summary>Cluster declaration versus exposed state</summary><p class="meta">catalog-corroboration · yrd210-lock-exposure</p><p>The matching ZHA quirk retains a DoorLock cluster. Zigbee2MQTT declares separate command/state and actual-state fields. These artifacts alone do not establish equal UI behavior or a complete cross-platform mapping.</p><p class="muted">Code declarations and upstream test fixtures describe source evidence; they are not physical-device results.</p><div class="comparison-grid"><article class="comparison"><h3>ZHA quirk</h3><p class="meta">code-declaration · context</p><p>YRD210PBDB220TSLL includes DoorLock in its signature and replacement input clusters. The quirk itself does not define the downstream HA lock entity&#x27;s states.</p><ul><li>Endpoint and complete cluster signature must match.</li><li>Cluster presence is not whole-platform exposure or hardware success.</li></ul><ul><li><a href="https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py" rel="noreferrer">zha-yale-realliving · YRD210PBDB220TSLL.signature and replacement; DoorLock.cluster_id</a></li></ul></article><article class="comparison"><h3>Zigbee2MQTT exposes</h3><p class="meta">code-declaration · context</p><p>The shared e.lock() constructor declares state as LOCK/UNLOCK with state/set/get access, and lock_state as not_fully_locked/locked/unlocked with state-only access.</p><ul><li>Model-only matcher; no explicit manufacturer constraint in this definition.</li><li>Exposed metadata is not a firmware capability test or confirmation that all state values occur.</li></ul><ul><li><a href="https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts" rel="noreferrer">z2m-yale-definitions · YRD210-HA-605; lockExtend; exposes e.lock()</a></li><li><a href="https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/lib/exposes.ts" rel="noreferrer">z2m-exposes · presets.lock; Lock.withState; Lock.withLockState; access</a></li></ul></article></div><ul><li>Human-authored candidate observations; no independent EdgeLoom review or physical-device test.</li><li>Sources are pinned snapshots, not a claim about the currently installed integration, coordinator or firmware.</li><li>Relationship labels are curator interpretations, not computed semantic equivalence. Conflicting observations must remain visible.</li><li>No SDF correspondence is added for this Zigbee case; lack of a catalog binding is not a limitation of SDF.</li><li>Commands, observations and partially locked state must not be collapsed into a single binary semantic binding.</li></ul><details><summary>Complete record</summary><pre>{
+  &quot;device_id&quot;: &quot;yale-yrd210-pb-db&quot;,
+  &quot;feature_id&quot;: &quot;lock-state&quot;,
+  &quot;id&quot;: &quot;yrd210-lock-exposure&quot;,
+  &quot;kind&quot;: &quot;catalog-corroboration&quot;,
+  &quot;limitations&quot;: [
+    &quot;Human-authored candidate observations; no independent EdgeLoom review or physical-device test.&quot;,
+    &quot;Sources are pinned snapshots, not a claim about the currently installed integration, coordinator or firmware.&quot;,
+    &quot;Relationship labels are curator interpretations, not computed semantic equivalence. Conflicting observations must remain visible.&quot;,
+    &quot;No SDF correspondence is added for this Zigbee case; lack of a catalog binding is not a limitation of SDF.&quot;,
+    &quot;Commands, observations and partially locked state must not be collapsed into a single binary semantic binding.&quot;
+  ],
+  &quot;lineage&quot;: [
+    {
+      &quot;depends_on&quot;: [],
+      &quot;family&quot;: &quot;zha-quirks&quot;,
+      &quot;manifest_id&quot;: &quot;zha-yale-d6fcec5&quot;
+    },
+    {
+      &quot;depends_on&quot;: [],
+      &quot;family&quot;: &quot;zigbee-herdsman-converters&quot;,
+      &quot;manifest_id&quot;: &quot;z2m-yale-5750b44&quot;
+    }
+  ],
+  &quot;observations&quot;: [
+    {
+      &quot;claim&quot;: &quot;YRD210PBDB220TSLL includes DoorLock in its signature and replacement input clusters. The quirk itself does not define the downstream HA lock entity&#x27;s states.&quot;,
+      &quot;conditions&quot;: [
+        &quot;Endpoint and complete cluster signature must match.&quot;,
+        &quot;Cluster presence is not whole-platform exposure or hardware success.&quot;
+      ],
+      &quot;evidence_kind&quot;: &quot;code-declaration&quot;,
+      &quot;id&quot;: &quot;zha-lock-cluster&quot;,
+      &quot;identity_evidence&quot;: {
+        &quot;artifact_id&quot;: &quot;zha-yale-realliving&quot;,
+        &quot;locator&quot;: &quot;YRD210PBDB220TSLL.signature.MODELS_INFO&quot;,
+        &quot;manifest_id&quot;: &quot;zha-yale-d6fcec5&quot;
+      },
+      &quot;identity_match&quot;: {
+        &quot;manufacturer&quot;: &quot;Yale&quot;,
+        &quot;model&quot;: &quot;YRD210 PB DB&quot;
+      },
+      &quot;platform&quot;: &quot;ZHA quirk&quot;,
+      &quot;references&quot;: [
+        {
+          &quot;artifact_id&quot;: &quot;zha-yale-realliving&quot;,
+          &quot;locator&quot;: &quot;YRD210PBDB220TSLL.signature and replacement; DoorLock.cluster_id&quot;,
+          &quot;manifest_id&quot;: &quot;zha-yale-d6fcec5&quot;
+        }
+      ],
+      &quot;relationship&quot;: &quot;context&quot;,
+      &quot;scope&quot;: &quot;device-model&quot;
+    },
+    {
+      &quot;claim&quot;: &quot;The shared e.lock() constructor declares state as LOCK/UNLOCK with state/set/get access, and lock_state as not_fully_locked/locked/unlocked with state-only access.&quot;,
+      &quot;conditions&quot;: [
+        &quot;Model-only matcher; no explicit manufacturer constraint in this definition.&quot;,
+        &quot;Exposed metadata is not a firmware capability test or confirmation that all state values occur.&quot;
+      ],
+      &quot;evidence_kind&quot;: &quot;code-declaration&quot;,
+      &quot;id&quot;: &quot;z2m-lock-exposes&quot;,
+      &quot;identity_evidence&quot;: {
+        &quot;artifact_id&quot;: &quot;z2m-yale-definitions&quot;,
+        &quot;locator&quot;: &quot;definitions[zigbeeModel includes YRD210 PB DB]&quot;,
+        &quot;manifest_id&quot;: &quot;z2m-yale-5750b44&quot;
+      },
+      &quot;identity_match&quot;: {
+        &quot;model&quot;: &quot;YRD210 PB DB&quot;
+      },
+      &quot;platform&quot;: &quot;Zigbee2MQTT exposes&quot;,
+      &quot;references&quot;: [
+        {
+          &quot;artifact_id&quot;: &quot;z2m-yale-definitions&quot;,
+          &quot;locator&quot;: &quot;YRD210-HA-605; lockExtend; exposes e.lock()&quot;,
+          &quot;manifest_id&quot;: &quot;z2m-yale-5750b44&quot;
+        },
+        {
+          &quot;artifact_id&quot;: &quot;z2m-exposes&quot;,
+          &quot;locator&quot;: &quot;presets.lock; Lock.withState; Lock.withLockState; access&quot;,
+          &quot;manifest_id&quot;: &quot;z2m-yale-5750b44&quot;
+        }
+      ],
+      &quot;relationship&quot;: &quot;context&quot;,
+      &quot;scope&quot;: &quot;device-model&quot;
+    }
+  ],
+  &quot;review&quot;: {
+    &quot;author&quot;: &quot;github:@infinitywings&quot;,
+    &quot;lifecycle&quot;: &quot;candidate&quot;,
+    &quot;reviewers&quot;: []
+  },
+  &quot;schema_version&quot;: &quot;0.1&quot;,
+  &quot;source_manifests&quot;: [
+    {
+      &quot;id&quot;: &quot;zha-yale-d6fcec5&quot;,
+      &quot;path&quot;: &quot;catalog/sources/zha-yale-d6fcec5.json&quot;,
+      &quot;sha256&quot;: &quot;dec7079fabb43777be098f10d5e6dda11642bd926f45df9cc030342380a0e4d7&quot;
+    },
+    {
+      &quot;id&quot;: &quot;z2m-yale-5750b44&quot;,
+      &quot;path&quot;: &quot;catalog/sources/z2m-yale-5750b44.json&quot;,
+      &quot;sha256&quot;: &quot;b1b7c256d3d3d805125684a3c680144d8f05b5f9a4b86067e4730cd5953ffa00&quot;
+    }
+  ],
+  &quot;summary&quot;: &quot;The matching ZHA quirk retains a DoorLock cluster. Zigbee2MQTT declares separate command/state and actual-state fields. These artifacts alone do not establish equal UI behavior or a complete cross-platform mapping.&quot;,
+  &quot;title&quot;: &quot;Cluster declaration versus exposed state&quot;
+}</pre></details><p class="meta">Packaged record: <code>catalog/corroboration/yrd210-lock-exposure.json</code><br>Record SHA-256: <code>95b83ea52d7cb4fb289c50ea20f69c20c301a4ac224bef78d452b26d04e5e3db</code></p></details><details class="record" id="record-4"><summary>zha · source snapshot</summary><p class="meta">source-manifest · zha-yale-d6fcec5</p><p>Merged Yale Real Living signature and battery quirk declarations. Device selection also depends on endpoint/cluster signatures, not just a marketing name.</p><p><a href="https://github.com/zigpy/zha-device-handlers" rel="noreferrer">Upstream repository ↗</a> · commit <code>d6fcec59eff9f63f154723500be9378be926d927</code></p><ul><li><a href="https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/yale/realliving.py" rel="noreferrer">zhaquirks/yale/realliving.py</a><p>Manufacturer/model and endpoint signature; replacement power-configuration cluster.</p><small>Declared source SHA-256: <code>c481e5b44fc3f00b6e58e44134ae1bbd5d42a5af074df6fd39a7dafe5765c402</code></small></li><li><a href="https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/zhaquirks/__init__.py" rel="noreferrer">zhaquirks/__init__.py</a><p>DoublingPowerConfigurationCluster implementation; not a full downstream entity pipeline.</p><small>Declared source SHA-256: <code>5481da1a0ce5fd6d2a4592f1a95c6ed1e1d4288a83edce817d0995981a42209b</code></small></li><li><a href="https://github.com/zigpy/zha-device-handlers/blob/d6fcec59eff9f63f154723500be9378be926d927/LICENSE.md" rel="noreferrer">LICENSE.md</a><p>Pinned upstream license text.</p><small>Declared source SHA-256: <code>c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4</code></small></li></ul><p class="muted">Source references describe pinned implementation snapshots. Upstream code is not included or executed by this bundle.</p><details><summary>Complete record</summary><pre>{
+  &quot;artifacts&quot;: [
+    {
+      &quot;artifact_role&quot;: &quot;evidence&quot;,
+      &quot;description&quot;: &quot;Manufacturer/model and endpoint signature; replacement power-configuration cluster.&quot;,
+      &quot;id&quot;: &quot;zha-yale-realliving&quot;,
+      &quot;layer&quot;: &quot;platform-exposure&quot;,
+      &quot;license&quot;: {
+        &quot;evidence_path&quot;: &quot;LICENSE.md&quot;,
+        &quot;expression&quot;: &quot;Apache-2.0&quot;
+      },
+      &quot;media_type&quot;: &quot;text/x-python&quot;,
+      &quot;path&quot;: &quot;zhaquirks/yale/realliving.py&quot;,
+      &quot;sha256&quot;: &quot;c481e5b44fc3f00b6e58e44134ae1bbd5d42a5af074df6fd39a7dafe5765c402&quot;,
+      &quot;source_maturity&quot;: &quot;community&quot;
+    },
+    {
+      &quot;artifact_role&quot;: &quot;evidence&quot;,
+      &quot;description&quot;: &quot;DoublingPowerConfigurationCluster implementation; not a full downstream entity pipeline.&quot;,
+      &quot;id&quot;: &quot;zha-battery-cluster&quot;,
+      &quot;layer&quot;: &quot;platform-exposure&quot;,
+      &quot;license&quot;: {
+        &quot;evidence_path&quot;: &quot;LICENSE.md&quot;,
+        &quot;expression&quot;: &quot;Apache-2.0&quot;
+      },
+      &quot;media_type&quot;: &quot;text/x-python&quot;,
+      &quot;path&quot;: &quot;zhaquirks/__init__.py&quot;,
+      &quot;sha256&quot;: &quot;5481da1a0ce5fd6d2a4592f1a95c6ed1e1d4288a83edce817d0995981a42209b&quot;,
+      &quot;source_maturity&quot;: &quot;community&quot;
+    },
+    {
+      &quot;artifact_role&quot;: &quot;evidence&quot;,
+      &quot;description&quot;: &quot;Pinned upstream license text.&quot;,
+      &quot;id&quot;: &quot;zha-license&quot;,
+      &quot;layer&quot;: &quot;platform-exposure&quot;,
+      &quot;license&quot;: {
+        &quot;evidence_path&quot;: &quot;LICENSE.md&quot;,
+        &quot;expression&quot;: &quot;Apache-2.0&quot;
+      },
+      &quot;media_type&quot;: &quot;text/plain&quot;,
+      &quot;path&quot;: &quot;LICENSE.md&quot;,
+      &quot;sha256&quot;: &quot;c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4&quot;,
+      &quot;source_maturity&quot;: &quot;community&quot;
+    }
+  ],
+  &quot;description&quot;: &quot;Merged Yale Real Living signature and battery quirk declarations. Device selection also depends on endpoint/cluster signatures, not just a marketing name.&quot;,
+  &quot;ecosystem&quot;: &quot;zha&quot;,
+  &quot;id&quot;: &quot;zha-yale-d6fcec5&quot;,
+  &quot;kind&quot;: &quot;source-manifest&quot;,
+  &quot;repository&quot;: {
+    &quot;commit&quot;: &quot;d6fcec59eff9f63f154723500be9378be926d927&quot;,
+    &quot;url&quot;: &quot;https://github.com/zigpy/zha-device-handlers&quot;
+  },
+  &quot;schema_version&quot;: &quot;0.1&quot;
+}</pre></details><p class="meta">Packaged record: <code>catalog/sources/zha-yale-d6fcec5.json</code><br>Record SHA-256: <code>dec7079fabb43777be098f10d5e6dda11642bd926f45df9cc030342380a0e4d7</code></p></details><details class="record" id="record-5"><summary>zigbee2mqtt · source snapshot</summary><p class="meta">source-manifest · z2m-yale-5750b44</p><p>Yale converter definitions, exposure constructors and battery converter. Sources are statically inspected, not imported; firmware and coordinator behavior remain untested.</p><p><a href="https://github.com/Koenkk/zigbee-herdsman-converters" rel="noreferrer">Upstream repository ↗</a> · commit <code>5750b44559405203b202e0f5539dc0d6f46f1c8d</code></p><ul><li><a href="https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/devices/yale.ts" rel="noreferrer">src/devices/yale.ts</a><p>Model-only matching, battery metadata and shared lock exposure declarations.</p><small>Declared source SHA-256: <code>ba8a4e8d896c09c40fc4268d5d0106617f10d897fcf97d8c010f682072d5c8c6</code></small></li><li><a href="https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/converters/fromZigbee.ts" rel="noreferrer">src/converters/fromZigbee.ts</a><p>Battery conversion with dontDividePercentage condition and invalid-value guard.</p><small>Declared source SHA-256: <code>a04ba5f429f4e04808b05327248f867b88b98229af7ac37a10ff589e507a9dc2</code></small></li><li><a href="https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/src/lib/exposes.ts" rel="noreferrer">src/lib/exposes.ts</a><p>Lock state, access and numeric exposure constructors.</p><small>Declared source SHA-256: <code>498bc040fe1badcd8f8cd9acccb722589f9faaf407405a0e0818570c27a04067</code></small></li><li><a href="https://github.com/Koenkk/zigbee-herdsman-converters/blob/5750b44559405203b202e0f5539dc0d6f46f1c8d/LICENSE" rel="noreferrer">LICENSE</a><p>Pinned upstream license text.</p><small>Declared source SHA-256: <code>b5ffb673900b5ec1f84e929f45077d429a0645b43c4b4eda65de815dfd02aef1</code></small></li></ul><p class="muted">Source references describe pinned implementation snapshots. Upstream code is not included or executed by this bundle.</p><details><summary>Complete record</summary><pre>{
+  &quot;artifacts&quot;: [
+    {
+      &quot;artifact_role&quot;: &quot;evidence&quot;,
+      &quot;description&quot;: &quot;Model-only matching, battery metadata and shared lock exposure declarations.&quot;,
+      &quot;id&quot;: &quot;z2m-yale-definitions&quot;,
+      &quot;layer&quot;: &quot;platform-exposure&quot;,
+      &quot;license&quot;: {
+        &quot;evidence_path&quot;: &quot;LICENSE&quot;,
+        &quot;expression&quot;: &quot;MIT&quot;
+      },
+      &quot;media_type&quot;: &quot;text/typescript&quot;,
+      &quot;path&quot;: &quot;src/devices/yale.ts&quot;,
+      &quot;sha256&quot;: &quot;ba8a4e8d896c09c40fc4268d5d0106617f10d897fcf97d8c010f682072d5c8c6&quot;,
+      &quot;source_maturity&quot;: &quot;community&quot;
+    },
+    {
+      &quot;artifact_role&quot;: &quot;evidence&quot;,
+      &quot;description&quot;: &quot;Battery conversion with dontDividePercentage condition and invalid-value guard.&quot;,
+      &quot;id&quot;: &quot;z2m-battery-converter&quot;,
+      &quot;layer&quot;: &quot;platform-exposure&quot;,
+      &quot;license&quot;: {
+        &quot;evidence_path&quot;: &quot;LICENSE&quot;,
+        &quot;expression&quot;: &quot;MIT&quot;
+      },
+      &quot;media_type&quot;: &quot;text/typescript&quot;,
+      &quot;path&quot;: &quot;src/converters/fromZigbee.ts&quot;,
+      &quot;sha256&quot;: &quot;a04ba5f429f4e04808b05327248f867b88b98229af7ac37a10ff589e507a9dc2&quot;,
+      &quot;source_maturity&quot;: &quot;community&quot;
+    },
+    {
+      &quot;artifact_role&quot;: &quot;evidence&quot;,
+      &quot;description&quot;: &quot;Lock state, access and numeric exposure constructors.&quot;,
+      &quot;id&quot;: &quot;z2m-exposes&quot;,
+      &quot;layer&quot;: &quot;platform-exposure&quot;,
+      &quot;license&quot;: {
+        &quot;evidence_path&quot;: &quot;LICENSE&quot;,
+        &quot;expression&quot;: &quot;MIT&quot;
+      },
+      &quot;media_type&quot;: &quot;text/typescript&quot;,
+      &quot;path&quot;: &quot;src/lib/exposes.ts&quot;,
+      &quot;sha256&quot;: &quot;498bc040fe1badcd8f8cd9acccb722589f9faaf407405a0e0818570c27a04067&quot;,
+      &quot;source_maturity&quot;: &quot;community&quot;
+    },
+    {
+      &quot;artifact_role&quot;: &quot;evidence&quot;,
+      &quot;description&quot;: &quot;Pinned upstream license text.&quot;,
+      &quot;id&quot;: &quot;z2m-license&quot;,
+      &quot;layer&quot;: &quot;platform-exposure&quot;,
+      &quot;license&quot;: {
+        &quot;evidence_path&quot;: &quot;LICENSE&quot;,
+        &quot;expression&quot;: &quot;MIT&quot;
+      },
+      &quot;media_type&quot;: &quot;text/plain&quot;,
+      &quot;path&quot;: &quot;LICENSE&quot;,
+      &quot;sha256&quot;: &quot;b5ffb673900b5ec1f84e929f45077d429a0645b43c4b4eda65de815dfd02aef1&quot;,
+      &quot;source_maturity&quot;: &quot;community&quot;
+    }
+  ],
+  &quot;description&quot;: &quot;Yale converter definitions, exposure constructors and battery converter. Sources are statically inspected, not imported; firmware and coordinator behavior remain untested.&quot;,
+  &quot;ecosystem&quot;: &quot;zigbee2mqtt&quot;,
+  &quot;id&quot;: &quot;z2m-yale-5750b44&quot;,
+  &quot;kind&quot;: &quot;source-manifest&quot;,
+  &quot;repository&quot;: {
+    &quot;commit&quot;: &quot;5750b44559405203b202e0f5539dc0d6f46f1c8d&quot;,
+    &quot;url&quot;: &quot;https://github.com/Koenkk/zigbee-herdsman-converters&quot;
+  },
+  &quot;schema_version&quot;: &quot;0.1&quot;
+}</pre></details><p class="meta">Packaged record: <code>catalog/sources/z2m-yale-5750b44.json</code><br>Record SHA-256: <code>b1b7c256d3d3d805125684a3c680144d8f05b5f9a4b86067e4730cd5953ffa00</code></p></details><details class="record" id="record-6"><summary>Yale Real Living Push Button Deadbolt (YRD210): Installation and Programming Instructions</summary><p class="meta">document-source · yale-yrd210-manual-rev-g</p><p class="badge">official source declaration · family-context</p><p><a href="https://cdn.shopify.com/s/files/1/0097/2433/0084/files/Installation_Manual_YRD210.pdf?227461" rel="noreferrer">Open upstream document ↗</a></p><dl class="facts"><div><dt>Publisher</dt><dd>Yale Locks &amp; Hardware / Yale Security Inc.</dd></div><div><dt>Document version</dt><dd>P/N AYRD-210-INST-FUL Rev G; 24-page PDF including Z-Wave and Zigbee module supplements</dd></div><div><dt>Accessed</dt><dd>2026-10-08</dd></div><div><dt>Applies to</dt><dd>Yale YRD210 product family</dd></div></dl><ul><li>Yale&#x27;s official support directory links this PDF as the YRD210 keypad deadbolt manual: https://support.shopyalehome.com/where-do-i-find-installation-manuals-for-yrl-previous-generation--SJKr09bBH . The directory and linked PDF were inspected on the access date.</li><li>The main manual names YRD210, and the PDF includes separate Z-Wave and Zigbee module sheets. This does not identify the exact YRD210 PB DB firmware or full ZHA endpoint/cluster signature.</li><li>Use the manual for family-level battery and local indicator context, not as proof of a Zigbee raw-value scale or a correspondence between platform outputs.</li></ul><ul><li><strong>PDF page 1, title and footer</strong> — Names the YRD210 push-button deadbolt and the Rev G document identifier.</li><li><strong>PDF/printed pages 11 and 16, Programming Instructions and Low Battery definition</strong> — Describes the local red low-battery indicator; no numeric Zigbee attribute encoding is supplied.</li><li><strong>PDF/printed page 18, Programming Troubleshooting, intermittent red flashes row</strong> — Connects the local warning to replacement of four AA alkaline batteries.</li><li><strong>PDF page 23, Yale Real Living ZigBee Module supplement, P/N AYR200-ZB-INSTAL-FUL Rev F</strong> — Includes a separate Zigbee module installation and enrollment sheet; it does not specify battery normalization.</li><li><strong>PDF/printed page 20, publisher and copyright footer</strong> — Identifies Yale Security Inc., copyright 2017, and requires express written permission for reproduction.</li></ul><p class="muted">Content digest declared; document bytes are not included or checked by this report.</p><p>Declared document SHA-256: <code>189029b598d750309251129d99018c9b0e50d349f80da01f7727c9f2caff8446</code></p><p>Redistribution: not-granted. The cited publisher notice reserves reproduction rights. No redistribution permission was obtained. Only catalog-authored metadata, paraphrases, the upstream link and the inspected file digest are included; the PDF and page images are not distributed.</p><ul><li>The official directory establishes the publisher link; the CDN URL itself is mutable. The recorded digest identifies the inspected bytes but does not guarantee future availability or archive them.</li><li>No exact firmware applicability, raw battery attribute scale, downstream platform percentage, independent review or hardware observation is established.</li><li>Catalog metadata was prepared with Codex assistance under the contributor&#x27;s direction; source inspection is not an independent review.</li></ul><details><summary>Complete record</summary><pre>{
+  &quot;accessed_at&quot;: &quot;2026-10-08&quot;,
+  &quot;applicability&quot;: {
+    &quot;manufacturer&quot;: &quot;Yale&quot;,
+    &quot;model&quot;: &quot;YRD210 product family&quot;,
+    &quot;notes&quot;: [
+      &quot;Yale&#x27;s official support directory links this PDF as the YRD210 keypad deadbolt manual: https://support.shopyalehome.com/where-do-i-find-installation-manuals-for-yrl-previous-generation--SJKr09bBH . The directory and linked PDF were inspected on the access date.&quot;,
+      &quot;The main manual names YRD210, and the PDF includes separate Z-Wave and Zigbee module sheets. This does not identify the exact YRD210 PB DB firmware or full ZHA endpoint/cluster signature.&quot;,
+      &quot;Use the manual for family-level battery and local indicator context, not as proof of a Zigbee raw-value scale or a correspondence between platform outputs.&quot;
+    ],
+    &quot;scope&quot;: &quot;family-context&quot;
+  },
+  &quot;capture&quot;: {
+    &quot;byte_size&quot;: 3378722,
+    &quot;media_type&quot;: &quot;application/pdf&quot;,
+    &quot;mode&quot;: &quot;digest-recorded&quot;,
+    &quot;sha256&quot;: &quot;189029b598d750309251129d99018c9b0e50d349f80da01f7727c9f2caff8446&quot;
+  },
+  &quot;contributed_by&quot;: &quot;github:@infinitywings&quot;,
+  &quot;document_version&quot;: &quot;P/N AYRD-210-INST-FUL Rev G; 24-page PDF including Z-Wave and Zigbee module supplements&quot;,
+  &quot;id&quot;: &quot;yale-yrd210-manual-rev-g&quot;,
+  &quot;kind&quot;: &quot;document-source&quot;,
+  &quot;limitations&quot;: [
+    &quot;The official directory establishes the publisher link; the CDN URL itself is mutable. The recorded digest identifies the inspected bytes but does not guarantee future availability or archive them.&quot;,
+    &quot;No exact firmware applicability, raw battery attribute scale, downstream platform percentage, independent review or hardware observation is established.&quot;,
+    &quot;Catalog metadata was prepared with Codex assistance under the contributor&#x27;s direction; source inspection is not an independent review.&quot;
+  ],
+  &quot;locations&quot;: [
+    {
+      &quot;description&quot;: &quot;Names the YRD210 push-button deadbolt and the Rev G document identifier.&quot;,
+      &quot;id&quot;: &quot;model-and-revision&quot;,
+      &quot;locator&quot;: &quot;PDF page 1, title and footer&quot;
+    },
+    {
+      &quot;description&quot;: &quot;Describes the local red low-battery indicator; no numeric Zigbee attribute encoding is supplied.&quot;,
+      &quot;id&quot;: &quot;low-battery-indicator&quot;,
+      &quot;locator&quot;: &quot;PDF/printed pages 11 and 16, Programming Instructions and Low Battery definition&quot;
+    },
+    {
+      &quot;description&quot;: &quot;Connects the local warning to replacement of four AA alkaline batteries.&quot;,
+      &quot;id&quot;: &quot;battery-replacement&quot;,
+      &quot;locator&quot;: &quot;PDF/printed page 18, Programming Troubleshooting, intermittent red flashes row&quot;
+    },
+    {
+      &quot;description&quot;: &quot;Includes a separate Zigbee module installation and enrollment sheet; it does not specify battery normalization.&quot;,
+      &quot;id&quot;: &quot;zigbee-module-supplement&quot;,
+      &quot;locator&quot;: &quot;PDF page 23, Yale Real Living ZigBee Module supplement, P/N AYR200-ZB-INSTAL-FUL Rev F&quot;
+    },
+    {
+      &quot;description&quot;: &quot;Identifies Yale Security Inc., copyright 2017, and requires express written permission for reproduction.&quot;,
+      &quot;id&quot;: &quot;copyright-notice&quot;,
+      &quot;locator&quot;: &quot;PDF/printed page 20, publisher and copyright footer&quot;
+    }
+  ],
+  &quot;publisher&quot;: &quot;Yale Locks &amp; Hardware / Yale Security Inc.&quot;,
+  &quot;rights&quot;: {
+    &quot;notice&quot;: &quot;The cited publisher notice reserves reproduction rights. No redistribution permission was obtained. Only catalog-authored metadata, paraphrases, the upstream link and the inspected file digest are included; the PDF and page images are not distributed.&quot;,
+    &quot;redistribution&quot;: &quot;not-granted&quot;
+  },
+  &quot;schema_version&quot;: &quot;0.1&quot;,
+  &quot;source_maturity&quot;: &quot;official&quot;,
+  &quot;title&quot;: &quot;Yale Real Living Push Button Deadbolt (YRD210): Installation and Programming Instructions&quot;,
+  &quot;url&quot;: &quot;https://cdn.shopify.com/s/files/1/0097/2433/0084/files/Installation_Manual_YRD210.pdf?227461&quot;
+}</pre></details><p class="meta">Packaged record: <code>catalog/documents/yale-yrd210-manual-rev-g.json</code><br>Record SHA-256: <code>1350f7ebe9e323c0e713b7912193e43fbdf55fe2e6a30f3fb6c239b047306361</code></p></details></section>
+<section id="participate" class="section" aria-labelledby="participate-title">
+<p class="eyebrow">People &amp; progress</p><h2 id="participate-title">Review &amp; contributions</h2>
+<div class="comparison-grid"><div><h3>Scoped reviews</h3><p>No scoped reviews recorded in this bundle.</p></div>
+<div><h3>Contribution credits</h3><ul class="credits"><li><strong>github:@infinitywings</strong><span class="meta">author, source-research, maintenance</span><small>Records: yale-yrd210-pb-db, yrd210-battery-normalization, yrd210-lock-exposure, zha-yale-d6fcec5, z2m-yale-5750b44, yale-yrd210-manual-rev-g</small></li></ul></div></div>
+<details><summary>Version history</summary><ul><li><strong>0.1.0</strong> · First candidate bundle: preserve the existing device/source/corroboration records, add official manual context, explain battery adaptation layers, and invite a scoped observation. No experiment or independent review has been added.</li></ul></details></section>
+<section class="section" aria-labelledby="integrity-title"><h2 id="integrity-title">Package integrity</h2>
+<p>Record hashes and reference checks establish package consistency. They do not authenticate a publisher, establish independent review, or demonstrate device behavior.</p><details><summary>Build provenance &amp; checks</summary>
+<dl class="facts"><div><dt>Catalog revision</dt><dd>52589528d53abbbb5265a13339c14cc96c4e8741</dd></div><div><dt>Declared core revision</dt><dd>0c86fea045972458dc1e60eb435ced95036f04fe</dd></div><div><dt>Input digest</dt><dd>ef399f78960484aedb4b63e80a6145498cfce928cef66cc1690e720384e9b898</dd></div></dl><details><summary>Generator provenance</summary><pre>{
+  &quot;implementation_digest&quot;: &quot;8eda03bb5bd6bb27f2ec85862ec425b484f0df6a7284884cef0b72dc7be94d05&quot;,
+  &quot;package_version_label&quot;: &quot;0.2.0&quot;,
+  &quot;version_label_is_not_release_attestation&quot;: true
+}</pre></details><details><summary>Package checks</summary><pre>{
+  &quot;contracts&quot;: &quot;passed&quot;,
+  &quot;hardware&quot;: &quot;not-tested-by-this-tool&quot;,
+  &quot;record_digests&quot;: &quot;matched&quot;,
+  &quot;references&quot;: &quot;passed&quot;,
+  &quot;review_identity&quot;: &quot;not-authenticated&quot;,
+  &quot;upstream_bytes&quot;: &quot;not-checked&quot;
+}</pre></details></details></section>
+</main><footer>EdgeLoom · Device Evidence Bundle draft v0.1 · Apache-2.0
+catalog-authored records.
+Third-party sources retain their own terms. This portable report works without network access;
+upstream and contribution links require a connection.</footer></body></html>
