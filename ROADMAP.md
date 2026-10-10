@@ -42,7 +42,7 @@ EdgeLoom is **not** planned as:
 
 ### Next bounded increment — media and appliance evidence
 
-Draft implementation on a review branch, **not shipped**: preserve the v0.1
+Draft development implementation, **not in a packaged release**: preserve the v0.1
 contracts and add opt-in v0.2 device/bundle records with explicit exact-model
 versus device-family scope. Separate transport, application protocol/API,
 platform adapter/version, local/cloud dependence and update mechanism. Each
@@ -56,6 +56,17 @@ review. Existing Yale records and frozen v0.1 schema bytes stay unchanged.
 Media/appliance observations and further protocol semantics need a later scoped
 increment; no device control, pairing or network scan is added here. Public
 schema adoption remains subject to the governance/design-review process.
+
+### Planned workflow — community driver assistance
+
+The [architecture and development plan](docs/driver-assistance-architecture.md)
+describes a SmartThings Edge-first Find → Customize → Contribute workflow.
+Core owns request/recipe contracts, explainable matching, development workpacks,
+reviewed generators and candidate checks. The catalog owns canonical reusable
+recipes and evidence. AI coding is optional; arbitrary driver generation,
+automatic device installation and hardware validation are not existing features.
+Implementation proceeds through contracts, matching/workpacks, one bounded
+candidate-generation path, community entry points and separately scoped testing.
 
 - **Shipped** — available on `main` and covered by the normal CI/release path.
 - **Next** — the current implementation gate; work should land before later

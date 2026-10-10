@@ -1,6 +1,6 @@
 # Media and appliance evidence — draft contract v0.2
 
-Review-branch implementation, not a published standard or new device adapter.
+Draft development implementation, not a published standard or new device adapter.
 Core owns contracts, validation and rendering; the catalog owns curated data.
 Public adoption requires the normal governance/design-review process.
 

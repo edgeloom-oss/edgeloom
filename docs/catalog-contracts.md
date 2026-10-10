@@ -1,6 +1,6 @@
 # Catalog Contracts
 
-Review-branch extension: [Media/device-family contracts v0.2](media-device-contracts.md).
+Development extension: [Media/device-family contracts v0.2](media-device-contracts.md).
 The original v0.1 contracts below remain unchanged; v0.2 is not yet released.
 
 EdgeLoom's catalog contracts describe evidence-backed relationships among
